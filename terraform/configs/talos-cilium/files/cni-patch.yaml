@@ -1,0 +1,12 @@
+# talosctl gen config \
+#    talos-cilium https://1922.168.10.11:6443 \
+#    --config-patch @files/cni-patch.yaml
+#    --config-patch @files/vip-patch.yaml
+#    --config-patch @files/
+
+cluster:
+  network:
+    cni:
+      name: none
+  proxy:    # to disable KUBE-PROXY
+    disabled: true

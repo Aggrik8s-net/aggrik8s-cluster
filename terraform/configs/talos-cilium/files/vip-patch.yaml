@@ -1,0 +1,25 @@
+machine:
+  network:
+    interfaces:
+    - interface: ens18
+      dhcp: true
+      vip:
+        ip: 192.168.10.12
+
+# to light up a vlan
+#      vlans:
+#        - vlanId: 100
+#          dhcp: true
+#          vip:
+#            ip: 192.168.1.15
+
+# Using a dummy selector to hit all nodes with a single interface
+# machine:
+#  network:
+#    interfaces:
+#      - deviceSelector:
+#          physical: true # should select any hardware network device, if you have just one, it will be selected
+#        dhcp: true
+#        vip:
+#          ip: 192.168.0.15
+
