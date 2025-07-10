@@ -181,7 +181,7 @@ cluster:
 
   extraManifests:
     - https://raw.githubusercontent.com/alex1989hu/kubelet-serving-cert-approver/main/deploy/standalone-install.yaml
-    - https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yamldshea@pi-manage-01:~/git/aggrik8s-cluster/terraform
+    - https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
 EOT
     ]
 }
