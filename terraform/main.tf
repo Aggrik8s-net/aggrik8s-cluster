@@ -22,33 +22,40 @@ provider "proxmox" {
   }
 }
 
-module "talos" {
+module "talos-proxmox-east" {
     # source  = "bbtechsys/talos/proxmox"
     source  = "./modules/talos_cilium"
     #version = "0.1.5"
-    talos_cluster_name = "prox-talos"
+    talos_cluster_name = "talos-east"
     talos_version = "1.9.5"
     control_nodes = {
-        "cp-1" = "pve"
-        "cp-2" = "pve"
-        "cp-3" = "pve"
+        "cp-e-1" = "pve"
+        "cp-e-2" = "pve"
+        "cp-e-3" = "pve"
     }
     worker_nodes = {
-        "worker-0" = "pve"
-        "worker-1" = "pve"
-        "worker-2" = "pve"
+        "wrk-e-1" = "pve"
+        "wrk-e-2" = "pve"
+        "wrk-e-3" = "pve"
     }
 }
 
-
-output "talos_config" {
-    description = "Talos configuration file"
-    value       = module.talos.talos_config
-    sensitive   = true
+module "talos-proxmox-west" {
+    # depends_on = [module.talos-proxmox-east]
+    # source  = "bbtechsys/talos/proxmox"
+    source  = "./modules/talos_cilium"
+    #version = "0.1.5"
+    talos_cluster_name = "talos-west"
+    talos_version = "1.9.5"
+    control_nodes = {
+        "cp-w-1" = "pve"
+        "cp-w-2" = "pve"
+        "cp-w-3" = "pve"
+    }
+    worker_nodes = {
+        "wrk-w-1" = "pve"
+        "wrk-w-2" = "pve"
+        "wrk-w-3" = "pve"
+    }
 }
 
-output "kubeconfig" {
-    description = "Kubeconfig file"
-    value       = module.talos.kubeconfig
-    sensitive   = true
-}
