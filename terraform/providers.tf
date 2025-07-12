@@ -15,11 +15,19 @@ terraform {
     }
     kubernetes = {
       source = "hashicorp/kubernetes"
-      configuration_aliases = [kubernetes.kubeconfig-east, kubernetes.kubeconfig-west]
+      configuration_aliases = [kubernetes.kubeconfig-east,
+                               kubernetes.kubeconfig-west,
+                               kubernetes.talos-proxmox-east,
+                               kubernetes.talos-proxmox-west]
     }
     helm = {
       source = "hashicorp/helm"
       version = "3.0.2"
+    }
+    kubectl = {
+      source = "gavinbunney/kubectl"
+      version = "1.19.0"
+      configuration_aliases = [kubectl.kubectl-east, kubectl.kubectl-west]
     }
   }
 }
@@ -50,11 +58,43 @@ alias = "cilium-west"
 provider "kubernetes" {
   alias          = "kubeconfig-east"
   config_path    = "${path.module}/tmp/kubeconfig-east"
-  config_context = "my-context"
+  config_context = "talos-east"
 }
 
 provider "kubernetes" {
     alias = "kubeconfig-west"
     config_path    = "${path.module}/tmp/kubeconfig-west"
-    config_context = "my-context"
+    config_context = "talos-=west"
+}
+
+provider "kubectl" {
+  alias          = "kubectl-east"
+  host           =  var.east_host
+  config_path    = "${path.module}/tmp/kubeconfig-east"
+  config_context = "talos-east"
+}
+
+provider "kubectl" {
+  alias = "kubectl-west"
+  host = var.west_host
+  config_path    = "${path.module}/tmp/kubeconfig-west"
+  config_context = "talos-west"
+}
+
+provider "kubernetes" {
+  alias = "talos-proxmox-east"
+  host = var.east_host
+
+  client_certificate     = base64decode(var.east_client_certificate)
+  client_key             = base64decode(var.east_client_key)
+  cluster_ca_certificate = base64decode(var.east_cluster_ca_certificate)
+}
+
+provider "kubernetes" {
+  alias = "talos-proxmox-west"
+  host = var.west_host
+
+  client_certificate     = base64decode(var.west_client_certificate)
+  client_key             = base64decode(var.west_client_key)
+  cluster_ca_certificate = base64decode(var.west_cluster_ca_certificate)
 }
