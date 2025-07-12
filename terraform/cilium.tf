@@ -12,30 +12,59 @@ data "kubectl_filename_list" "manifests" {
 //  yaml_body = file(element(data.kubectl_filename_list.manifests.matches, count.index))
 // }
 
+//  gateway.networking.k8s.io_gatewayclasses.yaml
 data "http" "manifest_gateway-api_gatewayclasses" {
   url = "https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/v1.1.0/config/crd/standard/gateway.networking.k8s.io_gatewayclasses.yaml"
 }
+resource "kubectl_manifest" "gateway-api_gatewayclasses" {
+  yaml_body = data.http.manifest_gateway-api_gatewayclasses.body
+}
+
+//  gateway.networking.k8s.io_gateways.yaml
 data "http" "manifest_gateway-api_gateways" {
   url = "https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/v1.1.0/config/crd/standard/gateway.networking.k8s.io_gateways.yaml"
 }
+resource "kubectl_manifest" "gateway-api_gateways" {
+  yaml_body = data.http.manifest_gateway-api_gateways.body
+}
+
+// gateway.networking.k8s.io_httproutes.yaml"
 data "http" "manifest_gateway-api_httproutes" {
   url = "https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/v1.1.0/config/crd/standard/gateway.networking.k8s.io_httproutes.yaml"
 }
+resource "kubectl_manifest" "gateway-api_httproutes" {
+  yaml_body = data.http.manifest_gateway-api_httproutes.body
+}
+
+// gateway.networking.k8s.io_referencegrants.yaml
 data "http" "manifest_gateway-api_referencegrants" {
   url = "https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/v1.1.0/config/crd/standard/gateway.networking.k8s.io_referencegrants.yaml"
 }
+resource "kubectl_manifest" "gateway-api_referencegrants" {
+  yaml_body = data.http.manifest_gateway-api_referencegrants.body
+}
+
+//  gateway.networking.k8s.io_grpcroutes.yaml
 data "http" "manifest_gateway-api_grpcroutes" {
   url = "https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/v1.1.0/config/crd/standard/gateway.networking.k8s.io_grpcroutes.yaml"
 }
+resource "kubectl_manifest" "gateway-api_grpcroutes" {
+  yaml_body = data.http.manifest_gateway-api_grpcroutes.body
+}
+
+
 data "http" "manifest_gateway-api_tlsroutes" {
   url = "https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/v1.1.0/config/crd/experimental/gateway.networking.k8s.io_tlsroutes.yaml"
+}
+resource "kubectl_manifest" "gateway-api_tlsroutes" {
+  yaml_body = data.http.manifest_gateway-api_tlsroutes.body
 }
 
 
 
-// output "kubectl_test" {
-//  value = data.http.manifest_gateway-api_gatewayclasses.body
-// }
+
+// resource "kubernetes" "" {}
+
 
 // $ kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/v1.1.0/config/crd/standard/gateway.networking.k8s.io_gatewayclasses.yaml
 // resource "kubernetes_  " "cilium" {}

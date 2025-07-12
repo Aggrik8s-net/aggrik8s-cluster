@@ -34,6 +34,41 @@ output "talos-proxmox-west_server" {
   sensitive   = false
 }
 
+output "http_manifest_gateway-api_gatewayclasses" {
+  value = data.http.manifest_gateway-api_gatewayclasses.id
+}
+output "http_manifest_gateway-api_gateways" {
+  value = data.http.manifest_gateway-api_gateways.id
+}
+output "http_manifeset_gateway-api_httproutes" {
+  value = data.http.manifest_gateway-api_httproutes.id
+}
+output "http_manifest_gateway-api_referencegrants" {
+  value = data.http.manifest_gateway-api_referencegrants.id
+}
+output "http_manifest_gateway-api_grpcroutes" {
+  value = data.http.manifest_gateway-api_grpcroutes.id
+}
+output "http_manifest_gateway-api_tlsroutes" {
+  value = data.http.manifest_gateway-api_tlsroutes.id
+}
 
-
+output "gateway-api-gatewayclasses" {
+  value = kubectl_manifest.gateway-api_gatewayclasses.id
+}
+output "gateway-api-gateways" {
+  value = kubectl_manifest.gateway-api_gateways.id
+}
+output "gateway-api-httproutes" {
+  value = kubectl_manifest.gateway-api_httproutes.id
+}
+output "gateway-api-referencegrants" {
+  value = kubectl_manifest.gateway-api_referencegrants.id
+}
+output "gateway-api-grpcroutes" {
+  value = kubectl_manifest.gateway-api_grpcroutes.id
+}
+output "gateway-api-tlsroutes" {
+  value = kubectl_manifest.gateway-api_tlsroutes.id
+}
 
