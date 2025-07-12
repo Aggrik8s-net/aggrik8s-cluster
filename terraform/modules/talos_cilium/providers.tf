@@ -18,21 +18,21 @@ terraform {
       source = "siderolabs/talos"
       version = "~> 0.7.1"
     }
-    random = {
-      source = "hashicorp/random"
-      version = "3.7.2"
-    }
-    kubernetes = {
-      source = "hashicorp/kubernetes"
-    }
-    cilium = {
-      source = "littlejo/cilium"
-      version = "0.3.1"
-    }
-    helm = {
-      source = "hashicorp/helm"
-      version = "3.0.1"
-    }
+    // random = {
+    //   source = "hashicorp/random"
+    //   version = "3.7.2"
+    // }
+    // kubernetes = {
+    //   source = "hashicorp/kubernetes"
+    // }
+    // cilium = {
+    //   source = "littlejo/cilium"
+    //   version = "0.3.1"
+    // }
+    // helm = {
+    //   source = "hashicorp/helm"
+    //   version = "3.0.2"
+    // }
   }
 }
 
@@ -47,24 +47,24 @@ provider "proxmox" {
   }
 }
 
-provider "kubernetes" {
-  # Just use the kubeconfig
-  config_path = "~/Talos/kubeconfig"
+// provider "kubernetes" {
+//   # Just use the kubeconfig
+//   config_path = "~/Talos/kubeconfig"
+//
+//   # host = var.host
+//   # client_certificate     = base64decode(data.talos_cluster_kubeconfig.kubeconfig.client_configuration.client_certificate)
+//   # client_key             = base64decode(data.talos_cluster_kubeconfig.kubeconfig.client_configuration.client_key)
+//   # cluster_ca_certificate = base64decode(data.talos_cluster_kubeconfig.kubeconfig.kubernetes_client_configuration.ca_certificate)
+// }
 
-  # host = var.host
-  # client_certificate     = base64decode(data.talos_cluster_kubeconfig.kubeconfig.client_configuration.client_certificate)
-  # client_key             = base64decode(data.talos_cluster_kubeconfig.kubeconfig.client_configuration.client_key)
-  # cluster_ca_certificate = base64decode(data.talos_cluster_kubeconfig.kubeconfig.kubernetes_client_configuration.ca_certificate)
-}
+// provider "cilium" {
+//   config_path = "${path.module}/kubeconfig"
+// }
 
-provider "cilium" {
-  config_path = "${path.module}/kubeconfig"
-}
-
-provider "helm" {
-  kubernetes = {
-    config_path = "${path.module}/kubeconfig"
-  }
+// provider "helm" {
+//   kubernetes = {
+//     config_path = "${path.module}/kubeconfig"
+//   }
 
 #`  registries = [
 #    {
@@ -78,4 +78,4 @@ provider "helm" {
 #      password = "password"
 #    }
 #  ]
-}
+# }

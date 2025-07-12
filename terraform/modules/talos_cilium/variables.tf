@@ -15,7 +15,7 @@ variable "proxmox_iso_datastore" {
 variable "proxmox_image_datastore" {
     description = "Datastore to put the VM hard drive images"
     type        = string
-    default     = "local-lvm"
+    default     = "cluster-lvm"
 }
 
 variable "proxmox_control_vm_cores" {
