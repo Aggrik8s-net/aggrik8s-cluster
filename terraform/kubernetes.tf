@@ -54,20 +54,4 @@ variable "west_cluster_ca_certificate" {
   default = ""
 }
 
-provider "kubernetes" {
-  alias = "talos-proxmox-east"
-  host = var.east_host
 
-  client_certificate     = base64decode(var.east_client_certificate)
-  client_key             = base64decode(var.east_client_key)
-  cluster_ca_certificate = base64decode(var.east_cluster_ca_certificate)
-}
-
-provider "kubernetes" {
-  alias = "talos-proxmox-west"
-  host = var.west_host
-
-  client_certificate     = base64decode(var.west_client_certificate)
-  client_key             = base64decode(var.west_client_key)
-  cluster_ca_certificate = base64decode(var.west_cluster_ca_certificate)
-}
