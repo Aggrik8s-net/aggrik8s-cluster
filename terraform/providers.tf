@@ -15,14 +15,15 @@ terraform {
     }
     kubernetes = {
       source = "hashicorp/kubernetes"
-      configuration_aliases = [kubernetes.kubeconfig-east,
-                               kubernetes.kubeconfig-west,
+      configuration_aliases = [ # kubernetes.kubeconfig-east,
+                                # kubernetes.kubeconfig-west,
                                kubernetes.talos-proxmox-east,
                                kubernetes.talos-proxmox-west]
     }
     helm = {
       source = "hashicorp/helm"
       version = "3.0.2"
+      configuration_aliases = [helm.helm-east, helm.helm-west]
     }
     kubectl = {
       source = "gavinbunney/kubectl"
@@ -55,30 +56,36 @@ config_path = "${path.module}/kubeconfig-west"
 alias = "cilium-west"
 }
 
-provider "kubernetes" {
-  alias          = "kubeconfig-east"
-  config_path    = "${path.module}/tmp/kubeconfig-east"
-  config_context = "talos-east"
-}
+// provider "kubernetes" {
+//   alias          = "kubeconfig-east"
+//   config_path    = "${path.module}/tmp/kubeconfig-east"
+//   config_context = "talos-east"
+// }
 
-provider "kubernetes" {
-    alias = "kubeconfig-west"
-    config_path    = "${path.module}/tmp/kubeconfig-west"
-    config_context = "talos-=west"
-}
+// provider "kubernetes" {
+//     alias = "kubeconfig-west"
+//     config_path    = "${path.module}/tmp/kubeconfig-west"
+//     config_context = "talos-=west"
+// }
 
 provider "kubectl" {
   alias          = "kubectl-east"
-  host           =  var.east_host
+  // host           =  var.east_host
   config_path    = "${path.module}/tmp/kubeconfig-east"
-  config_context = "talos-east"
+  // config_context = "admin@talos-east"
+  // client_certificate     = base64decode(var.east_client_certificate)
+  // client_key             = base64decode(var.east_client_key)
+  // cluster_ca_certificate = base64decode(var.east_cluster_ca_certificate)
 }
 
 provider "kubectl" {
   alias = "kubectl-west"
-  host = var.west_host
+  // host = var.west_host
   config_path    = "${path.module}/tmp/kubeconfig-west"
-  config_context = "talos-west"
+  // config_context = "admin@talos-west"
+  // client_certificate     = base64decode(var.west_client_certificate)
+  // client_key             = base64decode(var.west_client_key)
+  // cluster_ca_certificate = base64decode(var.west_cluster_ca_certificate)
 }
 
 provider "kubernetes" {
@@ -97,4 +104,19 @@ provider "kubernetes" {
   client_certificate     = base64decode(var.west_client_certificate)
   client_key             = base64decode(var.west_client_key)
   cluster_ca_certificate = base64decode(var.west_cluster_ca_certificate)
+}
+
+provider "helm" {
+  alias = "helm-east"
+  kubernetes = {
+    config_path = "${path.module}/tmp/kubeconfig-east"
+  }
+}
+
+provider "helm" {
+  alias = "helm-west"
+  kubernetes = {
+    config_path = "${path.module}/tmp/kubeconfig-west"
+  }
+
 }
