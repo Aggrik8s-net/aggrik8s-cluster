@@ -1,0 +1,77 @@
+//     We need to follow this guide.
+//     https://www.talos.dev/v1.10/kubernetes-guides/configuration/ceph-with-rook/
+//
+
+// 1.  - Install our HELM Repo
+//       $ helm repo add rook-release https://charts.rook.io/release
+
+
+
+// 2.  - Label our namespace to ??? <allow metrics-server on Nodes>` ???.
+//       kubectl label namespace rook-ceph pod-security.kubernetes.io/enforce=privileged
+//           ? is the namespace created yet ?
+
+// 3.  - Profit.
+//       helm install --create-namespace --namespace rook-ceph rook-ceph-cluster --set operatorNamespace=rook-ceph rook-release/rook-ceph-cluster
+
+
+resource "kubernetes_namespace" "rook-ceph-east" {
+  metadata {
+    name   = "rook-ceph"
+    labels = {
+               "pod-security.kubernetes.io/enforce" = "privileged"
+    }
+  }
+  provider = "kubernetes.talos-proxmox-east"
+}
+
+resource "kubernetes_namespace" "rook-ceph-west" {
+  metadata {
+    name   = "rook-ceph"
+    labels = {
+               "pod-security.kubernetes.io/enforce" = "privileged"
+    }
+  }
+  provider = "kubernetes.talos-proxmox-west"
+}
+
+resource "helm_release" "rook-operator-east" {
+  description = "HELM Chart to install the rook-operator."
+  depends_on = [kubernetes_namespace.rook-ceph-east]
+  provider = "helm.helm-east"
+  name  = "rook-ceph"
+  chart = "rook-ceph"
+  repository = "https://charts.rook.io/release"
+  namespace = "rook-ceph"
+}
+
+resource "helm_release" "rook-operator-west" {
+  description = "HELM Chart to install the rook-operator."
+  depends_on = [kubernetes_namespace.rook-ceph-west]
+  provider = "helm.helm-west"
+  name  = "rook-ceph"
+  chart = "rook-ceph"
+  repository = "https://charts.rook.io/release"
+  namespace = "rook-ceph"
+}
+
+resource "helm_release" "rook-ceph-cluster-east" {
+  description = "HELM Chart to install the rook-operator."
+  depends_on = [kubernetes_namespace.rook-ceph-east]
+  provider = "helm.helm-east"
+  name  = "rook-ceph-cluster"
+  chart = "rook-ceph-cluster"
+  repository = "https://charts.rook.io/release"
+  namespace = "rook-ceph"
+}
+
+resource "helm_release" "rook-ceph-cluster-west" {
+  description = "HELM Chart to install the rook-operator."
+  depends_on = [kubernetes_namespace.rook-ceph-west]
+  provider = "helm.helm-west"
+  name  = "rook-ceph-cluster"
+  chart = "rook-ceph-cluster"
+  repository = "https://charts.rook.io/release"
+  namespace = "rook-ceph"
+}
+

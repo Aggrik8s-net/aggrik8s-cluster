@@ -3,64 +3,93 @@
 // And      https://registry.terraform.io/providers/littlejo/cilium/latest/docs
 //
 
-data "kubectl_filename_list" "manifests" {
-  pattern = "~/Talos/*.yaml"
-}
-
+// data "kubectl_filename_list" "manifests" {
+//   pattern = "~/Talos/*.yaml"
+// }
 // resource "kubectl_manifest" "test" {
 //  count     = length(data.kubectl_filename_list.manifests.matches)
 //  yaml_body = file(element(data.kubectl_filename_list.manifests.matches, count.index))
 // }
 
-//  gateway.networking.k8s.io_gatewayclasses.yaml
+/*
+        First we install gateway-api CRD's in both clusters.
+*/
+// #1 - gateway.networking.k8s.io_gatewayclasses.yaml
 data "http" "manifest_gateway-api_gatewayclasses" {
   url = "https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/v1.1.0/config/crd/standard/gateway.networking.k8s.io_gatewayclasses.yaml"
 }
-resource "kubectl_manifest" "gateway-api_gatewayclasses" {
+resource "kubectl_manifest" "east-gateway-api_gatewayclasses" {
+  provider = "kubectl.kubectl-east"
   yaml_body = data.http.manifest_gateway-api_gatewayclasses.body
 }
-
-//  gateway.networking.k8s.io_gateways.yaml
+resource "kubectl_manifest" "west-gateway-api_gatewayclasses" {
+  provider = "kubectl.kubectl-west"
+  yaml_body = data.http.manifest_gateway-api_gatewayclasses.body
+}
+// #2 - gateway.networking.k8s.io_gateways.yaml
 data "http" "manifest_gateway-api_gateways" {
   url = "https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/v1.1.0/config/crd/standard/gateway.networking.k8s.io_gateways.yaml"
 }
-resource "kubectl_manifest" "gateway-api_gateways" {
+resource "kubectl_manifest" "east-gateway-api_gateways" {
+  provider = "kubectl.kubectl-east"
   yaml_body = data.http.manifest_gateway-api_gateways.body
 }
-
-// gateway.networking.k8s.io_httproutes.yaml"
+resource "kubectl_manifest" "west-gateway-api_gateways" {
+  provider = "kubectl.kubectl-west"
+  yaml_body = data.http.manifest_gateway-api_gateways.body
+}
+// #3 - gateway.networking.k8s.io_httproutes.yaml"
 data "http" "manifest_gateway-api_httproutes" {
   url = "https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/v1.1.0/config/crd/standard/gateway.networking.k8s.io_httproutes.yaml"
 }
-resource "kubectl_manifest" "gateway-api_httproutes" {
+resource "kubectl_manifest" "east-gateway-api_httproutes" {
+  provider = "kubectl.kubectl-east"
   yaml_body = data.http.manifest_gateway-api_httproutes.body
 }
-
-// gateway.networking.k8s.io_referencegrants.yaml
+resource "kubectl_manifest" "west-gateway-api_httproutes" {
+  provider = "kubectl.kubectl-west"
+  yaml_body = data.http.manifest_gateway-api_httproutes.body
+}
+// #4 - gateway.networking.k8s.io_referencegrants.yaml
 data "http" "manifest_gateway-api_referencegrants" {
   url = "https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/v1.1.0/config/crd/standard/gateway.networking.k8s.io_referencegrants.yaml"
 }
-resource "kubectl_manifest" "gateway-api_referencegrants" {
+resource "kubectl_manifest" "east-gateway-api_referencegrants" {
+  provider = "kubectl.kubectl-east"
   yaml_body = data.http.manifest_gateway-api_referencegrants.body
 }
-
-//  gateway.networking.k8s.io_grpcroutes.yaml
+resource "kubectl_manifest" "west-gateway-api_referencegrants" {
+  provider = "kubectl.kubectl-west"
+  yaml_body = data.http.manifest_gateway-api_referencegrants.body
+}
+// #5 - gateway.networking.k8s.io_grpcroutes.yaml
 data "http" "manifest_gateway-api_grpcroutes" {
   url = "https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/v1.1.0/config/crd/standard/gateway.networking.k8s.io_grpcroutes.yaml"
 }
-resource "kubectl_manifest" "gateway-api_grpcroutes" {
+resource "kubectl_manifest" "east-gateway-api_grpcroutes" {
+  provider = "kubectl.kubectl-east"
   yaml_body = data.http.manifest_gateway-api_grpcroutes.body
 }
-
-
+resource "kubectl_manifest" "west-gateway-api_grpcroutes" {
+  provider = "kubectl.kubectl-west"
+  yaml_body = data.http.manifest_gateway-api_grpcroutes.body
+}
+// #6 - gateway.networking.k8s.io_tlsroutes.yaml
 data "http" "manifest_gateway-api_tlsroutes" {
   url = "https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/v1.1.0/config/crd/experimental/gateway.networking.k8s.io_tlsroutes.yaml"
 }
-resource "kubectl_manifest" "gateway-api_tlsroutes" {
+resource "kubectl_manifest" "east-gateway-api_tlsroutes" {
+  provider = "kubectl.kubectl-east"
+  yaml_body = data.http.manifest_gateway-api_tlsroutes.body
+}
+resource "kubectl_manifest" "west-gateway-api_tlsroutes" {
+  provider = "kubectl.kubectl-west"
   yaml_body = data.http.manifest_gateway-api_tlsroutes.body
 }
 
-
+/*
+        Next we  install Cilium in both clusters.
+*/
 
 
 // resource "kubernetes" "" {}
