@@ -54,41 +54,41 @@ output "http_manifest_gateway-api_tlsroutes" {
 }
 
 output "east-gateway-api-gatewayclasses" {
-  value = kubectl_manifest.east-gateway-api_gatewayclasses.id
+  value = kubectl_manifest.gateway-api_gatewayclasses-east.id
 }
 output "east-gateway-api-gateways" {
-  value = kubectl_manifest.east-gateway-api_gateways.id
+  value = kubectl_manifest.gateway-api_gateways-east.id
 }
 output "east-gateway-api-httproutes" {
-  value = kubectl_manifest.east-gateway-api_httproutes.id
+  value = kubectl_manifest.gateway-api_httproutes-east.id
 }
 output "east-gateway-api-referencegrants" {
-  value = kubectl_manifest.east-gateway-api_referencegrants.id
+  value = kubectl_manifest.gateway-api_referencegrants-east.id
 }
 output "east-gateway-api-grpcroutes" {
-  value = kubectl_manifest.east-gateway-api_grpcroutes.id
+  value = kubectl_manifest.gateway-api_grpcroutes-east.id
 }
 output "east-gateway-api-tlsroutes" {
-  value = kubectl_manifest.east-gateway-api_tlsroutes.id
+  value = kubectl_manifest.gateway-api_tlsroutes-east.id
 }
 
 output "west-gateway-api-gatewayclasses" {
-  value = kubectl_manifest.west-gateway-api_gatewayclasses.id
+  value = kubectl_manifest.gateway-api_gatewayclasses-west.id
 }
 output "west-gateway-api-gateways" {
-  value = kubectl_manifest.west-gateway-api_gateways.id
+  value = kubectl_manifest.gateway-api_gateways-west.id
 }
 output "west-gateway-api-httproutes" {
 
-  value = kubectl_manifest.west-gateway-api_httproutes.id
+  value = kubectl_manifest.gateway-api_httproutes-west.id
 }
 output "west-gateway-api-referencegrants" {
-  value = kubectl_manifest.west-gateway-api_referencegrants.id
+  value = kubectl_manifest.gateway-api_referencegrants-west.id
 }
 output "west-gateway-api-grpcroutes" {
-  value = kubectl_manifest.east-gateway-api_grpcroutes.id
+  value = kubectl_manifest.gateway-api_grpcroutes-east.id
 }
 output "west-gateway-api-tlsroutes" {
-  value = kubectl_manifest.west-gateway-api_tlsroutes.id
+  value = kubectl_manifest.gateway-api_tlsroutes-west.id
 }
 

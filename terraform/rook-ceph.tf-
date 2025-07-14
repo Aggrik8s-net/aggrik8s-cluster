@@ -16,6 +16,7 @@
 
 
 resource "kubernetes_namespace" "rook-ceph-east" {
+  depends_on  =  [kubeconfig-east]
   metadata {
     name   = "rook-ceph"
     labels = {
@@ -26,6 +27,7 @@ resource "kubernetes_namespace" "rook-ceph-east" {
 }
 
 resource "kubernetes_namespace" "rook-ceph-west" {
+  depends_on  =  [kubeconfig-west]
   metadata {
     name   = "rook-ceph"
     labels = {
@@ -35,7 +37,16 @@ resource "kubernetes_namespace" "rook-ceph-west" {
   provider = "kubernetes.talos-proxmox-west"
 }
 
+resource "talos-wipe-disk" "wipe-disks-east"{
+  depends_on  =  [talosconfig-east]
+}
+resource "talos-wipe-disk" "wipe-disks-west"{
+  depends_on  =  [talosconfig-west]
+}
+
+
 resource "helm_release" "rook-operator-east" {
+  depends_on  = [talos-wipe-disk.wipe-disks-east]
   description = "HELM Chart to install the rook-operator."
   depends_on = [kubernetes_namespace.rook-ceph-east]
   provider = "helm.helm-east"
@@ -46,6 +57,7 @@ resource "helm_release" "rook-operator-east" {
 }
 
 resource "helm_release" "rook-operator-west" {
+  depends_on  = [talos-wipe-disk.wipe-disks-west]
   description = "HELM Chart to install the rook-operator."
   depends_on = [kubernetes_namespace.rook-ceph-west]
   provider = "helm.helm-west"
@@ -56,7 +68,8 @@ resource "helm_release" "rook-operator-west" {
 }
 
 resource "helm_release" "rook-ceph-cluster-east" {
-  description = "HELM Chart to install the rook-operator."
+  depends_on  = [talos-wipe-disk.wipe-disks-east]
+  description = "HELM Chart to install the rook-ceph cluster."
   depends_on = [kubernetes_namespace.rook-ceph-east]
   provider = "helm.helm-east"
   name  = "rook-ceph-cluster"
@@ -66,7 +79,8 @@ resource "helm_release" "rook-ceph-cluster-east" {
 }
 
 resource "helm_release" "rook-ceph-cluster-west" {
-  description = "HELM Chart to install the rook-operator."
+  depends_on  = [talos-wipe-disk.wipe-disks-west]
+  description = "HELM Chart to install the rook-ceph cluster."
   depends_on = [kubernetes_namespace.rook-ceph-west]
   provider = "helm.helm-west"
   name  = "rook-ceph-cluster"
