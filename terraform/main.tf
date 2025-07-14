@@ -1,4 +1,22 @@
 
+# main.tf
+resource "local_file" "kubeconfig-east" {
+  filename = "${path.module}/tmp/kubeconfig-east"
+  content  = module.talos-proxmox-east.kubeconfig
+}
+resource "local_file" "talosconfig-east" {
+  filename = "${path.module}/tmp/kubeconfig-east"
+  content  = module.talos-proxmox-east.kubeconfig
+}
+
+resource "local_file" "kubeconfig-west" {
+  filename = "${path.module}/tmp/talosconfig-east"
+  content  = module.talos-proxmox-west.talosconfig
+}
+resource "local_file" "talosconfig-west" {
+  filename = "${path.module}/tmp/talosconfig-west"
+  content  = module.talos-proxmox-west.talosconfig
+}
 
 module "talos-proxmox-east" {
     # source  = "bbtechsys/talos/proxmox"
@@ -78,3 +96,30 @@ module "talos-proxmox-west" {
     }
 }
 
+//
+//  We have spun up a cluster, now get TALOSCONFIG and KUBECONFIG files.
+//
+resource "null_resource" "talos-proxmox-creds" {
+   depends_on = [module.talos-proxmox-east, module.talos-proxmox-west]
+   provisioner "local-exec" {
+     // Run Terraform externally to copy output secrets to local files.
+     command = "${path.module}/../bin/getCreds.sh"
+   }
+}
+
+// resource "null_resource" "talos-proxmox-west" {
+//   depends_on = [module.talos-proxmox-west]
+//   provisioner "local_exec" {
+//     // Run Terraform externally to copy output secrets to local files.
+//     command = "${path.module}/../bin/getCreds.sh"
+//   }
+// }
+
+
+
+//resource "get-creds" "talosconfig-east" {
+//  depends_on = [module.talos-proxmox-east]
+//}
+//resource "get-creds" "talosconfig-west" {
+//  depends_on = [module.talos-proxmox-west]
+//}

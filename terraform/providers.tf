@@ -79,9 +79,10 @@ provider "kubectl" {
 }
 
 provider "kubectl" {
-  alias = "kubectl-west"
-  // host = var.west_host
+  alias          = "kubectl-west"
+  // host                   = var.west_host
   config_path    = "${path.module}/tmp/kubeconfig-west"
+  // config_path    = yamldecode(module.talos-proxmox-west.kubeconfig)
   // config_context = "admin@talos-west"
   // client_certificate     = base64decode(var.west_client_certificate)
   // client_key             = base64decode(var.west_client_key)
@@ -90,25 +91,34 @@ provider "kubectl" {
 
 provider "kubernetes" {
   alias = "talos-proxmox-east"
-  host = var.east_host
-
-  client_certificate     = base64decode(var.east_client_certificate)
-  client_key             = base64decode(var.east_client_key)
-  cluster_ca_certificate = base64decode(var.east_cluster_ca_certificate)
+  // host = var.east_host
+  config_path    = "${path.module}/tmp/kubeconfig-east"
+  // config_path = module.talos-proxmox-east.kubeconfig
+  //
+  // These need to be set up externally using ../bin/setTF_VARS.sh
+  //
+  // client_certificate     = base64decode(var.east_client_certificate)
+  // client_key             = base64decode(var.east_client_key)
+  // cluster_ca_certificate = base64decode(var.east_cluster_ca_certificate)
 }
 
 provider "kubernetes" {
   alias = "talos-proxmox-west"
-  host = var.west_host
-
-  client_certificate     = base64decode(var.west_client_certificate)
-  client_key             = base64decode(var.west_client_key)
-  cluster_ca_certificate = base64decode(var.west_cluster_ca_certificate)
+  // host = var.west_host
+  // config_path = module.talos-proxmox-west.kubeconfig
+  config_path = "${path.module}/tmp/kubeconfig-west"
+  //
+  //  These need to be set up externally using ../bin/setTF_VARS.sh
+  //
+  // client_certificate     = base64decode(var.west_client_certificate)
+  // client_key             = base64decode(var.west_client_key)
+  // cluster_ca_certificate = base64decode(var.west_cluster_ca_certificate)
 }
 
 provider "helm" {
   alias = "helm-east"
   kubernetes = {
+    # config_path = module.talos-proxmox-east.kubeconfig
     config_path = "${path.module}/tmp/kubeconfig-east"
   }
 }
@@ -116,7 +126,12 @@ provider "helm" {
 provider "helm" {
   alias = "helm-west"
   kubernetes = {
+    # config_path = module.talos-proxmox-west.kubeconfig
     config_path = "${path.module}/tmp/kubeconfig-west"
   }
-
 }
+
+//output "test-module-output" {
+//  value = module.talos-proxmox-west.kubeconfig
+//  sensitive = false
+//}
