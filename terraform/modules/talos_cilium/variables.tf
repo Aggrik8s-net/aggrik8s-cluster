@@ -15,31 +15,31 @@ variable "proxmox_iso_datastore" {
 variable "proxmox_image_datastore" {
     description = "Datastore to put the VM hard drive images"
     type        = string
-    default     = "local-lvm"
+    default     = "cluster-lvm"
 }
 
 variable "proxmox_control_vm_cores" {
     description = "Number of CPU cores for the control VMs"
     type        = number
-    default     = 4
+    default     = 8
 }
 
 variable "proxmox_worker_vm_cores" {
     description = "Number of CPU cores for the worker VMs"
     type        = number
-    default     = 4
+    default     = 16
 }
 
 variable "proxmox_control_vm_memory" {
     description = "Memory in MB for the control VMs"
     type        = number
-    default     = 4096
+    default     = 8192
 }
 
 variable "proxmox_worker_vm_memory" {
     description = "Memory in MB for the worker VMs"
     type        = number
-    default     = 4096
+    default     = 16384
 }
 
 variable "proxmox_vm_type" {
@@ -51,13 +51,13 @@ variable "proxmox_vm_type" {
 variable "proxmox_control_vm_disk_size" {
     description = "Proxmox control VM disk size in GB"
     type        = number
-    default     = 32
+    default     = 64
 }
 
 variable "proxmox_worker_vm_disk_size" {
     description = "Proxmox worker VM disk size in GB"
     type        = number
-    default     = 100
+    default     = 128
 }
 
 variable "proxmox_network_vlan_id" {
@@ -181,7 +181,7 @@ cluster:
 
   extraManifests:
     - https://raw.githubusercontent.com/alex1989hu/kubelet-serving-cert-approver/main/deploy/standalone-install.yaml
-    - https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yamldshea@pi-manage-01:~/git/aggrik8s-cluster/terraform
+    - https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
 EOT
     ]
 }

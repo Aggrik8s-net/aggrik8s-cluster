@@ -1,5 +1,5 @@
 # Copyright (c) 2024 BB Tech Systems LLC
-output "talos_config" {
+output "talosconfig" {
     description = "Talos configuration file"
     value       = data.talos_client_configuration.talos_client_config.talos_config
     sensitive   = true
