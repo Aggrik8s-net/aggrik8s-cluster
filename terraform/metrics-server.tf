@@ -93,6 +93,7 @@ output "kubectl_path_documents-metrics-server_elements" {
   sensitive = true
 }
 
+/*
 output "kubectl_manifest_metrics-server-pattern" {
   description = "Errach YAML docuemnt in metrics-server document."
   value = data.kubectl_path_documents.metrics-server-docs.pattern
@@ -102,7 +103,6 @@ output "kubectl_manifest_metrics-server-pattern" {
 }
 
 
-
 // output "kubectl_path_documents-metrics-server_parsed" {
 //   value = {
 //     for k, doc in yamldecode(data.kubectl_path_documents.metrics-server-docs.pattern) : k => doc
@@ -110,7 +110,4 @@ output "kubectl_manifest_metrics-server-pattern" {
 //   sensitive = true
 // }
 
-
-/*
-        Next we  install Cilium in both clusters.
 */
