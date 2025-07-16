@@ -25,22 +25,32 @@ terraform {
       version = "3.0.2"
       configuration_aliases = [helm.helm-east, helm.helm-west]
     }
+    // kubectl = {
+    //   source = "gavinbunney/kubectl"
+    //   version = "1.19.0"
+    //   configuration_aliases = [kubectl.kubectl-east, kubectl.kubectl-west]
+    // }
     kubectl = {
-      source = "gavinbunney/kubectl"
-      version = "1.19.0"
-      configuration_aliases = [kubectl.kubectl-east, kubectl.kubectl-west]
+      source = "alekc/kubectl"
+      version = "2.1.3"
+    }
+    doppler = {
+      source = "DopplerHQ/doppler"
     }
   }
 }
 
 provider "proxmox" {
-  endpoint   = "https://192.168.10.10:8006"
-  api_token  =  "terraform@pam!terraform-api-key=8f4973ee-e3e4-4897-97f0-d11313bad16a"
+  endpoint   = var.proxmox_api_endpoint
+  // api_token  =  var.proxmox_api_token
+  api_token  =  data.doppler_secrets.this.map.proxmox_api_token
   insecure   = true
   ssh {
     agent    = true
-    username = "root"
-    password = "myPr0xM0x"
+    // username = var.proxmox_user
+    username = data.doppler_secrets.this.map.proxmox_user
+    // password = var.proxmox_root_pwd
+    password = data.doppler_secrets.this.map.root_pwd
   }
 }
 
@@ -129,6 +139,12 @@ provider "helm" {
     # config_path = module.talos-proxmox-west.kubeconfig
     config_path = "${path.module}/tmp/kubeconfig-west"
   }
+}
+
+# Configure the Doppler provider with the token
+provider "doppler" {
+  // Injected using `doppler run`
+  doppler_token = var.doppler_token
 }
 
 //output "test-module-output" {
