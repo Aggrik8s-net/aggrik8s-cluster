@@ -102,7 +102,8 @@ provider "kubectl" {
 provider "kubernetes" {
   alias = "talos-proxmox-east"
   // host = var.east_host
-  config_path    = "${path.module}/tmp/kubeconfig-east"
+  config_path    = "${path.module}/tmp/kubeconfig"
+  config_context = "admin@talos-east"
   // config_path = module.talos-proxmox-east.kubeconfig
   //
   // These need to be set up externally using ../bin/setTF_VARS.sh
@@ -117,6 +118,7 @@ provider "kubernetes" {
   // host = var.west_host
   // config_path = module.talos-proxmox-west.kubeconfig
   config_path = "${path.module}/tmp/kubeconfig-west"
+  config_context = "admin@talos-west"
   //
   //  These need to be set up externally using ../bin/setTF_VARS.sh
   //
@@ -129,7 +131,8 @@ provider "helm" {
   alias = "helm-east"
   kubernetes = {
     # config_path = module.talos-proxmox-east.kubeconfig
-    config_path = "${path.module}/tmp/kubeconfig-east"
+    config_path = "${path.module}/tmp/kubeconfig"
+    config_context = "admin@talos-east"
   }
 }
 
@@ -137,7 +140,8 @@ provider "helm" {
   alias = "helm-west"
   kubernetes = {
     # config_path = module.talos-proxmox-west.kubeconfig
-    config_path = "${path.module}/tmp/kubeconfig-west"
+    config_path = "${path.module}/tmp/kubeconfig"
+    config_context = "admin@talos-west"
   }
 }
 
