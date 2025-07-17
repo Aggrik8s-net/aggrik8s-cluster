@@ -1,9 +1,10 @@
 # aggrik8s-cluster
-This project automates the provisioning of a monetizable mesh of Talos based Kubernetes clusters.
-
-Talos is an immutable Linux distribution built specifally to run Kubernetes.  Talos nodes must be configured by using either `talosctl` or code such as Terraform, Ansible, Go, Python and such which use the `Talos API`. `talosctl` will be the primary adhoc administrative tool as there is no `ssh` and there are no `bash`, `systemctl`, `cat`, `find`, `sed` or any other familiar OSF tools.
-
 ## TLDR;
+This project provisions a monetizable platform composed of a mesh of Talos Kubernetes clusters running Cilium. Talos is an immutable Linux distribution built specifically to run Kubernetes.  This project uses Terraform providers to access the `Talos API`, `kubectl`, and `Helm` to allow provisioning and configuration of a turnkey Cilium Cluster Mesh.  All adhoc cluster administration uses `talosctl` as there is no `ssh` and there are no beloved OSF tools such as `bash`, `systemctl`, `cat`, `find`, `sed`.
+## Status
+The Cilium branch works but currently has a race condition involving Kubernetes credentials. The stack does export the correct Talos and Kubernetes credentials for each cluster, but, as they were not available at plan time, the stack fails the first time it is run. A simple helper script uses Terraform to retreive the newly generated credentials and sets up the required KUBECONFIG files. A second run of `terraform apply` now finds Kubernetes credentials and our Terraform stack uses `kubectl` and `Helm` to configure the Kubernetes bits. After second `terraform apply`, we have spun up two clusters, `talos-easty` and `talos-west` with all nodes haaving `NotReady` status as our code disables `CNI`. Cilium can always be installed using the `cilium CLI` and sometimes it can be installed using `Helm` but the  as well as installing Cilium. 
+The stack will be fully automated once the best integration strategy is determined. For instance, Helm can be usind to install Cilium or we can use the Cilium CLI which properly handles complicated scenarios not properly handled using Helm.
+## Design
 We use Terraform to provision Cilium Mesh of Talos based Kubernetes clusters.
 - We spin up Kubernetees clusters using [bbtechsys/talos/proxmox"](https://registry.terraform.io/modules/bbtechsys/talos/proxmox/latest) which uses:
   - Proxmox VMs are provisioned using [bgp/terraform-provider-proxmox](https://github.com/bpg/terraform-provider-proxmox),
@@ -18,7 +19,4 @@ We use Terraform to provision Cilium Mesh of Talos based Kubernetes clusters.
 - Tetragon for SecOps (see system calls)
 - Robusta for Cloud based Cluster DevOps workflows.
 - `Groundcover` for Inversion of Cost for OTEL Cloud storage. They only ingest metadaata, all actual OTEL data remains in cluster.
-## Status
-The Cilium branch works but requires at least two `terraform apply` and several bash helper scripts for setting up Talos & Kubernetes credentials as well as installing Cilium. 
-The stack will be fully automated once the best integration strategy is determined. For instance, Helm can be usind to install Cilium or we can use the Cilium CLI which properly handles complicated scenarios not properly handled using Helm.
 
