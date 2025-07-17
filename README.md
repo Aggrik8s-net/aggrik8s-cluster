@@ -1,4 +1,4 @@
-# TLDR;
+# aggrik8s-net/aggrik8s-cluster
 ## Purpose
 This project spins up a mesh of [Talos Kubernetes clusters](https://www.talos.dev) running [Cilium](https://cilium.io/). 
 ## Overview
