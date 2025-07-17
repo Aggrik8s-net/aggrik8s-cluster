@@ -1,15 +1,14 @@
 # aggrik8s-cluster
-This project automates spinning up a mesh of Talos based Kubernetes clusters using Cilium Mesh.
-
-Talos is an immutable Linux distribution built specifally to run Kubernetes.  Talos nodes must be configured using either `talosctl` or the `Talos API` via code such as Terraform, Ansible, Go, or Python. `talosctl` is the primary administrative tool for adhoc interactions as there is no `ssh` and there are no `bash`, `systemctl`, `cat`, `find`, `sed` or any of their family of OSF tooling.
-
 ## TLDR;
-We use Terraform to spin up multiple Talos Kubernetes clusters which are meshed using Cilium Mesh. 
-This gives the full set of Cilium features including L2 IPAM, L2 Load Balanmcing, L3 BGP support, Hubble Observability, Cilium Policy management and more. 
-- Use [bbtechsys/talos/proxmox](https://registry.terraform.io/modules/bbtechsys/talos/proxmox/latest) to spin up multiple Proxmox based Talos clusters.
-  - [bgp/terraform-provider-proxmox](https://github.com/bpg/terraform-provider-proxmox) talks to our Proxmox server(s),
-  - [siderolabs/talos Terraform provider](https://registry.terraform.io/providers/siderolabs/talos/0.9.0-alpha.0) manages clusters of Talos nodes,
-  - Talos `Image Factory` operationalizes generation of `control-plane` and `worker-node` configuration which we patch to customize the nodesto meet our requirements.
+This project spins up a mesh of Talos based Kubernetes clusters running Cilium. Talos is an immutable Linux distribution purpose built to run Kubernetes. Cilium is an eBPF based Kubernetes CNI which allows us to improve Kubernetes scalability and visibility by running eBPF code in the kernel. Terraform providers allow us to access the `Talos API` as well as `kubectl` and `Helm` to wire the Talos nodes into Kubernetes clusters and configure Kubernetes resources for the Cilium Service Mesh. The `aggrik8s-net/aggrik8s-cluster` stack gives us a Service Mesh Platform ready to monetize.  
+## Status
+The Cilium branch works but has a race condition involving Kubernetes credentials. This requires multiple `terraform apply` runs with several bash scripts automating the bits not yet terraformed. The stack does try to export the correct Talos and Kubernetes credentials for each cluster, but, as the credentials are not available at plan time, the stack will not progress until we run the `bin/getCreds.sh` script to install required KUBECONFIG files.  After setting up KUBECONFIG, a second `terraform apply` connects to our clusters and uses `kubectl` and `Helm` to configure the K8s bits. At this point, we have two clusters, `talos-east` and `talos-west` with all nodes in `NotReady` status which is required to install Cilium. We now run `bin/cilium_config.sh` to setup Cilium CNI and bring all nodes to `Ready` status. We are currently using the CLI because `Helm` does not handle certain scenarios properly. We have moved to Doppler to manage Proxmox, Terraform, and Kubernetes secrets. 
+## Design
+We use Terraform to provision Cilium Mesh of Talos based Kubernetes clusters.
+- We spin up Kubernetees clusters using [bbtechsys/talos/proxmox"](https://registry.terraform.io/modules/bbtechsys/talos/proxmox/latest) which uses:
+  - Proxmox VMs are provisioned using [bgp/terraform-provider-proxmox](https://github.com/bpg/terraform-provider-proxmox),
+  - Talos nodes and clusters managed using [siderolabs/talos Terraform provider](https://registry.terraform.io/providers/siderolabs/talos/0.9.0-alpha.0).
+  - Talos `Image Factory` generation of `control-plane` and `worker-node` configurations are patched to handle our requirements.
 - [DopplerHQ/doppler](https://registry.terraform.io/providers/DopplerHQ/doppler/latest/docs) manages Secrets for Terraform and Kubernetes,
 - CSI ObjectSore, BlockStore, and FileSystem services using [rook-ceph on Talos](https://www.talos.dev/v1.10/kubernetes-guides/configuration/ceph-with-rook/) and [digitalocean/csi-digitalocean](https://github.com/digitalocean/csi-digitalocean),
 - CNI wired up following [Cilium on Talos](https://www.talos.dev/v1.10/kubernetes-guides/network/deploying-cilium/) provides Cilium features, 
