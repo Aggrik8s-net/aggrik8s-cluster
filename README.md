@@ -1,6 +1,5 @@
 # aggrik8s-cluster
-This project automates spinning up a mesh of Talos based Kubernetes clusters using Cilium Mesh. Talos is an immutable Linux distribution built specifally to run Kubernetes.  
-Talos nodes must be configured by using either `talosctl` or code such as Terraform, Ansible, Go, Python which use the `Talos API`. `talosctl` is the primary administrative tool for adhoc interactions as there is no `ssh` and there are no `bash`, `systemctl`, `cat`, `find`, `sed` or any of their family of OSF tools.
+This project automates spinning up a mesh of Talos based Kubernetes clusters using Cilium Mesh. Talos is an immutable Linux distribution built specifally to run Kubernetes.  Talos nodes must be configured using either `talosctl` or the `Talos API` via code such as Terraform, Ansible, Go, or Python. `talosctl` is the primary administrative tool for adhoc interactions as there is no `ssh` and there are no `bash`, `systemctl`, `cat`, `find`, `sed` or any of their family of OSF tooling.
 
 ## TLDR;
 We use Terraform to spin up multiple Talos Kubernetes clusters which are meshed using Cilium Mesh. 
