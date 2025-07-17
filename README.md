@@ -2,7 +2,7 @@
 ## TLDR;
 This project spins up a mesh of [Talos Kubernetes clusters](https://www.talos.dev) running [Cilium](https://cilium.io/). 
 
-Talos is an immutable Linux distribution purpose built to run Kubernetes. Cilium is an [eBPF](https://ebpf.io/) based CNI which allows us to improve scalability and visibility by injecting eBPF code into the kernel. Terraform providers allow us to use the [Talos API](https://www.talos.dev/v1.10/reference/api/) to configure Talos nodes and wire them into Kubernetes clusters then use `kubectl` and `Helm` to configure the kubernetes bits required for platform components such as [Cilium on Talos](https://www.talos.dev/v1.10/kubernetes-guides/network/deploying-cilium/) and [rook-ceph](https://www.talos.dev/v1.10/kubernetes-guides/configuration/ceph-with-rook/).
+Talos is an immutable Linux distribution purpose built to run Kubernetes. Cilium is an [eBPF](https://ebpf.io/) based CNI which allows us to improve scalability and visibility by injecting eBPF code into Linux kernels. Terraform providers allow us to use the [Talos API](https://www.talos.dev/v1.10/reference/api/) to configure Talos nodes and wire them into Kubernetes clusters then use `kubectl` and `Helm` to configure the kubernetes bits required for platform components such as [Cilium on Talos](https://www.talos.dev/v1.10/kubernetes-guides/network/deploying-cilium/) and [rook-ceph](https://www.talos.dev/v1.10/kubernetes-guides/configuration/ceph-with-rook/).
 
 The `aggrik8s-net/aggrik8s-cluster` stack gives us a monetizable Service Mesh Platform ready to host revenue generating applications.  
 ## Status
