@@ -1,14 +1,17 @@
 # aggrik8s-cluster
-This project automates the provisioning of a monetizable mesh of Talos based Kubernetes clusters.
+This project automates spinning up a mesh of Talos based Kubernetes clusters using Cilium Mesh.
 
-Talos is an immutable Linux distribution built specifally to run Kubernetes.  Talos nodes must be configured by using either `talosctl` or code such as Terraform, Ansible, Go, Python and such which use the `Talos API`. `talosctl` will be the primary adhoc administrative tool as there is no `ssh` and there are no `bash`, `systemctl`, `cat`, `find`, `sed` or any other familiar OSF tools.
+Talos is an immutable Linux distribution built specifally to run Kubernetes.  
+Talos nodes must be configured by using either `talosctl` or code such as Terraform, Ansible, Go, Python which use the `Talos API`. 
+`talosctl` is the primary administrative tool for adhoc interactions as there is no `ssh` and there are no `bash`, `systemctl`, `cat`, `find`, `sed` or any of their family of OSF tools.
 
 ## TLDR;
-We use Terraform to provision Cilium Mesh of Talos based Kubernetes clusters.
-- We spin up Kubernetees clusters using [bbtechsys/talos/proxmox"](https://registry.terraform.io/modules/bbtechsys/talos/proxmox/latest) which uses:
-  - Proxmox VMs are provisioned using [bgp/terraform-provider-proxmox](https://github.com/bpg/terraform-provider-proxmox),
-  - Talos nodes and clusters managed using [siderolabs/talos Terraform provider](https://registry.terraform.io/providers/siderolabs/talos/0.9.0-alpha.0).
-  - Talos `Image Factory` generation of `control-plane` and `worker-node` configurations are patched to handle our requirements.
+We use Terraform to spin up multiple Talos Kubernetes clusters which are meshed using Cilium Mesh. 
+This gives the full set of Cilium features including L2 IPAM, L2 Load Balanmcing, L3 BGP support, Hubble Observability, Cilium Policy management and more. 
+- Use [bbtechsys/talos/proxmox](https://registry.terraform.io/modules/bbtechsys/talos/proxmox/latest) to spin up multiple Proxmox based Talos clusters.
+  - [bgp/terraform-provider-proxmox](https://github.com/bpg/terraform-provider-proxmox) talks to our Proxmox server(s),
+  - [siderolabs/talos Terraform provider](https://registry.terraform.io/providers/siderolabs/talos/0.9.0-alpha.0) manages clusters of Talos nodes,
+  - Talos `Image Factory` operationalizes generation of `control-plane` and `worker-node` configuration which we patch to customize the nodesto meet our requirements.
 - [DopplerHQ/doppler](https://registry.terraform.io/providers/DopplerHQ/doppler/latest/docs) manages Secrets for Terraform and Kubernetes,
 - CSI ObjectSore, BlockStore, and FileSystem services using both [rook-ceph on Talos](https://www.talos.dev/v1.10/kubernetes-guides/configuration/ceph-with-rook/) and [digitalocean/csi-digitalocean](https://github.com/digitalocean/csi-digitalocean),
 - CNI wired up following [Cilium on Talos](https://www.talos.dev/v1.10/kubernetes-guides/network/deploying-cilium/) iliumprovides Cloud based management of all secrets 
