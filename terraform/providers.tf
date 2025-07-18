@@ -81,8 +81,8 @@ alias = "cilium-west"
 provider "kubectl" {
   alias          = "kubectl-east"
   // host           =  var.east_host
-  config_path    = "${path.module}/tmp/kubeconfig-east"
-  // config_context = "admin@talos-east"
+  config_path    = "${path.module}/tmp/kubeconfig"
+  config_context = "admin@talos-east"
   // client_certificate     = base64decode(var.east_client_certificate)
   // client_key             = base64decode(var.east_client_key)
   // cluster_ca_certificate = base64decode(var.east_cluster_ca_certificate)
@@ -91,9 +91,9 @@ provider "kubectl" {
 provider "kubectl" {
   alias          = "kubectl-west"
   // host                   = var.west_host
-  config_path    = "${path.module}/tmp/kubeconfig-west"
-  // config_path    = yamldecode(module.talos-proxmox-west.kubeconfig)
-  // config_context = "admin@talos-west"
+  config_path    = "${path.module}/tmp/kubeconfig"
+  config_context = "admin@talos-west"
+  //config_path    = yamldecode(module.talos-proxmox-west.kubeconfig)
   // client_certificate     = base64decode(var.west_client_certificate)
   // client_key             = base64decode(var.west_client_key)
   // cluster_ca_certificate = base64decode(var.west_cluster_ca_certificate)

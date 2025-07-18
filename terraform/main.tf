@@ -5,13 +5,13 @@ resource "local_file" "kubeconfig-east" {
   content  = module.talos-proxmox-east.kubeconfig
 }
 resource "local_file" "talosconfig-east" {
-  filename = "${path.module}/tmp/kubeconfig-east"
-  content  = module.talos-proxmox-east.kubeconfig
+  filename = "${path.module}/tmp/talosconfig-east"
+  content  = module.talos-proxmox-east.talosconfig
 }
 
 resource "local_file" "kubeconfig-west" {
-  filename = "${path.module}/tmp/talosconfig-east"
-  content  = module.talos-proxmox-west.talosconfig
+  filename = "${path.module}/tmp/kubeconfig-west"
+  content  = module.talos-proxmox-west.kubeconfig
 }
 resource "local_file" "talosconfig-west" {
   filename = "${path.module}/tmp/talosconfig-west"
