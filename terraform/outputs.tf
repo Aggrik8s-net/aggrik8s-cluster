@@ -1,3 +1,4 @@
+/*
 output "talosconfig-east" {
     description = "Talos configuration file"
     value       = module.talos-proxmox-east.talosconfig
@@ -21,6 +22,7 @@ output "kubeconfig-west" {
     value       = module.talos-proxmox-west.kubeconfig
     sensitive   = true
 }
+*/
 
 output "talos-proxmox-east_server" {
     description = "Our cluster's endpoint."
