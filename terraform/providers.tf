@@ -55,51 +55,47 @@ provider "proxmox" {
 }
 
 provider "cilium" {
-# Configuration options
-// config_path = "${path.module}/kubeconfig-east"
-config_path = "${path.module}/kubeconfig"
-config_context = "admin@talos-east"
-alias = "cilium-east"
+  # Configuration options
+  // config_path = "${path.module}/kubeconfig-east"
+  // config_path = "${path.module}/kubeconfig"
+  // config_context = "admin@talos-east"
+  // alias = "cilium-east"
+  host = yamldecode(data.doppler_secrets.this.map.KUBECONFIG_EAST)["clusters"][0]["cluster"]["server"]
+  client_certificate     = base64decode(yamldecode(data.doppler_secrets.this.map.KUBECONFIG_EAST)["users"][0]["user"]["client-certificate-data"])
+  client_key             = base64decode(yamldecode(data.doppler_secrets.this.map.KUBECONFIG_EAST)["users"][0]["user"]["client-key-data"])
+  cluster_ca_certificate = base64decode(yamldecode(data.doppler_secrets.this.map.KUBECONFIG_EAST)["clusters"][0]["cluster"]["certificate-authority-data"])
 }
 
 provider "cilium" {
-# Configuration options
-config_path = "${path.module}/kubeconfig"
-config_context = "admin@talos-west"
-alias = "cilium-west"
+  # Configuration options
+  // config_path = "${path.module}/kubeconfig"
+  // config_context = "admin@talos-west"
+  alias = "cilium-west"
+  host = yamldecode(data.doppler_secrets.this.map.KUBECONFIG_WEST)["clusters"][0]["cluster"]["server"]
+  client_certificate     = base64decode(yamldecode(data.doppler_secrets.this.map.KUBECONFIG_WEST)["users"][0]["user"]["client-certificate-data"])
+  client_key             = base64decode(yamldecode(data.doppler_secrets.this.map.KUBECONFIG_WEST)["users"][0]["user"]["client-key-data"])
+  cluster_ca_certificate = base64decode(yamldecode(data.doppler_secrets.this.map.KUBECONFIG_WEST)["clusters"][0]["cluster"]["certificate-authority-data"])
+
 }
-
-// provider "kubernetes" {
-//   alias          = "kubeconfig-east"
-//   config_path    = "${path.module}/tmp/kubeconfig-east"
-//   config_context = "talos-east"
-// }
-
-// provider "kubernetes" {
-//     alias = "kubeconfig-west"
-//     config_path    = "${path.module}/tmp/kubeconfig-west"
-//     config_context = "talos-=west"
-// }
 
 provider "kubectl" {
   alias          = "kubectl-east"
-  // host           =  var.east_host
-  config_path    = "${path.module}/tmp/kubeconfig"
-  config_context = "admin@talos-east"
-  // client_certificate     = base64decode(var.east_client_certificate)
-  // client_key             = base64decode(var.east_client_key)
-  // cluster_ca_certificate = base64decode(var.east_cluster_ca_certificate)
+  // config_path    = "${path.module}/tmp/kubeconfig"
+  // config_context = "admin@talos-east"
+  host = yamldecode(data.doppler_secrets.this.map.KUBECONFIG_EAST)["clusters"][0]["cluster"]["server"]
+  client_certificate     = base64decode(yamldecode(data.doppler_secrets.this.map.KUBECONFIG_EAST)["users"][0]["user"]["client-certificate-data"])
+  client_key             = base64decode(yamldecode(data.doppler_secrets.this.map.KUBECONFIG_EAST)["users"][0]["user"]["client-key-data"])
+  cluster_ca_certificate = base64decode(yamldecode(data.doppler_secrets.this.map.KUBECONFIG_EAST)["clusters"][0]["cluster"]["certificate-authority-data"])
 }
 
 provider "kubectl" {
   alias          = "kubectl-west"
-  // host                   = var.west_host
-  config_path    = "${path.module}/tmp/kubeconfig"
-  config_context = "admin@talos-west"
-  //config_path    = yamldecode(module.talos-proxmox-west.kubeconfig)
-  // client_certificate     = base64decode(var.west_client_certificate)
-  // client_key             = base64decode(var.west_client_key)
-  // cluster_ca_certificate = base64decode(var.west_cluster_ca_certificate)
+  // config_path    = "${path.module}/tmp/kubeconfig"
+  // config_context = "admin@talos-west"
+  host = yamldecode(data.doppler_secrets.this.map.KUBECONFIG_WEST)["clusters"][0]["cluster"]["server"]
+  client_certificate     = base64decode(yamldecode(data.doppler_secrets.this.map.KUBECONFIG_WEST)["users"][0]["user"]["client-certificate-data"])
+  client_key             = base64decode(yamldecode(data.doppler_secrets.this.map.KUBECONFIG_WEST)["users"][0]["user"]["client-key-data"])
+  cluster_ca_certificate = base64decode(yamldecode(data.doppler_secrets.this.map.KUBECONFIG_WEST)["clusters"][0]["cluster"]["certificate-authority-data"])
 }
 
 provider "kubernetes" {
@@ -147,8 +143,12 @@ provider "helm" {
   alias = "helm-east"
   kubernetes = {
     # config_path = module.talos-proxmox-east.kubeconfig
-    config_path = "${path.module}/tmp/kubeconfig"
-    config_context = "admin@talos-east"
+    // config_path = "${path.module}/tmp/kubeconfig"
+    // config_context = "admin@talos-east"
+    host = yamldecode(data.doppler_secrets.this.map.KUBECONFIG_EAST)["clusters"][0]["cluster"]["server"]
+    client_certificate     = base64decode(yamldecode(data.doppler_secrets.this.map.KUBECONFIG_EAST)["users"][0]["user"]["client-certificate-data"])
+    client_key             = base64decode(yamldecode(data.doppler_secrets.this.map.KUBECONFIG_EAST)["users"][0]["user"]["client-key-data"])
+    cluster_ca_certificate = base64decode(yamldecode(data.doppler_secrets.this.map.KUBECONFIG_EAST)["clusters"][0]["cluster"]["certificate-authority-data"])
   }
 }
 
@@ -156,8 +156,12 @@ provider "helm" {
   alias = "helm-west"
   kubernetes = {
     // config_path = doppler_secrets.talos-proxmox-west.kubeconfig
-    config_path = "${path.module}/tmp/kubeconfig"
-    config_context = "admin@talos-west"
+    // config_path = "${path.module}/tmp/kubeconfig"
+    // config_context = "admin@talos-west"
+    host = yamldecode(data.doppler_secrets.this.map.KUBECONFIG_WEST)["clusters"][0]["cluster"]["server"]
+    client_certificate     = base64decode(yamldecode(data.doppler_secrets.this.map.KUBECONFIG_WEST)["users"][0]["user"]["client-certificate-data"])
+    client_key             = base64decode(yamldecode(data.doppler_secrets.this.map.KUBECONFIG_WEST)["users"][0]["user"]["client-key-data"])
+    cluster_ca_certificate = base64decode(yamldecode(data.doppler_secrets.this.map.KUBECONFIG_WEST)["clusters"][0]["cluster"]["certificate-authority-data"])
   }
 }
 
@@ -166,8 +170,3 @@ provider "doppler" {
   // Injected using `doppler run`
   doppler_token = var.doppler_token_dev
 }
-
-//output "test-module-output" {
-//  value = module.talos-proxmox-west.kubeconfig
-//  sensitive = false
-//}
