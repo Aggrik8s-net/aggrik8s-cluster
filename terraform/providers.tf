@@ -148,7 +148,7 @@ provider "helm" {
 # Configure the Doppler provider with the token
 provider "doppler" {
   // Injected using `doppler run`
-  doppler_token = var.doppler_token
+  doppler_token = var.doppler_token_dev
 }
 
 //output "test-module-output" {
