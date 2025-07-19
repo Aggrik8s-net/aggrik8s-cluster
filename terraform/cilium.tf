@@ -17,7 +17,7 @@
 // #1 - gateway.networking.k8s.io_gatewayclasses.yaml
 
 resource "kubernetes_namespace" "cilium-test-east" {
-  depends_on  =  [module.talos-proxmox-east, local_file.kubeconfig-east]
+  depends_on  =  [doppler_secret.kubeconfig_east]
   provider    =  kubernetes.talos-proxmox-east
   metadata {
     name   = "cilium-test-1"
@@ -28,7 +28,8 @@ resource "kubernetes_namespace" "cilium-test-east" {
 }
 
 resource "kubernetes_namespace" "cilium-test-west" {
-  depends_on  =  [module.talos-proxmox-west, local_file.kubeconfig-west]
+  depends_on  =  [doppler_secret.kubeconfig_east]
+  // depends_on  =  [module.talos-proxmox-west, local_file.kubeconfig-west]
   provider    =  kubernetes.talos-proxmox-west
   metadata {
     name   = "cilium-test-1"
@@ -42,12 +43,14 @@ data "http" "manifest_gateway-api_gatewayclasses" {
   url = "https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/v1.1.0/config/crd/standard/gateway.networking.k8s.io_gatewayclasses.yaml"
 }
 resource "kubectl_manifest" "gateway-api_gatewayclasses-east" {
-  depends_on  =  [module.talos-proxmox-east, local_file.kubeconfig-east]
+  depends_on  =  [doppler_secret.kubeconfig_east]
+  // depends_on  =  [module.talos-proxmox-east, local_file.kubeconfig-east]
   provider = kubectl.kubectl-east
   yaml_body = data.http.manifest_gateway-api_gatewayclasses.response_body
 }
 resource "kubectl_manifest" "gateway-api_gatewayclasses-west" {
-  depends_on  =  [module.talos-proxmox-west, local_file.kubeconfig-west]
+  depends_on  =  [doppler_secret.kubeconfig_west]
+  // depends_on  =  [module.talos-proxmox-west, local_file.kubeconfig-west]
   provider = kubectl.kubectl-west
   yaml_body = data.http.manifest_gateway-api_gatewayclasses.response_body
 }
@@ -56,12 +59,14 @@ data "http" "manifest_gateway-api_gateways" {
   url = "https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/v1.1.0/config/crd/standard/gateway.networking.k8s.io_gateways.yaml"
 }
 resource "kubectl_manifest" "gateway-api_gateways-east" {
-  depends_on  =  [module.talos-proxmox-east, local_file.kubeconfig-east]
+  depends_on  =  [doppler_secret.kubeconfig_east]
+  // depends_on  =  [module.talos-proxmox-east, local_file.kubeconfig-east]
   provider = kubectl.kubectl-east
   yaml_body = data.http.manifest_gateway-api_gateways.response_body
 }
 resource "kubectl_manifest" "gateway-api_gateways-west" {
-  depends_on  =  [module.talos-proxmox-west, local_file.kubeconfig-west]
+  depends_on  =  [doppler_secret.kubeconfig_west]
+  // depends_on  =  [module.talos-proxmox-west, local_file.kubeconfig-west]
   provider = kubectl.kubectl-west
   yaml_body = data.http.manifest_gateway-api_gateways.response_body
 }
@@ -70,12 +75,14 @@ data "http" "manifest_gateway-api_httproutes" {
   url = "https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/v1.1.0/config/crd/standard/gateway.networking.k8s.io_httproutes.yaml"
 }
 resource "kubectl_manifest" "gateway-api_httproutes-east" {
-  depends_on  =  [module.talos-proxmox-east, local_file.kubeconfig-east]
+  depends_on  =  [doppler_secret.kubeconfig_east]
+  // depends_on  =  [module.talos-proxmox-east, local_file.kubeconfig-east]
   provider = kubectl.kubectl-east
   yaml_body = data.http.manifest_gateway-api_httproutes.response_body
 }
 resource "kubectl_manifest" "gateway-api_httproutes-west" {
-  depends_on  =  [module.talos-proxmox-west, local_file.kubeconfig-west]
+  depends_on  =  [doppler_secret.kubeconfig_west]
+  // depends_on  =  [module.talos-proxmox-west, local_file.kubeconfig-west]
   provider = kubectl.kubectl-west
   yaml_body = data.http.manifest_gateway-api_httproutes.response_body
 }
@@ -84,12 +91,14 @@ data "http" "manifest_gateway-api_referencegrants" {
   url = "https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/v1.1.0/config/crd/standard/gateway.networking.k8s.io_referencegrants.yaml"
 }
 resource "kubectl_manifest" "gateway-api_referencegrants-east" {
-  depends_on  =  [module.talos-proxmox-east, local_file.kubeconfig-east]
+  depends_on  =  [doppler_secret.kubeconfig_east]
+  // depends_on  =  [module.talos-proxmox-east, local_file.kubeconfig-east]
   provider = kubectl.kubectl-east
   yaml_body = data.http.manifest_gateway-api_referencegrants.response_body
 }
 resource "kubectl_manifest" "gateway-api_referencegrants-west" {
-  depends_on  =  [module.talos-proxmox-west, local_file.kubeconfig-west]
+  depends_on  =  [doppler_secret.kubeconfig_west]
+  // depends_on  =  [module.talos-proxmox-west, local_file.kubeconfig-west]
   provider = kubectl.kubectl-west
   yaml_body = data.http.manifest_gateway-api_referencegrants.response_body
 }
@@ -98,12 +107,14 @@ data "http" "manifest_gateway-api_grpcroutes" {
   url = "https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/v1.1.0/config/crd/standard/gateway.networking.k8s.io_grpcroutes.yaml"
 }
 resource "kubectl_manifest" "gateway-api_grpcroutes-east" {
-  depends_on  =  [module.talos-proxmox-east, local_file.kubeconfig-east]
+  depends_on  =  [doppler_secret.kubeconfig_east]
+  // depends_on  =  [module.talos-proxmox-east, local_file.kubeconfig-east]
   provider = kubectl.kubectl-east
   yaml_body = data.http.manifest_gateway-api_grpcroutes.response_body
 }
 resource "kubectl_manifest" "gateway-api_grpcroutes-west" {
-  depends_on  =  [module.talos-proxmox-west, local_file.kubeconfig-west]
+  depends_on  =  [doppler_secret.kubeconfig_west]
+  // depends_on  =  [module.talos-proxmox-west, local_file.kubeconfig-west]
   provider = kubectl.kubectl-west
   yaml_body = data.http.manifest_gateway-api_grpcroutes.response_body
 }
@@ -112,12 +123,14 @@ data "http" "manifest_gateway-api_tlsroutes" {
   url = "https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/v1.1.0/config/crd/experimental/gateway.networking.k8s.io_tlsroutes.yaml"
 }
 resource "kubectl_manifest" "gateway-api_tlsroutes-east" {
-  depends_on  =  [module.talos-proxmox-east, local_file.kubeconfig-east]
+  depends_on  =  [doppler_secret.kubeconfig_east]
+  // depends_on  =  [module.talos-proxmox-east, local_file.kubeconfig-east]
   provider = kubectl.kubectl-east
   yaml_body = data.http.manifest_gateway-api_tlsroutes.response_body
 }
 resource "kubectl_manifest" "gateway-api_tlsroutes-west" {
-  depends_on  =  [module.talos-proxmox-west, local_file.kubeconfig-west]
+  depends_on  =  [doppler_secret.kubeconfig_west]
+  // depends_on  =  [module.talos-proxmox-west, local_file.kubeconfig-west]
   provider = kubectl.kubectl-west
   yaml_body = data.http.manifest_gateway-api_tlsroutes.response_body
 }

@@ -1,5 +1,6 @@
 
 # main.tf
+/*
 resource "local_file" "kubeconfig-east" {
   filename = "${path.module}/tmp/kubeconfig-east"
   content  = module.talos-proxmox-east.kubeconfig
@@ -17,6 +18,7 @@ resource "local_file" "talosconfig-west" {
   filename = "${path.module}/tmp/talosconfig-west"
   content  = module.talos-proxmox-west.talosconfig
 }
+*/
 
 module "talos-proxmox-east" {
     # source  = "bbtechsys/talos/proxmox"

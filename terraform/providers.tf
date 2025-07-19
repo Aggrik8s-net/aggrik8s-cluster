@@ -56,13 +56,16 @@ provider "proxmox" {
 
 provider "cilium" {
 # Configuration options
-config_path = "${path.module}/kubeconfig-east"
+// config_path = "${path.module}/kubeconfig-east"
+config_path = "${path.module}/kubeconfig"
+config_context = "admin@talos-east"
 alias = "cilium-east"
 }
 
 provider "cilium" {
 # Configuration options
-config_path = "${path.module}/kubeconfig-west"
+config_path = "${path.module}/kubeconfig"
+config_context = "admin@talos-west"
 alias = "cilium-west"
 }
 
@@ -101,30 +104,43 @@ provider "kubectl" {
 
 provider "kubernetes" {
   alias = "talos-proxmox-east"
-  // host = var.east_host
-  config_path    = "${path.module}/tmp/kubeconfig"
-  config_context = "admin@talos-east"
+
+  host = yamldecode(data.doppler_secrets.this.map.KUBECONFIG_EAST)["clusters"][0]["cluster"]["server"]
+  client_certificate     = base64decode(yamldecode(data.doppler_secrets.this.map.KUBECONFIG_EAST)["users"][0]["user"]["client-certificate-data"])
+  client_key             = base64decode(yamldecode(data.doppler_secrets.this.map.KUBECONFIG_EAST)["users"][0]["user"]["client-key-data"])
+  cluster_ca_certificate = base64decode(yamldecode(data.doppler_secrets.this.map.KUBECONFIG_EAST)["clusters"][0]["cluster"]["certificate-authority-data"])
+
+  // config_path    = "${path.module}/tmp/kubeconfig"
+  // config_context = "admin@talos-east"
   // config_path = module.talos-proxmox-east.kubeconfig
-  //
-  // These need to be set up externally using ../bin/setTF_VARS.sh
-  //
-  // client_certificate     = base64decode(var.east_client_certificate)
-  // client_key             = base64decode(var.east_client_key)
-  // cluster_ca_certificate = base64decode(var.east_cluster_ca_certificate)
+
 }
+
+/*
+output "kube_secret_client-certificate-data" {
+    value = nonsensitive(yamldecode(data.doppler_secrets.this.map.KUBECONFIG_EAST)["users"][0]["user"]["client-certificate-data"])
+}
+output "kube_secret_cluster_ca_data" {
+    value = nonsensitive(yamldecode(data.doppler_secrets.this.map.KUBECONFIG_EAST)["clusters"][0]["cluster"]["certificate-authority-data"])
+}
+output "kube_secret_cluster_server" {
+    value = nonsensitive(yamldecode(data.doppler_secrets.this.map.KUBECONFIG_EAST)["clusters"][0]["cluster"]["server"])
+}
+*/
+
 
 provider "kubernetes" {
   alias = "talos-proxmox-west"
-  // host = var.west_host
+
+  host = yamldecode(data.doppler_secrets.this.map.KUBECONFIG_WEST)["clusters"][0]["cluster"]["server"]
+  client_certificate     = base64decode(yamldecode(data.doppler_secrets.this.map.KUBECONFIG_WEST)["users"][0]["user"]["client-certificate-data"])
+  client_key             = base64decode(yamldecode(data.doppler_secrets.this.map.KUBECONFIG_WEST)["users"][0]["user"]["client-key-data"])
+  cluster_ca_certificate = base64decode(yamldecode(data.doppler_secrets.this.map.KUBECONFIG_WEST)["clusters"][0]["cluster"]["certificate-authority-data"])
+
   // config_path = module.talos-proxmox-west.kubeconfig
-  config_path = "${path.module}/tmp/kubeconfig-west"
-  config_context = "admin@talos-west"
-  //
-  //  These need to be set up externally using ../bin/setTF_VARS.sh
-  //
-  // client_certificate     = base64decode(var.west_client_certificate)
-  // client_key             = base64decode(var.west_client_key)
-  // cluster_ca_certificate = base64decode(var.west_cluster_ca_certificate)
+  // config_path = "${path.module}/tmp/kubeconfig"
+  // config_context = "admin@talos-west"
+
 }
 
 provider "helm" {
@@ -139,7 +155,7 @@ provider "helm" {
 provider "helm" {
   alias = "helm-west"
   kubernetes = {
-    # config_path = module.talos-proxmox-west.kubeconfig
+    // config_path = doppler_secrets.talos-proxmox-west.kubeconfig
     config_path = "${path.module}/tmp/kubeconfig"
     config_context = "admin@talos-west"
   }
