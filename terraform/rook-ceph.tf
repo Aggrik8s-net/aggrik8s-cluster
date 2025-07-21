@@ -24,7 +24,7 @@ resource "kubernetes_namespace" "rook-ceph-east" {
                "pod-security.kubernetes.io/enforce" = "privileged"
     }
   }
-  provider = "kubernetes.talos-proxmox-east"
+  provider = kubernetes.talos-proxmox-east
 }
 
 resource "kubernetes_namespace" "rook-ceph-west" {
@@ -35,7 +35,7 @@ resource "kubernetes_namespace" "rook-ceph-west" {
                "pod-security.kubernetes.io/enforce" = "privileged"
     }
   }
-  provider = "kubernetes.talos-proxmox-west"
+  provider = kubernetes.talos-proxmox-west
 }
 
 // resource "talos-wipe-disk" "wipe-disks-east"{
@@ -48,11 +48,10 @@ resource "kubernetes_namespace" "rook-ceph-west" {
 
 resource "helm_release" "rook-operator-east" {
   depends_on = [kubernetes_namespace.rook-ceph-east,
-                module.talos-proxmox-east.kubeconfig,
-                local_file.kubeconfig-west]
+                doppler_secret.kubeconfig_east]
 
   description = "HELM Chart to install the rook-operator."
-  provider = "helm.helm-east"
+  provider = helm.helm-east
   name  = "rook-ceph"
   chart = "rook-ceph"
   repository = "https://charts.rook.io/release"
@@ -61,10 +60,9 @@ resource "helm_release" "rook-operator-east" {
 
 resource "helm_release" "rook-operator-west" {
   depends_on = [kubernetes_namespace.rook-ceph-west,
-                module.talos-proxmox-west.kubeconfig,
-                local_file.kubeconfig-west]
+                doppler_secret.kubeconfig_west]
   description = "HELM Chart to install the rook-operator."
-  provider = "helm.helm-west"
+  provider = helm.helm-west
   name  = "rook-ceph"
   chart = "rook-ceph"
   repository = "https://charts.rook.io/release"
@@ -75,7 +73,7 @@ resource "helm_release" "rook-ceph-cluster-east" {
   depends_on = [kubernetes_namespace.rook-ceph-east,
                 helm_release.rook-operator-east]
   description = "HELM Chart to install the rook-ceph cluster."
-  provider = "helm.helm-east"
+  provider = helm.helm-east
   name  = "rook-ceph-cluster"
   chart = "rook-ceph-cluster"
   repository = "https://charts.rook.io/release"
@@ -86,7 +84,7 @@ resource "helm_release" "rook-ceph-cluster-west" {
   depends_on = [kubernetes_namespace.rook-ceph-west,
                 helm_release.rook-operator-west]
   description = "HELM Chart to install the rook-ceph cluster."
-  provider = "helm.helm-west"
+  provider = helm.helm-west
   name  = "rook-ceph-cluster"
   chart = "rook-ceph-cluster"
   repository = "https://charts.rook.io/release"
