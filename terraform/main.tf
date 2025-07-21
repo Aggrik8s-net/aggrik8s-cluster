@@ -101,13 +101,13 @@ module "talos-proxmox-west" {
 //
 //  We have spun up a cluster, now get TALOSCONFIG and KUBECONFIG files.
 //
-resource "null_resource" "talos-proxmox-creds" {
-   depends_on = [module.talos-proxmox-east, module.talos-proxmox-west]
-   provisioner "local-exec" {
-     // Run Terraform externally to copy output secrets to local files.
-     command = "${path.module}/../bin/getCreds.sh"
-   }
-}
+// resource "null_resource" "talos-proxmox-creds" {
+//    depends_on = [module.talos-proxmox-east, module.talos-proxmox-west]
+//    provisioner "local-exec" {
+//      // Run Terraform externally to copy output secrets to local files.
+//      command = "${path.module}/../bin/getCreds.sh"
+//    }
+// }
 
 // resource "null_resource" "talos-proxmox-west" {
 //   depends_on = [module.talos-proxmox-west]
