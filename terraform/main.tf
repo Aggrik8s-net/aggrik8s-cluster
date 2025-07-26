@@ -40,19 +40,19 @@ module "talos-proxmox-east" {
     worker_extra_disks = {
         "wrk-e-1" = [{
                             datastore_id = "cluster-lvm"
-                            size         = 96
+                            size         = 150
                             #file_format  = optional(string)
                             #file_id      = optional(string)
                       },]
         "wrk-e-2" = [{
                             datastore_id = "cluster-lvm"
-                            size         = 96
+                            size         = 150
                             #file_format  = optional(string)
                             #file_id      = optional(string)
                       },]
         "wrk-e-3" = [{
                             datastore_id = "cluster-lvm"
-                            size         = 96
+                            size         = 150
                             #file_format  = optional(string)
                             #file_id      = optional(string)
                       },]
@@ -79,19 +79,19 @@ module "talos-proxmox-west" {
     worker_extra_disks = {
         "wrk-w-1" = [{
                             datastore_id = "cluster-lvm"
-                            size         = 96
+                            size         = 150
                             #file_format  = optional(string)
                             #file_id      = optional(string)
                       },]
         "wrk-w-2" = [{
                             datastore_id = "cluster-lvm"
-                            size         = 96
+                            size         = 150
                             #file_format  = optional(string)
                             #file_id      = optional(string)
                       },]
         "wrk-w-3" = [{
                             datastore_id = "cluster-lvm"
-                            size         = 96
+                            size         = 150
                             #file_format  = optional(string)
                             #file_id      = optional(string)
                       },]

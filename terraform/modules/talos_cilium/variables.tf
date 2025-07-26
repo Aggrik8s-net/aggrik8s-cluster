@@ -21,7 +21,7 @@ variable "proxmox_image_datastore" {
 variable "proxmox_control_vm_cores" {
     description = "Number of CPU cores for the control VMs"
     type        = number
-    default     = 16
+    default     = 8
 }
 
 variable "proxmox_worker_vm_cores" {
@@ -33,13 +33,13 @@ variable "proxmox_worker_vm_cores" {
 variable "proxmox_control_vm_memory" {
     description = "Memory in MB for the control VMs"
     type        = number
-    default     = 16384
+    default     = 32768
 }
 
 variable "proxmox_worker_vm_memory" {
     description = "Memory in MB for the worker VMs"
     type        = number
-    default     = 32768
+    default     = 65536
 }
 
 variable "proxmox_vm_type" {
@@ -51,13 +51,13 @@ variable "proxmox_vm_type" {
 variable "proxmox_control_vm_disk_size" {
     description = "Proxmox control VM disk size in GB"
     type        = number
-    default     = 64
+    default     = 32
 }
 
 variable "proxmox_worker_vm_disk_size" {
     description = "Proxmox worker VM disk size in GB"
     type        = number
-    default     = 128
+    default     = 64
 }
 
 variable "proxmox_network_vlan_id" {
