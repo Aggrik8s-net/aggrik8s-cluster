@@ -11,19 +11,21 @@ terraform {
     cilium = {
       source  = "littlejo/cilium"
       version = "~> 0.3.1"
-      configuration_aliases = [ cilium.cilium-east, cilium.cilium-west ]
+      configuration_aliases = [ cilium.cilium-east,
+                                cilium.cilium-west ]
     }
     kubernetes = {
       source = "hashicorp/kubernetes"
       configuration_aliases = [ # kubernetes.kubeconfig-east,
                                 # kubernetes.kubeconfig-west,
                                kubernetes.talos-proxmox-east,
-                               kubernetes.talos-proxmox-west]
+                               kubernetes.talos-proxmox-west ]
     }
     helm = {
       source = "hashicorp/helm"
       version = "3.0.2"
-      configuration_aliases = [helm.helm-east, helm.helm-west]
+      configuration_aliases = [helm.helm-east,
+                               helm.helm-west ]
     }
     // kubectl = {
     //   source = "gavinbunney/kubectl"
@@ -69,8 +71,7 @@ provider "cilium" {
 /*
 output "kube_secret_KUBECONFIG_EAST" {
     value = nonsensitive(yamldecode(doppler_secret.kubeconfig_east.computed))
-    //    yamldecode(data.doppler_secrets.this.map.KUBECONFIG_EAST)["users"][0]["user"]["client-certificate-data"])
-}
+    //    yamldecode(data.doppler_secrets.this.map.KUBECONFIG_EAST)["users"][0]["user"]["client-certificate-data"]
 output "kube_secret_cluster_ca_data" {
     value = nonsensitive(yamldecode(data.doppler_secrets.this.map.KUBECONFIG_EAST)["clusters"][0]["cluster"]["certificate-authority-data"])
 }
