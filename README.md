@@ -1,7 +1,91 @@
 # aggrik8s-net/aggrik8s-cluster
-This project spins up a mesh of [Talos Kubernetes clusters](https://www.talos.dev) running [Cilium](https://cilium.io/). 
+This project spins up a development platform composed of [Talos Kubernetes clusters](https://www.talos.dev) meshed using [Cilium](https://cilium.io/use-cases/cluster-mesh/). 
+<p align="center">
+  <img src="docs/Cilium_Cluster_Mesh.png" width="350" title="Cilium Cluster Mesh">
+</p>
+The next phase of the platform will focus on CI/CD and BGP based network infrastructure. 
+
 ## TLDR;
-Talos is an immutable Linux distribution purpose built to run Kubernetes. Cilium is an [eBPF](https://ebpf.io/) based CNI which allows us to improve scalability and visibility by injecting eBPF code into Linux kernels. Terraform providers allow us to use the [Talos API](https://www.talos.dev/v1.10/reference/api/) to configure Talos nodes and wire them into Kubernetes clusters then use `kubectl` and `Helm` to configure platform components such as [Cilium on Talos](https://www.talos.dev/v1.10/kubernetes-guides/network/deploying-cilium/) and [rook-ceph](https://www.talos.dev/v1.10/kubernetes-guides/configuration/ceph-with-rook/).
+Talos and Cilium combined give us the ability to create immutable edge platforms ready to monetize!
+
+[Talos](https://github.com/siderolabs/talos) is an immutable Linux distribution purpose built to run Kubernetes.
+
+[Cilium](https://github.com/cilium/cilium) is a Kubernetes CNI which uses [eBPF](https://ebpf.io/) to improve scalability, cost efficiency, and observability of the cluster.
+
+We use a Terraform module [bbtechsys/terraform-proxmox-talos](https://github.com/bbtechsys/terraform-proxmox-talos) to spin up Proxmox based Talos clusters with CNI disabled (which is required to install Cilium).
+The module uses the [bpg/terraform-provider-proxmox](https://github.com/bpg/terraform-provider-proxmox) provider to provision Talos VMs and the [siderolabs/terraform-provider-talos](https://github.com/siderolabs/terraform-provider-talos) provider to configure our `control-plane` and `worker` nodes.
+The stack uses [DopplerHQ/terraform-provider-doppler](https://github.com/DopplerHQ/terraform-provider-doppler) to creaate and inject credentials used by the [hashicorp/terraform-provider-kubernetes](https://github.com/hashicorp/terraform-provider-kubernetes) and [hashicorp/terraform-provider-helm](https://github.com/hashicorp/terraform-provider-helm) providers to install our K8s bits such as CRDs and CSI storage.
+
+We currently use script based CLI tooling to install Cilium and enable `clustermesh` but the long term strategy is to orchestrate everything once the requirements are fully understood.
+We have verified the reusability of existing `Ansible Playbooks` to install `Day 2 Services` such as [Robusta](https://docs.robusta.dev/master/#), [Ollama](https://ollama.com) and [Honeycomb OTEL](https://docs.honeycomb.io/send-data/opentelemetry/collector/).
+
+## Status
+This recipe has been tested and verrified to orchestrate the provisioning of our mesh of (two) Talos clusters.
+1. [../bin/spinUp.sh](https://github.com/Aggrik8s-net/aggrik8s-cluster/blob/cilium/bin/spinUp.sh) provisions the Talos Clusters and sets up our Doppler secrets.
+2. [../bin/getCreds.sh](https://github.com/Aggrik8s-net/aggrik8s-cluster/blob/cilium/bin/getCreds.sh) create local `talosconfig` and `kubeconfig` files and merge our `kubeconfig` files to support `kubectx -`.
+3. `export KUBECONFIG=./tmp/kubeconfig` point to our merged `kubeconfig` file.
+4. `mv rook-ceph.tf rook-ceph.tf-` disable `rook-ceph` provisioning until after Cilium is installed.
+5. `doppler run --name-transformer tf-var -- terraform apply` installs our Kubernetes bits including CRD's we need to start Cilium.
+6. [../bin/cilium-config.sh -i 1 -n talos-east -c admin@talos-east](https://github.com/Aggrik8s-net/aggrik8s-cluster/blob/cilium/bin/cilium_config.sh) install Cilium on `talos-east`.
+7. [../bin/cilium-config.sh -i 2 -n talos-west -c admin@talos-west](https://github.com/Aggrik8s-net/aggrik8s-cluster/blob/cilium/bin/cilium_config.sh) install Cilium on `talos-west`.
+8. `mv rook-ceph.tf- rook-ceph.tf` enable `rook-ceph` provisioning now that Cilium CNI is installed.
+9. `doppler run --name-transformer tf-var -- terraform apply` installs our Kubernetes bits including CRD's we need to start Cilium.
+10. ` cilium clustermesh enable --context admin@talos-east --service-type NodePort` enable 1/2 of our Cluster Mesh.
+11. ` cilium clustermesh enable --context admin@talos-west --service-type NodePort` enable the other 1/2 of the Mesh. 
+
+Both clusters are good to go. 
+Our Cluster credentials for Talos and Kubernetes have been exported both as [Doppler secrets](https://www.doppler.com/integrations/kubernetes) and as local `talosconfig` and `kubeconfig` files. 
+We are using the Cilium CLI to manage our environment because `Cilium Helm charts` do not always work correctly.
+Our existing Ansible Playbooks have been verified to be reusable to configure `Day 2 Services` such as [Robusta](https://github.com/robusta-dev/robusta), [Honeycomb OTEL](https://docs.honeycomb.io/send-data/opentelemetry/).
+SecOps is addressed using [Doppler](https://www.doppler.com/platform/secrets-manager) to manage our platform secrets (Proxmox, Terraform, linux, and Kubernetes) and tools such as [Kubescape](https://kubescape.io/) with [Armo](https://hub.armosec.io/docs/armo-platform#how-armo-platform-works) and [Groundcover](https://www.groundcover.com/ebpf-sensor).
+
+
+## Example Cluster Mesh
+We t this point we have two working Talos Clusters ready to mesh using Cilium, let's check `talos-east`.
+#### $ kubectl get nodes -o wide
+```
+NAME            STATUS   ROLES           AGE   VERSION   INTERNAL-IP     EXTERNAL-IP   OS-IMAGE          KERNEL-VERSION   CONTAINER-RUNTIME
+talos-038-r2y   Ready    <none>          42h   v1.32.0   192.168.10.60   <none>        Talos (v1.10.4)   6.12.31-talos    containerd://2.0.5
+talos-lu9-i4w   Ready    <none>          42h   v1.32.0   192.168.10.59   <none>        Talos (v1.10.4)   6.12.31-talos    containerd://2.0.5
+talos-nrn-yiw   Ready    control-plane   42h   v1.32.0   192.168.10.58   <none>        Talos (v1.10.4)   6.12.31-talos    containerd://2.0.5
+talos-rvp-mr8   Ready    control-plane   42h   v1.32.0   192.168.10.62   <none>        Talos (v1.10.4)   6.12.31-talos    containerd://2.0.5
+talos-vyf-fhz   Ready    control-plane   42h   v1.32.0   192.168.10.57   <none>        Talos (v1.10.4)   6.12.31-talos    containerd://2.0.5
+talos-wiz-qp1   Ready    <none>          42h   v1.32.0   192.168.10.61   <none>        Talos (v1.10.4)   6.12.31-talos    containerd://2.0.5
+```
+Next we enable `clustermesh` mode using the following commands.
+#### dshea@pi-manage-01:~/git/aggrik8s-cluster/terraform $ cilium clustermesh enable --context admin@talos-west --service-type NodePort
+```⚠️  Using service type NodePort may fail when nodes are removed from the cluster!
+```
+#### dshea@pi-manage-01:~/git/aggrik8s-cluster/terraform $ cilium clustermesh enable --context admin@talos-east --service-type NodePort
+```⚠️  Using service type NodePort may fail when nodes are removed from the cluster!
+```
+We check the Clustermesh status using the Cilium CLI.
+#### dshea@pi-manage-01:~/git/aggrik8s-cluster/terraform $ cilium status
+```
+/¯¯\
+/¯¯\__/¯¯\    Cilium:             OK                                                                                                                                                                                                                    
+\__/¯¯\__/    Operator:           OK
+/¯¯\__/¯¯\    Envoy DaemonSet:    OK
+\__/¯¯\__/    Hubble Relay:       disabled
+\__/       ClusterMesh:        OK
+
+DaemonSet              cilium                   Desired: 6, Ready: 6/6, Available: 6/6
+DaemonSet              cilium-envoy             Desired: 6, Ready: 6/6, Available: 6/6
+Deployment             cilium-operator          Desired: 2, Ready: 2/2, Available: 2/2
+Deployment             clustermesh-apiserver    Desired: 1, Ready: 1/1, Available: 1/1
+Containers:            cilium                   Running: 6
+cilium-envoy             Running: 6
+cilium-operator          Running: 2
+clustermesh-apiserver    Running: 1
+hubble-relay             
+Cluster Pods:          45/45 managed by Cilium
+Helm chart version:    1.18.0-rc.0
+Image versions         cilium                   quay.io/cilium/cilium:v1.18.0-rc.0@sha256:5e1cf48e1cce3ed7050f8238fb78f89f535b6baab00b03124c84f31ad1331ea2: 6
+cilium-envoy             quay.io/cilium/cilium-envoy:v1.34.1-1750869463-42c7e8cf0f93ea19c9cb7e4d0ad2a339b3f81ad2@sha256:892cab92ffaf8499be90bd227bf07181e4b460ecd97750032ea7e91710a8acce: 6
+cilium-operator          quay.io/cilium/operator-generic:v1.18.0-rc.0@sha256:6f8c73053cf94cc26c8f18e54dccb65a1305bf881ccbdeebcdd25e79faa0ac2e: 2
+clustermesh-apiserver    quay.io/cilium/clustermesh-apiserver:v1.18.0-rc.0@sha256:1c39b242b24cd465e3ad5dc369ce24afd0dcc906a94657224dc44d07ef8642de: 3
+```
+
 ## Purpose
 The `aggrik8s-net/aggrik8s-cluster` stack gives us a Service Mesh Platform ready to host revenue generating applications.  
 ## Status
