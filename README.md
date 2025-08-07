@@ -6,21 +6,20 @@ This project spins up a development platform composed of [Talos Kubernetes clust
 The next phase of the platform will focus on CI/CD and BGP based network infrastructure. 
 
 ## TLDR;
-Talos and Cilium combined give us the ability to create immutable edge platforms ready to monetize!
+Talos and Cilium combined give us the ability to create Kubernetes platforms ready to monetize!
 
 [Talos](https://github.com/siderolabs/talos) is an immutable Linux distribution purpose built to run Kubernetes.
 
-[Cilium](https://github.com/cilium/cilium) is a Kubernetes CNI which uses [eBPF](https://ebpf.io/) to improve scalability, cost efficiency, and observability of the cluster.
+[Cilium](https://github.com/cilium/cilium) is an [eBPF](https://ebpf.io/) based CNI which dramatically improves scalability, cost efficiency, and observability of the cluster.
 
-We use a Terraform module [bbtechsys/terraform-proxmox-talos](https://github.com/bbtechsys/terraform-proxmox-talos) to spin up Proxmox based Talos clusters with CNI disabled (which is required to install Cilium).
-The module uses the [bpg/terraform-provider-proxmox](https://github.com/bpg/terraform-provider-proxmox) provider to provision Talos VMs and the [siderolabs/terraform-provider-talos](https://github.com/siderolabs/terraform-provider-talos) provider to configure our `control-plane` and `worker` nodes.
-The stack uses [DopplerHQ/terraform-provider-doppler](https://github.com/DopplerHQ/terraform-provider-doppler) to creaate and inject credentials used by the [hashicorp/terraform-provider-kubernetes](https://github.com/hashicorp/terraform-provider-kubernetes) and [hashicorp/terraform-provider-helm](https://github.com/hashicorp/terraform-provider-helm) providers to install our K8s bits such as CRDs and CSI storage.
+We use a Terraform module [bbtechsys/terraform-proxmox-talos](https://github.com/bbtechsys/terraform-proxmox-talos) to spin up Proxmox based Talos clusters with CNI disabled (required to install Cilium).
+The module uses the [bpg/terraform-provider-proxmox](https://github.com/bpg/terraform-provider-proxmox) provider to provision Talos VMs and the [siderolabs/terraform-provider-talos](https://github.com/siderolabs/terraform-provider-talos) provider to configure those VMs as our `control-plane` and `worker` nodes.
+The stack uses [DopplerHQ/terraform-provider-doppler](https://github.com/DopplerHQ/terraform-provider-doppler) to create and inject secrets used by [hashicorp/terraform-provider-kubernetes](https://github.com/hashicorp/terraform-provider-kubernetes) to install k8s bits such as our Cilium CRD manifests and [hashicorp/terraform-provider-helm](https://github.com/hashicorp/terraform-provider-helm) for helm charts used to install resources such as `rook-ceph`.
 
-We currently use script based CLI tooling to install Cilium and enable `clustermesh` but the long term strategy is to orchestrate everything once the requirements are fully understood.
 We have verified the reusability of existing `Ansible Playbooks` to install `Day 2 Services` such as [Robusta](https://docs.robusta.dev/master/#), [Ollama](https://ollama.com) and [Honeycomb OTEL](https://docs.honeycomb.io/send-data/opentelemetry/collector/).
 
 ## Status
-This recipe has been tested and verrified to orchestrate the provisioning of our mesh of (two) Talos clusters.
+This recipe has been tested and verified to orchestrate the provisioning of our mesh of (two) Talos clusters.
 1. [../bin/spinUp.sh](https://github.com/Aggrik8s-net/aggrik8s-cluster/blob/cilium/bin/spinUp.sh) provisions the Talos Clusters and sets up our Doppler secrets.
 2. [../bin/getCreds.sh](https://github.com/Aggrik8s-net/aggrik8s-cluster/blob/cilium/bin/getCreds.sh) create local `talosconfig` and `kubeconfig` files and merge our `kubeconfig` files to support `kubectx -`.
 3. `export KUBECONFIG=./tmp/kubeconfig` point to our merged `kubeconfig` file.
@@ -38,7 +37,6 @@ Our Cluster credentials for Talos and Kubernetes have been exported both as [Dop
 We are using the Cilium CLI to manage our environment because `Cilium Helm charts` do not always work correctly.
 Our existing Ansible Playbooks have been verified to be reusable to configure `Day 2 Services` such as [Robusta](https://github.com/robusta-dev/robusta), [Honeycomb OTEL](https://docs.honeycomb.io/send-data/opentelemetry/).
 SecOps is addressed using [Doppler](https://www.doppler.com/platform/secrets-manager) to manage our platform secrets (Proxmox, Terraform, linux, and Kubernetes) and tools such as [Kubescape](https://kubescape.io/) with [Armo](https://hub.armosec.io/docs/armo-platform#how-armo-platform-works) and [Groundcover](https://www.groundcover.com/ebpf-sensor).
-
 
 ## Example Cluster Mesh
 We t this point we have two working Talos Clusters ready to mesh using Cilium, let's check `talos-east`.
