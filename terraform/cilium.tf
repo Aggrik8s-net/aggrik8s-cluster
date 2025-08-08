@@ -229,9 +229,24 @@ cilium/cilium \
 --set=gatewayAPI.enableAppProtocol=true
 
 */
+
 /*
+           #### Still need to use CLI ####
+
 resource "cilium" "talos-proxmox-east" {
-  depends_on = [module.talos-proxmox-east]
+  depends_on = [module.talos-proxmox-east,
+                doppler_secret.kubeconfig_east,
+                doppler_secret.kubeconfig-server-east,
+                doppler_secret.client_certificate_east,
+                doppler_secret.client_key_east,
+                doppler_secret.cluster_ca_certificate_east,
+                kubernetes_namespace.cilium-test-east,
+                kubectl_manifest.gateway-api_gatewayclasses-east,
+                kubectl_manifest.gateway-api_gateways-east,
+                kubectl_manifest.gateway-api_httproutes-east,
+                kubectl_manifest.gateway-api_referencegrants-east,
+                kubectl_manifest.gateway-api_grpcroutes-east,
+                kubectl_manifest.gateway-api_tlsroutes-east ]
   set = [
     "ipam.mode=kubernetes",
     "kubeProxyReplacement=true",
@@ -248,8 +263,22 @@ resource "cilium" "talos-proxmox-east" {
   version = "1.14.5"
 }
 
+
+
 resource "cilium" "talos-proxmox-west" {
-  depends_on = [module.talos-proxmox-west]
+  depends_on = [module.talos-proxmox-west,
+                doppler_secret.kubeconfig_west,
+                doppler_secret.kubeconfig-server-west,
+                doppler_secret.client_certificate_west,
+                doppler_secret.client_key_west,
+                doppler_secret.cluster_ca_certificate_west,
+                kubernetes_namespace.cilium-test-west,
+                kubectl_manifest.gateway-api_gatewayclasses-west,
+                kubectl_manifest.gateway-api_gateways-west,
+                kubectl_manifest.gateway-api_httproutes-west,
+                kubectl_manifest.gateway-api_referencegrants-west,
+                kubectl_manifest.gateway-api_grpcroutes-west,
+                kubectl_manifest.gateway-api_tlsroutes-west ]
   set = [
     "ipam.mode=kubernetes",
     "kubeProxyReplacement=true",
