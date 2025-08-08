@@ -16,27 +16,44 @@ We use a Terraform module [bbtechsys/terraform-proxmox-talos](https://github.com
 The module uses the [bpg/terraform-provider-proxmox](https://github.com/bpg/terraform-provider-proxmox) provider to provision Talos VMs and the [siderolabs/terraform-provider-talos](https://github.com/siderolabs/terraform-provider-talos) provider to configure those VMs as our `control-plane` and `worker` nodes.
 The stack uses [DopplerHQ/terraform-provider-doppler](https://github.com/DopplerHQ/terraform-provider-doppler) to create and inject secrets used by [hashicorp/terraform-provider-kubernetes](https://github.com/hashicorp/terraform-provider-kubernetes) to install k8s bits such as our Cilium CRD manifests and [hashicorp/terraform-provider-helm](https://github.com/hashicorp/terraform-provider-helm) for helm charts used to install resources such as `rook-ceph`.
 
+## Status
+The Terraform stack works but requires bash helper scripts to orchestrate multiple `terraform apply --target <foo>` commands required to handle dependency tracking gaps in the Terraform plan phase.  helper scripts for setting up Talos & Kubernetes credentials as well as installing Cilium.
+The stack will be fully automated once the best integration strategy is determined. For instance, Helm can be usind to install Cilium or we can use the Cilium CLI which properly handles complicated scenarios not properly handled using Helm.
 We have verified the reusability of existing `Ansible Playbooks` to install `Day 2 Services` such as [Robusta](https://docs.robusta.dev/master/#), [Ollama](https://ollama.com) and [Honeycomb OTEL](https://docs.honeycomb.io/send-data/opentelemetry/collector/).
 
-## Status
-This recipe has been tested and verified to orchestrate the provisioning of our mesh of (two) Talos clusters.
+
+
+## Procedure
+This recipe has been tested and verified to orchestrate the provisioning of our meshed Talos clusters.
 1. [../bin/spinUp.sh](https://github.com/Aggrik8s-net/aggrik8s-cluster/blob/cilium/bin/spinUp.sh) provisions the Talos Clusters and sets up our Doppler secrets.
 2. [../bin/getCreds.sh](https://github.com/Aggrik8s-net/aggrik8s-cluster/blob/cilium/bin/getCreds.sh) create local `talosconfig` and `kubeconfig` files and merge our `kubeconfig` files to support `kubectx -`.
-3. `export KUBECONFIG=./tmp/kubeconfig` point to our merged `kubeconfig` file.
-4. `mv rook-ceph.tf rook-ceph.tf-` disable `rook-ceph` provisioning until after Cilium is installed.
-5. `doppler run --name-transformer tf-var -- terraform apply` installs our Kubernetes bits including CRD's we need to start Cilium.
-6. [../bin/cilium-config.sh -i 1 -n talos-east -c admin@talos-east](https://github.com/Aggrik8s-net/aggrik8s-cluster/blob/cilium/bin/cilium_config.sh) install Cilium on `talos-east`.
-7. [../bin/cilium-config.sh -i 2 -n talos-west -c admin@talos-west](https://github.com/Aggrik8s-net/aggrik8s-cluster/blob/cilium/bin/cilium_config.sh) install Cilium on `talos-west`.
-8. `mv rook-ceph.tf- rook-ceph.tf` enable `rook-ceph` provisioning now that Cilium CNI is installed.
-9. `doppler run --name-transformer tf-var -- terraform apply` installs our Kubernetes bits including CRD's we need to start Cilium.
-10. ` cilium clustermesh enable --context admin@talos-east --service-type NodePort` enable 1/2 of our Cluster Mesh.
-11. ` cilium clustermesh enable --context admin@talos-west --service-type NodePort` enable the other 1/2 of the Mesh. 
+3. [../bin/wipeVdb.sh](https://github.com/Aggrik8s-net/aggrik8s-cluster/blob/cilium/bin/getCreds.sh)  -  prepare`vdb`to be adopted by Rook.
+4. `export KUBECONFIG=./tmp/kubeconfig` point to our merged `kubeconfig` file.
+5. `mv rook-ceph.tf rook-ceph.tf-` disable `rook-ceph` provisioning until after Cilium is installed.
+5. `mv metrics-server.tf metrics-server.tf-` disable metrics-server provisioning until we patch config.
+7. `doppler run --name-transformer tf-var -- terraform apply` installs our Kubernetes bits including CRD's we need to start Cilium.
+8. [../bin/cilium-config.sh -i 1 -n talos-east -c admin@talos-east](https://github.com/Aggrik8s-net/aggrik8s-cluster/blob/cilium/bin/cilium_config.sh) install Cilium on `talos-east`.
+9. [../bin/cilium-config.sh -i 2 -n talos-west -c admin@talos-west](https://github.com/Aggrik8s-net/aggrik8s-cluster/blob/cilium/bin/cilium_config.sh) install Cilium on `talos-west`.
+10. `mv rook-ceph.tf- rook-ceph.tf` enable `rook-ceph` provisioning now that Cilium CNI is installed.
+11. `mv metrics-server.tf- metrics-server.tf` enable `rook-ceph` provisioning now that Cilium CNI is installed.
+12. `doppler run --name-transformer tf-var -- terraform apply` installs our Kubernetes bits including CRD's we need to start Cilium.
+13. `kubectl --context admin@talos-west delete secret cilium-ca -n kube-system` => secret "cilium-ca" deleted
+14. `kubectl --context admin@talos-east get secret -n kube-system cilium-ca -o yaml |  kubectl --context admin@talos-west  create -f -`  => secret/cilium-ca created
+15. ` cilium clustermesh enable --context admin@talos-east --service-type NodePort` enable 1/2 of our Cluster Mesh.
+16. ` cilium clustermesh enable --context admin@talos-west --service-type NodePort` enable the other 1/2 of the Mesh.
+17. `cilium clustermesh connect --context admin@talos-east --destination-context admin@talos-west` is how we make it so
+18.  `cilium connectivity test --context admin@talos-east --multi-cluster admin@talos-west`  -  run cilium conn3ctivity test
 
-Both clusters are good to go. 
+Both clusters are good to go.
+
 Our Cluster credentials for Talos and Kubernetes have been exported both as [Doppler secrets](https://www.doppler.com/integrations/kubernetes) and as local `talosconfig` and `kubeconfig` files. 
 We are using the Cilium CLI to manage our environment because `Cilium Helm charts` do not always work correctly.
 Our existing Ansible Playbooks have been verified to be reusable to configure `Day 2 Services` such as [Robusta](https://github.com/robusta-dev/robusta), [Honeycomb OTEL](https://docs.honeycomb.io/send-data/opentelemetry/).
-SecOps is addressed using [Doppler](https://www.doppler.com/platform/secrets-manager) to manage our platform secrets (Proxmox, Terraform, linux, and Kubernetes) and tools such as [Kubescape](https://kubescape.io/) with [Armo](https://hub.armosec.io/docs/armo-platform#how-armo-platform-works) and [Groundcover](https://www.groundcover.com/ebpf-sensor).
+SecOps is addressed using [Doppler](https://www.doppler.com/platform/secrets-manager) to manage our platform secrets and eBPF tools such as [Kubescape](https://kubescape.io/) with [Armo](https://hub.armosec.io/docs/armo-platform#how-armo-platform-works), [Inspektor-Gadget](https://github.com/inspektor-gadget/inspektor-gadget),  [Groundcover](https://www.groundcover.com/ebpf-sensor) and [Tetragon](https://github.com/cilium/tetragon/).
+
+<p align="center">
+  <img src="https://tetragon.io/images/smart_observability.png" width="500" title="Tetragon eBPF Sensor">
+</p>
 
 ## Example Cluster Mesh
 We t this point we have two working Talos Clusters ready to mesh using Cilium, let's check `talos-east`.
@@ -107,7 +124,3 @@ We use Terraform to provision Cilium Mesh of Talos based Kubernetes clusters.
 ## Applications
 - Ollama
 - 
-## Status
-The Cilium branch works but requires at least two `terraform apply` and several bash helper scripts for setting up Talos & Kubernetes credentials as well as installing Cilium. 
-The stack will be fully automated once the best integration strategy is determined. For instance, Helm can be usind to install Cilium or we can use the Cilium CLI which properly handles complicated scenarios not properly handled using Helm.
-
