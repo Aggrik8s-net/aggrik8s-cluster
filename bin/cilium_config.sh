@@ -83,7 +83,8 @@ cilium install \
     --set cgroup.hostRoot=/sys/fs/cgroup \
     --set gatewayAPI.enabled=true \
     --set gatewayAPI.enableAlpn=true \
-    --set gatewayAPI.enableAppProtocol=true
+    --set gatewayAPI.enableAppProtocol=true \
+    --set ipv4NativeRoutingCIDR=10.0.0.0/8
 
 
 # cilium hubble enable
