@@ -1,7 +1,7 @@
 # aggrik8s-net/aggrik8s-cluster
-This project spins up a development platform composed of Kubernetes clusters running [Talos](https://www.talos.dev) which are meshed using [Cilium](https://cilium.io/use-cases/cluster-mesh/).
-The cluster mesh extends Kubernetes to allow applications to utilize a Zero Trust model to run on multiple clusters.
-This effectively extends our control-plane accross clusters.
+This project spins up a mesh of Kubernetes clusters running [Talos](https://www.talos.dev) and [Cilium](https://cilium.io/use-cases/cluster-mesh/).
+The cluster mesh extends the Kubernetes control-plane to allow applications to use a Zero Trust model to run across multiple clusters. 
+A depoyment can now be composed of pods hosted on multiple clusters.
 <p align="center">
   <img src="https://cdn.sanity.io/images/xinsvxfu/production/52945d699a34350e33de7dc1d85182ae37b0715e-1600x938.png?auto=format&q=80&fit=clip&w=2560" width="675" title="Cilium Cluster Mesh">
 </p>
@@ -22,6 +22,7 @@ The stack uses [DopplerHQ/terraform-provider-doppler](https://github.com/Doppler
 
 ## Goals for the next phase of the project
 - Document ARMO before trial ends (3 days ?),
+- Consider `talm` to manage `CozyStack` PaaS-Full clusters.
 - Document Cilium Debug Tooling:
   - Deploy the Starwars applicatiopn using CI/CD,
   - Use Hubble UI to explore Starwars app,
