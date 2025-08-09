@@ -1,4 +1,5 @@
-# aggrik8s-net/aggrik8s-cluster
+## TLDR;
+m aggrik8s-net/aggrik8s-cluster
 This project spins up a mesh of Kubernetes clusters running [Talos](https://www.talos.dev) and [Cilium](https://cilium.io/use-cases/cluster-mesh/).
 The cluster mesh extends the Kubernetes control-plane to allow applications to use a Zero Trust model to run across multiple clusters. 
 A depoyment can now be composed of pods hosted on multiple clusters.
@@ -8,7 +9,7 @@ A depoyment can now be composed of pods hosted on multiple clusters.
 This Terraform stack creates a mesh of two Talos Clusters ready for development of Edge based Kubernetes applications.
 
 
-## TLDR;
+
 Talos and Cilium combined give us the ability to create a Kubernetes platforms ready to monetize!
 
 [Talos](https://github.com/siderolabs/talos) is an immutable Linux distribution purpose built to run Kubernetes.
