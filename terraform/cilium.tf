@@ -295,3 +295,61 @@ resource "cilium" "talos-proxmox-west" {
   version = "1.14.5"
 }
 */
+
+/*
+resource "kubectl_manifest" "test" {
+    yaml_body = <<YAML
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: test-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    azure/frontdoor: enabled
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /testpath
+        pathType: "Prefix"
+        backend:
+          serviceName: test
+          servicePort: 80
+YAML
+}
+*/
+resource "kubectl_manifest" "ippool-east" {
+    depends_on  =  [doppler_secret.kubeconfig_east,
+                  doppler_secret.kubeconfig-server-east,
+                  doppler_secret.client_certificate_east,
+                  doppler_secret.client_key_east,
+                  doppler_secret.cluster_ca_certificate_east]
+    provider = kubectl.kubectl-east
+    yaml_body = <<YAML
+apiVersion: "cilium.io/v2"
+kind: CiliumLoadBalancerIPPool
+metadata:
+  name: "east-pool"
+spec:
+  blocks:
+  - cidr: "192.168.10.192/28"
+YAML
+}
+
+resource "kubectl_manifest" "ippool-west" {
+    depends_on  =  [doppler_secret.kubeconfig_west,
+                    doppler_secret.kubeconfig-server-west,
+                    doppler_secret.client_certificate_west,
+                    doppler_secret.client_key_west,
+                    doppler_secret.cluster_ca_certificate_west]
+    provider = kubectl.kubectl-west
+    yaml_body = <<YAML
+apiVersion: "cilium.io/v2"
+kind: CiliumLoadBalancerIPPool
+metadata:
+  name: "west-pool"
+spec:
+  blocks:
+  - cidr: "192.168.10.208/28"
+YAML
+}
