@@ -1,24 +1,19 @@
 ## TLDR;
-m aggrik8s-net/aggrik8s-cluster
-This project spins up a mesh of Kubernetes clusters running [Talos](https://www.talos.dev) and [Cilium](https://cilium.io/use-cases/cluster-mesh/).
-The cluster mesh extends the Kubernetes control-plane to allow applications to use a Zero Trust model to run across multiple clusters. 
-A depoyment can now be composed of pods hosted on multiple clusters.
+This project spins up a platform composed of multiple [Talos Kubernetes Clusters](https://www.talos.dev) connected using [Cilium Cluster Mesh](https://cilium.io/use-cases/cluster-mesh/).
+A cluster mesh extends the Kubernetes' control-plane to allow applications composed of resources hosted on multiple clusters. 
+Applications features such as `Follow-the-Sun` or `Disaster Recovery`can be simplified dramatically using pods hosted across multiple clusters.
 <p align="center">
   <img src="https://cdn.sanity.io/images/xinsvxfu/production/52945d699a34350e33de7dc1d85182ae37b0715e-1600x938.png?auto=format&q=80&fit=clip&w=2560" width="675" title="Cilium Cluster Mesh">
 </p>
-This Terraform stack creates a mesh of two Talos Clusters ready for development of Edge based Kubernetes applications.
 
-
-
-Talos and Cilium combined give us the ability to create a Kubernetes platforms ready to monetize!
-
+## Description
 [Talos](https://github.com/siderolabs/talos) is an immutable Linux distribution purpose built to run Kubernetes.
 
-[Cilium](https://github.com/cilium/cilium) is an [eBPF](https://ebpf.io/) based CNI which dramatically improves scalability, cost efficiency, and observability of the cluster.
+[Cilium](https://github.com/cilium/cilium) is an [eBPF](https://ebpf.io/) based Kubernetes CNI which improves scalability, cost efficiency, and observability of the cluster.
 
-We use a Terraform module [bbtechsys/terraform-proxmox-talos](https://github.com/bbtechsys/terraform-proxmox-talos) to spin up Proxmox based Talos clusters with CNI disabled (required to install Cilium).
+We use a Terraform module [bbtechsys/terraform-proxmox-talos](https://github.com/bbtechsys/terraform-proxmox-talos) to spin up Proxmox based Talos clusters with CNI disabled (a Cilium requirement).
 The module uses the [bpg/terraform-provider-proxmox](https://github.com/bpg/terraform-provider-proxmox) provider to provision Talos VMs and the [siderolabs/terraform-provider-talos](https://github.com/siderolabs/terraform-provider-talos) provider to configure those VMs as our `control-plane` and `worker` nodes.
-The stack uses [DopplerHQ/terraform-provider-doppler](https://github.com/DopplerHQ/terraform-provider-doppler) to create and inject secrets used by [hashicorp/terraform-provider-kubernetes](https://github.com/hashicorp/terraform-provider-kubernetes) to install k8s bits such as our Cilium CRD manifests and [hashicorp/terraform-provider-helm](https://github.com/hashicorp/terraform-provider-helm) for helm charts used to install resources such as `rook-ceph`.
+The stack uses [DopplerHQ/terraform-provider-doppler](https://github.com/DopplerHQ/terraform-provider-doppler) to create and inject secrets used by [hashicorp/terraform-provider-kubernetes](https://github.com/hashicorp/terraform-provider-kubernetes) to install k8s bits (such as Cilium CRD manifests) and [hashicorp/terraform-provider-helm](https://github.com/hashicorp/terraform-provider-helm) for helm charts support. We use both Terraform and Ansible to provision resources such as `rook-ceph` and [robusta](https://home.robusta.dev/).
 
 
 ## Goals for the next phase of the project
