@@ -11,14 +11,15 @@ Applications features such as `Follow-the-Sun` or `Disaster Recovery`can be simp
 
 [Cilium](https://github.com/cilium/cilium) is an [eBPF](https://ebpf.io/) based Kubernetes CNI which improves scalability, cost efficiency, and observability of the cluster.
 
-We use a Terraform module [bbtechsys/terraform-proxmox-talos](https://github.com/bbtechsys/terraform-proxmox-talos) to spin up Proxmox based Talos clusters with CNI disabled (a Cilium requirement).
-The module uses the [bpg/terraform-provider-proxmox](https://github.com/bpg/terraform-provider-proxmox) provider to provision Talos VMs and the [siderolabs/terraform-provider-talos](https://github.com/siderolabs/terraform-provider-talos) provider to configure those VMs as our `control-plane` and `worker` nodes.
+We use a combination of Terraform and Ansible to provision and administer our platform. 
+The [bbtechsys/terraform-proxmox-talos](https://github.com/bbtechsys/terraform-proxmox-talos) Terraform module spins up Talos clusters using [bpg/terraform-provider-proxmox](https://github.com/bpg/terraform-provider-proxmox) to provision Talos VMs and [siderolabs/terraform-provider-talos](https://github.com/siderolabs/terraform-provider-talos) to configure those VMs as our Kubernetes cluster's `control-plane` and `worker` nodes.
 The stack uses [DopplerHQ/terraform-provider-doppler](https://github.com/DopplerHQ/terraform-provider-doppler) to create and inject secrets used by [hashicorp/terraform-provider-kubernetes](https://github.com/hashicorp/terraform-provider-kubernetes) to install k8s bits (such as Cilium CRD manifests) and [hashicorp/terraform-provider-helm](https://github.com/hashicorp/terraform-provider-helm) for helm charts support. We use both Terraform and Ansible to provision resources such as `rook-ceph` and [robusta](https://home.robusta.dev/).
 
 
 ## Goals for the next phase of the project
 - Document ARMO before trial ends (3 days ?),
-- Consider `talm` to manage `CozyStack` PaaS-Full clusters.
+- add `piCluster`, our RaspberryPi 5 based [rancherfederal/rk2-ansible](https://github.com/rancherfederal/rke2-ansible) cluster to the Cilium Cluster Mesh.
+- Consider `talm` to manage `CozyStack` PaaS-Full clusters to leversge Day-2 support.
 - Document Cilium Debug Tooling:
   - Deploy the Starwars applicatiopn using CI/CD,
   - Use Hubble UI to explore Starwars app,
