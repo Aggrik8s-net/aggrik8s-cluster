@@ -1,36 +1,44 @@
 output "talosconfig-east" {
+    depends_on = [module.talos-proxmox-east]
     description = "Talos configuration file"
     value       = module.talos-proxmox-east.talosconfig
     sensitive   = true
 }
 
 output "talosconfig-west" {
+    depends_on = [module.talos-proxmox-west]
     description = "Talos configuration file"
     value       = module.talos-proxmox-west.talosconfig
     sensitive   = true
 }
 
 output "kubeconfig-east" {
+    depends_on = [module.talos-proxmox-east]
     description = "Kubeconfig file"
     value       = module.talos-proxmox-east.kubeconfig
     sensitive   = true
 }
 
 output "kubeconfig-west" {
+    depends_on = [module.talos-proxmox-west]
     description = "Kubeconfig file"
     value       = module.talos-proxmox-west.kubeconfig
     sensitive   = true
 }
 
+
 output "talos-proxmox-east_server" {
+    depends_on = [module.talos-proxmox-east.kubeconfig]
     description = "Our cluster's endpoint."
-    value       = var.east_host
+    value       = nonsensitive(doppler_secret.kubeconfig-server-east.computed)
     sensitive   = false
 }
 
+
 output "talos-proxmox-west_server" {
+  depends_on = [module.talos-proxmox-west.kubeconfig]
   description = "Our cluster's endpoint."
-  value       = var.west_host
+  value       = nonsensitive(doppler_secret.kubeconfig-server-west.computed)
   sensitive   = false
 }
 
