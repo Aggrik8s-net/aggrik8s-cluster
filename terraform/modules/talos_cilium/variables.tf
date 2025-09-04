@@ -27,7 +27,7 @@ variable "proxmox_control_vm_cores" {
 variable "proxmox_worker_vm_cores" {
     description = "Number of CPU cores for the worker VMs"
     type        = number
-    default     = 32
+    default     = 24
 }
 
 variable "proxmox_control_vm_memory" {
@@ -51,19 +51,19 @@ variable "proxmox_vm_type" {
 variable "proxmox_control_vm_disk_size" {
     description = "Proxmox control VM disk size in GB"
     type        = number
-    default     = 32
+    default     = 24
 }
 
 variable "proxmox_worker_vm_disk_size" {
     description = "Proxmox worker VM disk size in GB"
     type        = number
-    default     = 64
+    default     = 32
 }
 
 variable "proxmox_network_vlan_id" {
     description = "Proxmox network VLAN ID"
     type        = number
-    default     = null
+    default     = 10
 }
 variable "proxmox_network_bridge" {
   description = "Proxmox network Bridge"
@@ -124,6 +124,12 @@ variable "worker_nodes" {
     type        = map(string)
 }
 
+variable "podCIDR" {
+  description = "Version of Talos to use"
+  type        = string
+  default     = "10.244.0.0/16"
+}
+
 variable "control_machine_config_patches" {
     description = "List of YAML patches to apply to the control machine configuration"
     type        = list(string)
@@ -146,7 +152,8 @@ cluster:
     cni:
       name: none
   proxy:    # to disable KUBE-PROXY
-    disabled: true
+    # disabled: true
+    disabled: false
 
   extraManifests:
     - https://raw.githubusercontent.com/alex1989hu/kubelet-serving-cert-approver/main/deploy/standalone-install.yaml
@@ -177,7 +184,8 @@ cluster:
     cni:
       name: none
   proxy:    # to disable KUBE-PROXY
-    disabled: true
+    # disabled: true
+    disabled: false
 
   extraManifests:
     - https://raw.githubusercontent.com/alex1989hu/kubelet-serving-cert-approver/main/deploy/standalone-install.yaml
