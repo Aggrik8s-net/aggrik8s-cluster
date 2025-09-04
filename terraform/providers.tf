@@ -39,6 +39,10 @@ terraform {
     doppler = {
       source = "DopplerHQ/doppler"
     }
+    auth0 = {
+      source = "auth0/auth0"
+      version = ">= 1.28.0" # Use the latest stable version
+    }
   }
 }
 
@@ -103,6 +107,7 @@ provider "kubectl" {
 }
 
 provider "kubectl" {
+  #depends_on = [ doppler_secret.kubeconfig_west ]
   alias          = "kubectl-west"
   // config_path    = "${path.module}/tmp/kubeconfig"
   // config_context = "admin@talos-west"
@@ -185,4 +190,11 @@ provider "helm" {
 provider "doppler" {
   // Injected using `doppler run`
   doppler_token = var.doppler_token_dev
+}
+
+provider "auth0" {
+  domain        = data.doppler_secrets.this.map.AUTH0_DOMAIN
+  client_id     = data.doppler_secrets.this.map.AUTH0_CLIENT_ID
+  client_secret = data.doppler_secrets.this.map.AUTH0_CLIENT_SECRET
+  // debug         = "<debug>"
 }
