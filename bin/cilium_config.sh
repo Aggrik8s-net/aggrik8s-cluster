@@ -1,5 +1,7 @@
 #!/bin/bash
 
+kubeProxyReplacement="false"
+
 POSITIONAL_ARGS=()
 
 while [[ $# -gt 0 ]]; do
@@ -67,7 +69,7 @@ cilium install \
   --set cluster.id=${CLUSTER_ID}   \
   --context ${CLUSTER_CONTEXT}  \
   --set ipam.mode=kubernetes \
-  --set kubeProxyReplacement=true \
+  --set kubeProxyReplacement=${kubeProxyReplacement} \
   --set k8sServiceHost=localhost \
   --set k8sServicePort=7445 \
   --set l2announcements.enabled=true \
@@ -83,7 +85,9 @@ cilium install \
     --set cgroup.hostRoot=/sys/fs/cgroup \
     --set gatewayAPI.enabled=true \
     --set gatewayAPI.enableAlpn=true \
-    --set gatewayAPI.enableAppProtocol=true
+    --set gatewayAPI.enableAppProtocol=true \
+    --set ipv4NativeRoutingCIDR=10.0.0.0/8 \
+    --set l7Proxy=true
 
 
 # cilium hubble enable

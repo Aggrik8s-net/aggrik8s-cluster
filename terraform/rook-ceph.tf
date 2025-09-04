@@ -1,7 +1,8 @@
 //     We need to follow this guide.
 //     https://www.talos.dev/v1.10/kubernetes-guides/configuration/ceph-with-rook/
 //
-
+//     IMPORTANT:    WIPE Rook DISK befoe running this or not so good.
+//
 // 1.  - Install our HELM Repo
 //       $ helm repo add rook-release https://charts.rook.io/release
 
@@ -16,40 +17,45 @@
 
 
 resource "kubernetes_namespace" "rook-ceph-east" {
-  depends_on  =  [kubeconfig-east]
+  depends_on  =  [module.talos-proxmox-east.kubeconfig]
   metadata {
     name   = "rook-ceph"
     labels = {
                "pod-security.kubernetes.io/enforce" = "privileged"
     }
   }
-  provider = "kubernetes.talos-proxmox-east"
+  provider = kubernetes.talos-proxmox-east
 }
 
 resource "kubernetes_namespace" "rook-ceph-west" {
-  depends_on  =  [kubeconfig-west]
+  depends_on  =  [module.talos-proxmox-west.kubeconfig]
   metadata {
     name   = "rook-ceph"
     labels = {
                "pod-security.kubernetes.io/enforce" = "privileged"
     }
   }
-  provider = "kubernetes.talos-proxmox-west"
+  provider = kubernetes.talos-proxmox-west
 }
 
-resource "talos-wipe-disk" "wipe-disks-east"{
-  depends_on  =  [talosconfig-east]
-}
-resource "talos-wipe-disk" "wipe-disks-west"{
-  depends_on  =  [talosconfig-west]
-}
+// resource "talos-wipe-disk" "wipe-disks-east"{
+//   depends_on  =  [talosconfig-east]
+// }
+// resource "talos-wipe-disk" "wipe-disks-west"{
+//   depends_on  =  [talosconfig-west]
+// }
 
 
 resource "helm_release" "rook-operator-east" {
-  depends_on  = [talos-wipe-disk.wipe-disks-east]
+  depends_on = [kubernetes_namespace.rook-ceph-east,
+                doppler_secret.kubeconfig_east,
+                doppler_secret.kubeconfig-server-east,
+                doppler_secret.client_certificate_east,
+                doppler_secret.client_key_east,
+                doppler_secret.cluster_ca_certificate_east]
+
   description = "HELM Chart to install the rook-operator."
-  depends_on = [kubernetes_namespace.rook-ceph-east]
-  provider = "helm.helm-east"
+  provider = helm.helm-east
   name  = "rook-ceph"
   chart = "rook-ceph"
   repository = "https://charts.rook.io/release"
@@ -57,10 +63,14 @@ resource "helm_release" "rook-operator-east" {
 }
 
 resource "helm_release" "rook-operator-west" {
-  depends_on  = [talos-wipe-disk.wipe-disks-west]
+  depends_on = [kubernetes_namespace.rook-ceph-west,
+                doppler_secret.kubeconfig_west,
+                doppler_secret.kubeconfig-server-west,
+                doppler_secret.client_certificate_west,
+                doppler_secret.client_key_west,
+                doppler_secret.cluster_ca_certificate_west]
   description = "HELM Chart to install the rook-operator."
-  depends_on = [kubernetes_namespace.rook-ceph-west]
-  provider = "helm.helm-west"
+  provider = helm.helm-west
   name  = "rook-ceph"
   chart = "rook-ceph"
   repository = "https://charts.rook.io/release"
@@ -68,10 +78,14 @@ resource "helm_release" "rook-operator-west" {
 }
 
 resource "helm_release" "rook-ceph-cluster-east" {
-  depends_on  = [talos-wipe-disk.wipe-disks-east]
+  depends_on = [kubernetes_namespace.rook-ceph-east,
+                helm_release.rook-operator-east,
+                doppler_secret.kubeconfig-server-east,
+                doppler_secret.client_certificate_east,
+                doppler_secret.client_key_east,
+                doppler_secret.cluster_ca_certificate_east]
   description = "HELM Chart to install the rook-ceph cluster."
-  depends_on = [kubernetes_namespace.rook-ceph-east]
-  provider = "helm.helm-east"
+  provider = helm.helm-east
   name  = "rook-ceph-cluster"
   chart = "rook-ceph-cluster"
   repository = "https://charts.rook.io/release"
@@ -79,10 +93,14 @@ resource "helm_release" "rook-ceph-cluster-east" {
 }
 
 resource "helm_release" "rook-ceph-cluster-west" {
-  depends_on  = [talos-wipe-disk.wipe-disks-west]
+  depends_on = [kubernetes_namespace.rook-ceph-west,
+                helm_release.rook-operator-east,
+                doppler_secret.kubeconfig-server-west,
+                doppler_secret.client_certificate_west,
+                doppler_secret.client_key_west,
+                doppler_secret.cluster_ca_certificate_west]
   description = "HELM Chart to install the rook-ceph cluster."
-  depends_on = [kubernetes_namespace.rook-ceph-west]
-  provider = "helm.helm-west"
+  provider = helm.helm-west
   name  = "rook-ceph-cluster"
   chart = "rook-ceph-cluster"
   repository = "https://charts.rook.io/release"
