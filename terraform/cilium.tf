@@ -318,6 +318,8 @@ spec:
 YAML
 }
 */
+
+/*
 resource "kubectl_manifest" "ippool-east" {
     depends_on  =  [doppler_secret.kubeconfig_east,
                   doppler_secret.kubeconfig-server-east,
@@ -353,3 +355,4 @@ spec:
   - cidr: "192.168.10.208/28"
 YAML
 }
+*/

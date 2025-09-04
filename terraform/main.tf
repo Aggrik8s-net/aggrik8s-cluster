@@ -26,6 +26,9 @@ module "talos-proxmox-east" {
     #version = "0.1.5"
     talos_cluster_name = "talos-east"
     talos_version = "1.10.4"
+
+    proxmox_network_vlan_id = 1500
+
     control_nodes = {
         "cp-e-1" = "pve"
         "cp-e-2" = "pve"
@@ -40,23 +43,25 @@ module "talos-proxmox-east" {
     worker_extra_disks = {
         "wrk-e-1" = [{
                             datastore_id = "cluster-lvm"
-                            size         = 150
+                            size         = 80
                             #file_format  = optional(string)
                             #file_id      = optional(string)
                       },]
         "wrk-e-2" = [{
                             datastore_id = "cluster-lvm"
-                            size         = 150
+                            size         = 80
                             #file_format  = optional(string)
                             #file_id      = optional(string)
                       },]
         "wrk-e-3" = [{
                             datastore_id = "cluster-lvm"
-                            size         = 150
+                            size         = 80
                             #file_format  = optional(string)
                             #file_id      = optional(string)
                       },]
     }
+    # Cilium requires this to be unique per cluster.
+    # podCIDR = "10.244.0.0/16"
 }
 
 module "talos-proxmox-west" {
@@ -66,6 +71,9 @@ module "talos-proxmox-west" {
     #version = "0.1.5"
     talos_cluster_name = "talos-west"
     talos_version = "1.10.4"
+
+    proxmox_network_vlan_id = 2000
+
     control_nodes = {
         "cp-w-1" = "pve"
         "cp-w-2" = "pve"
@@ -79,23 +87,90 @@ module "talos-proxmox-west" {
     worker_extra_disks = {
         "wrk-w-1" = [{
                             datastore_id = "cluster-lvm"
-                            size         = 150
+                            size         = 80
                             #file_format  = optional(string)
                             #file_id      = optional(string)
                       },]
         "wrk-w-2" = [{
                             datastore_id = "cluster-lvm"
-                            size         = 150
+                            size         = 80
                             #file_format  = optional(string)
                             #file_id      = optional(string)
                       },]
         "wrk-w-3" = [{
                             datastore_id = "cluster-lvm"
-                            size         = 150
+                            size         = 80
                             #file_format  = optional(string)
                             #file_id      = optional(string)
                       },]
     }
+    # Cilium requires this to be unique per cluster.
+    control_machine_config_patches = [<<EOF
+machine:
+  install:
+    disk: "/dev/vda"
+  time:
+    disabled: false # Indicates if the time service is disabled for the machine.
+      # description: |
+    servers:
+      - time.cloudflare.com
+    bootTimeout: 2m0s
+  kubelet:
+    extraArgs:
+      rotate-server-certificates: true
+cluster:
+  network:
+    cni:
+      name: none
+    # Used for node podCIDR assignments (default is 10.244.0.0/16)
+    podSubnets:
+      - "10.245.0.0/16"
+    # The service subnet CIDR (default is 10.96.0.0/12).
+    serviceSubnets:
+      - 10.112.0.0/12
+  proxy:    # to disable KUBE-PROXY
+    #disabled: true
+    disabled: false
+
+  extraManifests:
+    - https://raw.githubusercontent.com/alex1989hu/kubelet-serving-cert-approver/main/deploy/standalone-install.yaml
+    - https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yamldshea@pi-manage-01:~/git/aggrik8s-cluster/terraformEOF
+EOF
+    ]
+
+    worker_machine_config_patches = [<<EOF
+machine:
+  install:
+    disk: "/dev/vda"
+  time:
+    disabled: false # Indicates if the time service is disabled for the machine.
+      # description: |
+    servers:
+      - time.cloudflare.com
+    bootTimeout: 2m0s
+  kubelet:
+    extraArgs:
+      rotate-server-certificates: true
+cluster:
+  network:
+    cni:
+      name: none
+    # Used for node podCIDR assignments (default is 10.244.0.0/16)
+    podSubnets:
+      - "10.245.0.0/16"
+    # The service subnet CIDR (default is 10.96.0.0/12).
+    serviceSubnets:
+      - 10.112.0.0/12
+  proxy:    # to disable KUBE-PROXY
+    #disabled: true
+    disabled: false
+
+  extraManifests:
+    - https://raw.githubusercontent.com/alex1989hu/kubelet-serving-cert-approver/main/deploy/standalone-install.yaml
+    - https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+EOF
+    ]
+
 }
 
 //
