@@ -1,13 +1,13 @@
 ## TLDR;
-This project spins up a platform composed of multiple [Talos Kubernetes Clusters](https://www.talos.dev) connected using [Cilium Cluster Mesh](https://cilium.io/use-cases/cluster-mesh/).
-A cluster mesh extends the Kubernetes' control-plane to allow applications composed of resources hosted on multiple clusters. 
-Applications features such as `Follow-the-Sun` or `Disaster Recovery`can be simplified dramatically using pods hosted across multiple clusters.
+This project provisions a Kubernetes Edge platform using [Talos](https://www.talos.dev) and [Cilium luster Mesh](https://cilium.io/use-cases/cluster-mesh/). 
+A cluster mesh extends the Kubernetes' control-plane allowing applications to be composed of resources hosted on multiple clusters. 
+Use cases such as `Follow-the-Sun NOC` or `Disaster Recovery` are simplified dramatically using applications hosted on meshed clusters.
 <p align="center">
   <img src="https://cdn.sanity.io/images/xinsvxfu/production/52945d699a34350e33de7dc1d85182ae37b0715e-1600x938.png?auto=format&q=80&fit=clip&w=2560" width="675" title="Cilium Cluster Mesh">
 </p>
 
 ## Description
-[Talos](https://github.com/siderolabs/talos) is an immutable Linux distribution purpose built to run Kubernetes.
+[Talos](https://github.com/siderolabs/talos) is an immutable Linux distribution purpose built to run Kubernetes - it is configured using a single `YAML` and there no `ssh` . 
 
 [Cilium](https://github.com/cilium/cilium) is an [eBPF](https://ebpf.io/) based Kubernetes CNI which improves scalability, cost efficiency, and observability of the cluster.
 
@@ -17,7 +17,8 @@ The stack uses [DopplerHQ/terraform-provider-doppler](https://github.com/Doppler
 
 
 ## Goals for the next phase of the project
-- Document ARMO before trial ends (3 days ?),
+~~- Document ARMO before trial ends (3 days ?),~~
+- Terraform Mikrotik Fabrik to support multiple AZ model, this is required for Ciliumm Cluster Mesh develoopment, 
 - add `piCluster`, our RaspberryPi 5 based [rancherfederal/rk2-ansible](https://github.com/rancherfederal/rke2-ansible) cluster to the Cilium Cluster Mesh.
 - Consider `talm` to manage `CozyStack` PaaS-Full clusters to leversge Day-2 support.
 - Document Cilium Debug Tooling:
@@ -37,25 +38,26 @@ We have verified the reusability of existing `Ansible Playbooks` to install `Day
 
 
 ## Cluster Mesh Deployment
-This recipe has been tested and verified to orchestrate the provisioning of our meshed Talos clusters.
+This recipe has been tested and verified to orchestrate the provisioning of our meshed Talos clusters; the procedure does depend on `podCIDR` to be unique for each cluster.
 1. [../bin/spinUp.sh](https://github.com/Aggrik8s-net/aggrik8s-cluster/blob/cilium/bin/spinUp.sh) provisions the Talos Clusters and sets up our Doppler secrets.
 2. [../bin/getCreds.sh](https://github.com/Aggrik8s-net/aggrik8s-cluster/blob/cilium/bin/getCreds.sh) create local `talosconfig` and `kubeconfig` files and merge our `kubeconfig` files to support `kubectx -`.
 3. [../bin/wipeVdb.sh](https://github.com/Aggrik8s-net/aggrik8s-cluster/blob/cilium/bin/getCreds.sh)  -  prepare`vdb`to be adopted by Rook.
 4. `export KUBECONFIG=./tmp/kubeconfig` point to our merged `kubeconfig` file.
 5. `mv rook-ceph.tf rook-ceph.tf-` disable `rook-ceph` provisioning until after Cilium is installed.
 5. `mv metrics-server.tf metrics-server.tf-` disable metrics-server provisioning until we patch config.
-7. `doppler run --name-transformer tf-var -- terraform apply` installs our Kubernetes bits including CRD's we need to start Cilium.
-8. [../bin/cilium-config.sh -i 1 -n talos-east -c admin@talos-east](https://github.com/Aggrik8s-net/aggrik8s-cluster/blob/cilium/bin/cilium_config.sh) install Cilium on `talos-east`.
-9. [../bin/cilium-config.sh -i 2 -n talos-west -c admin@talos-west](https://github.com/Aggrik8s-net/aggrik8s-cluster/blob/cilium/bin/cilium_config.sh) install Cilium on `talos-west`.
-10. `mv rook-ceph.tf- rook-ceph.tf` enable `rook-ceph` provisioning now that Cilium CNI is installed.
-11. `mv metrics-server.tf- metrics-server.tf` enable `rook-ceph` provisioning now that Cilium CNI is installed.
-12. `doppler run --name-transformer tf-var -- terraform apply` installs our Kubernetes bits including CRD's we need to start Cilium.
-13. `kubectl --context admin@talos-west delete secret cilium-ca -n kube-system` => secret "cilium-ca" deleted
-14. `kubectl --context admin@talos-east get secret -n kube-system cilium-ca -o yaml |  kubectl --context admin@talos-west  create -f -`  => secret/cilium-ca created
-15. ` cilium clustermesh enable --context admin@talos-east --service-type NodePort` enable 1/2 of our Cluster Mesh.
-16. ` cilium clustermesh enable --context admin@talos-west --service-type NodePort` enable the other 1/2 of the Mesh.
-17. `cilium clustermesh connect --context admin@talos-east --destination-context admin@talos-west` is how we make it so
-18.  `cilium connectivity test --context admin@talos-east --multi-cluster admin@talos-west`  -  run cilium conn3ctivity test
+7. `terraform taint doppler_secret.kubeconfig_west` => fix this suspected race condition issue
+8. `doppler run --name-transformer tf-var -- terraform apply` installs our Kubernetes bits including CRD's we need to start Cilium.
+9. [../bin/cilium_config.sh -i 1 -n talos-east -c admin@talos-east --pod_cidr "10.244.0.0/16"](https://github.com/Aggrik8s-net/aggrik8s-cluster/blob/cilium/bin/cilium_config.sh) install Cilium on `talos-east`.
+10. [../bin/cilium_config.sh -i 2 -n talos-west -c admin@talos-west --pod_cidr "10.245.0.0/16"](https://github.com/Aggrik8s-net/aggrik8s-cluster/blob/cilium/bin/cilium_config.sh) install Cilium on `talos-west`.
+11. `mv rook-ceph.tf- rook-ceph.tf` enable `rook-ceph` provisioning now that Cilium CNI is installed.
+12. `mv metrics-server.tf- metrics-server.tf` enable `rook-ceph` provisioning now that Cilium CNI is installed.
+    13. `doppler run --name-transformer tf-var -- terraform apply` installs or Kubernetes bits including CRD's we need to start Cilium.
+14. `kubectl --context admin@talos-west delete secret cilium-ca -n kube-system` => secret "cilium-ca" deleted
+15. `kubectl --context admin@talos-east get secret -n kube-system cilium-ca -o yaml |  kubectl --context admin@talos-west  create -f -`  => secret/cilium-ca created
+16. ` cilium clustermesh enable --context admin@talos-east --service-type NodePort` enable 1/2 of our Cluster Mesh.
+17. ` cilium clustermesh enable --context admin@talos-west --service-type NodePort` enable the other 1/2 of the Mesh.
+18. `cilium clustermesh connect --context admin@talos-east --destination-context admin@talos-west` is how we make it so
+19. `cilium connectivity test --context admin@talos-east --multi-cluster admin@talos-west`  -  run cilium conn3ctivity test
 
 Both clusters are good to go.
 
