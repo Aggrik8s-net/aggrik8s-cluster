@@ -1,4 +1,27 @@
+locals {
+  do_s3_endpoint_url = ""
+  state_bucket       = ""
+  state_file_name    = ""
+}
+// this needs to be templated using Jinja
 terraform {
+  backend "s3" {
+    endpoints = {
+      s3 = "https://nyc3.digitaloceanspaces.com"
+    }
+
+    bucket = "aggrik8s-cluster"
+    key    = "terraform-bucket"
+
+    # Deactivate a few AWS-specific checks
+    skip_credentials_validation = true
+    skip_requesting_account_id  = true
+    skip_metadata_api_check     = true
+    skip_region_validation      = true
+    skip_s3_checksum            = true
+    region                      = "nyc3"
+  }
+
   required_providers {
     proxmox = {
       source  = "bpg/proxmox"
@@ -42,6 +65,10 @@ terraform {
     auth0 = {
       source = "auth0/auth0"
       version = ">= 1.28.0" # Use the latest stable version
+    }
+    digitalocean = {
+      source = "digitalocean/digitalocean"
+      version = "2.66.0"
     }
   }
 }
@@ -198,3 +225,10 @@ provider "auth0" {
   client_secret = data.doppler_secrets.this.map.AUTH0_CLIENT_SECRET
   // debug         = "<debug>"
 }
+
+provider "digitalocean" {
+  token             = data.doppler_secrets.this.map.DO_TOKEN
+  spaces_access_id  = data.doppler_secrets.this.map.DO_SPACES_ACCESS_ID
+  spaces_secret_key = data.doppler_secrets.this.map.DO_SPACES_SECRET_KEY
+}
+
