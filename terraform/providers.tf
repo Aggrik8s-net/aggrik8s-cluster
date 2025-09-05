@@ -11,7 +11,7 @@ terraform {
     }
 
     bucket = "aggrik8s-cluster"
-    key    = "terraform-bucket"
+    key    = "terraform.tfstate"
 
     # Deactivate a few AWS-specific checks
     skip_credentials_validation = true
