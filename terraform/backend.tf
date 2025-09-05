@@ -1,6 +1,7 @@
-resource "digitalocean_spaces_bucket" "foobarzap" {
-  name   = "foobarzap"
+resource "digitalocean_spaces_bucket" "foobar-aggrik8s-cluster" {
+  name   = "foobar-aggrik8s-cluster"
   region = "nyc3"
+  // acl    = "private"
 }
 
 // Imported using:
@@ -24,6 +25,6 @@ resource "digitalocean_spaces_bucket" "aggrik8s-cluster" {
   // urn                = "do:space:aggrik8s-cluster"
 
   versioning {
-    enabled = false
+    enabled = true
   }
 }
