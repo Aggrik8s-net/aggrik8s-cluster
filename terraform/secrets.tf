@@ -12,7 +12,7 @@ Wwe use this pattern to pe-process our secrets and just save attributes
 //i. resource "doppler_project.default" "aggrik8s-net" {
 // }
 
-data "doppler_secrets" "this" {
+data "doppler_secrets" "aggrik8s-cluster" {
   project = "aggrik8s-cluster"
   config  = "dev"
 }

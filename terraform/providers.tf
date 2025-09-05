@@ -3,7 +3,7 @@ locals {
   state_bucket       = ""
   state_file_name    = ""
 }
-// this needs to be templated using Jinja
+// aggrik8s-cluster needs to be templated using Jinja
 terraform {
   backend "s3" {
     endpoints = {
@@ -76,14 +76,14 @@ terraform {
 provider "proxmox" {
   endpoint   = var.proxmox_api_endpoint
   // api_token  =  var.proxmox_api_token
-  api_token  =  data.doppler_secrets.this.map.PROXMOX_API_TOKEN
+  api_token  =  data.doppler_secrets.aggrik8s-cluster.map.PROXMOX_API_TOKEN
   insecure   = true
   ssh {
     agent    = true
     // username = var.proxmox_user
-    username = data.doppler_secrets.this.map.PROXMOX_USER
+    username = data.doppler_secrets.aggrik8s-cluster.map.PROXMOX_USER
     // password = var.proxmox_root_pwd
-    password = data.doppler_secrets.this.map.PROXMOX_ROOT_PWD
+    password = data.doppler_secrets.aggrik8s-cluster.map.PROXMOX_ROOT_PWD
   }
 }
 
@@ -102,12 +102,12 @@ provider "cilium" {
 /*
 output "kube_secret_KUBECONFIG_EAST" {
     value = nonsensitive(yamldecode(doppler_secret.kubeconfig_east.computed))
-    //    yamldecode(data.doppler_secrets.this.map.KUBECONFIG_EAST)["users"][0]["user"]["client-certificate-data"]
+    //    yamldecode(data.doppler_secrets.aggrik8s-cluster.map.KUBECONFIG_EAST)["users"][0]["user"]["client-certificate-data"]
 output "kube_secret_cluster_ca_data" {
-    value = nonsensitive(yamldecode(data.doppler_secrets.this.map.KUBECONFIG_EAST)["clusters"][0]["cluster"]["certificate-authority-data"])
+    value = nonsensitive(yamldecode(data.doppler_secrets.aggrik8s-cluster.map.KUBECONFIG_EAST)["clusters"][0]["cluster"]["certificate-authority-data"])
 }
 output "kube_secret_cluster_server" {
-    value = nonsensitive(yamldecode(data.doppler_secrets.this.map.KUBECONFIG_EAST)["clusters"][0]["cluster"]["server"])
+    value = nonsensitive(yamldecode(data.doppler_secrets.aggrik8s-cluster.map.KUBECONFIG_EAST)["clusters"][0]["cluster"]["server"])
 }
 */
 
@@ -163,13 +163,13 @@ output "kube_secret_host" {
 }
 
 output "kube_secret_client-certificate-data" {
-    value = nonsensitive(yamldecode(data.doppler_secrets.this.map.KUBECONFIG_EAST)["users"][0]["user"]["client-certificate-data"])
+    value = nonsensitive(yamldecode(data.doppler_secrets.aggrik8s-cluster.map.KUBECONFIG_EAST)["users"][0]["user"]["client-certificate-data"])
 }
 output "kube_secret_cluster_ca_data" {
-    value = nonsensitive(yamldecode(data.doppler_secrets.this.map.KUBECONFIG_EAST)["clusters"][0]["cluster"]["certificate-authority-data"])
+    value = nonsensitive(yamldecode(data.doppler_secrets.aggrik8s-cluster.map.KUBECONFIG_EAST)["clusters"][0]["cluster"]["certificate-authority-data"])
 }
 output "kube_secret_cluster_server" {
-    value = nonsensitive(yamldecode(data.doppler_secrets.this.map.KUBECONFIG_EAST)["clusters"][0]["cluster"]["server"])
+    value = nonsensitive(yamldecode(data.doppler_secrets.aggrik8s-cluster.map.KUBECONFIG_EAST)["clusters"][0]["cluster"]["server"])
 }
 */
 
@@ -220,15 +220,15 @@ provider "doppler" {
 }
 
 provider "auth0" {
-  domain        = data.doppler_secrets.this.map.AUTH0_DOMAIN
-  client_id     = data.doppler_secrets.this.map.AUTH0_CLIENT_ID
-  client_secret = data.doppler_secrets.this.map.AUTH0_CLIENT_SECRET
+  domain        = data.doppler_secrets.aggrik8s-cluster.map.AUTH0_DOMAIN
+  client_id     = data.doppler_secrets.aggrik8s-cluster.map.AUTH0_CLIENT_ID
+  client_secret = data.doppler_secrets.aggrik8s-cluster.map.AUTH0_CLIENT_SECRET
   // debug         = "<debug>"
 }
 
 provider "digitalocean" {
-  token             = data.doppler_secrets.this.map.DO_TOKEN
-  spaces_access_id  = data.doppler_secrets.this.map.DO_SPACES_ACCESS_ID
-  spaces_secret_key = data.doppler_secrets.this.map.DO_SPACES_SECRET_KEY
+  token             = data.doppler_secrets.aggrik8s-cluster.map.DO_TOKEN
+  spaces_access_id  = data.doppler_secrets.aggrik8s-cluster.map.DO_SPACES_ACCESS_ID
+  spaces_secret_key = data.doppler_secrets.aggrik8s-cluster.map.DO_SPACES_SECRET_KEY
 }
 
