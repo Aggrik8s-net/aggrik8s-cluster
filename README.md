@@ -1,5 +1,5 @@
 ## TLDR;
-This project provisions a Kubernetes Edge platform using [Talos](https://www.talos.dev) and [Cilium luster Mesh](https://cilium.io/use-cases/cluster-mesh/). 
+This project provisions a mesh of [Talos](https://www.talos.dev) Kubernetes clusters using [Cilium cluster Mesh](https://cilium.io/use-cases/cluster-mesh/). 
 A cluster mesh extends the Kubernetes' control-plane allowing applications to be composed of resources hosted on multiple clusters. 
 Use cases such as `Follow-the-Sun NOC` or `Disaster Recovery` are simplified dramatically using applications hosted on meshed clusters.
 <p align="center">
