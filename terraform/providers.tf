@@ -6,19 +6,20 @@ locals {
 // aggrik8s-cluster needs to be templated using Jinja
 terraform {
   backend "s3" {
-    endpoints = {
-      s3 = "https://nyc3.digitaloceanspaces.com"
-    }
+    # endpoints = {
+    #   s3 = "https://nyc3.digitaloceanspaces.com"
+    # }
+    endpoint = "https://nyc3.digitaloceanspaces.com"
 
     bucket = "aggrik8s-cluster"
     key    = "terraform.tfstate"
 
     # Deactivate a few AWS-specific checks
     skip_credentials_validation = true
-    skip_requesting_account_id  = true
+    # skip_requesting_account_id  = true
     skip_metadata_api_check     = true
     skip_region_validation      = true
-    skip_s3_checksum            = true
+    # skip_s3_checksum            = true
     region                      = "nyc3"
   }
 
