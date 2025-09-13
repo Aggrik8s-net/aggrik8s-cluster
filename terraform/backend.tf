@@ -1,8 +1,10 @@
+/*
 resource "digitalocean_spaces_bucket" "foobar-aggrik8s-cluster" {
   name   = "foobar-aggrik8s-cluster"
   region = "nyc3"
   // acl    = "private"
 }
+*/
 
 // Imported using:
 //
@@ -15,6 +17,13 @@ resource "digitalocean_spaces_bucket" "foobar-aggrik8s-cluster" {
 //
 // The attributes commented out are READ ONLY, get from state as shown above.
 //
+
+
+//
+// We need to import this in the case we destroy terraform state ...
+//
+
+/*
 resource "digitalocean_spaces_bucket" "aggrik8s-cluster" {
   // bucket_domain_name = "aggrik8s-cluster.nyc3.digitaloceanspaces.com"
   // endpoint           = "nyc3.digitaloceanspaces.com"
@@ -28,3 +37,4 @@ resource "digitalocean_spaces_bucket" "aggrik8s-cluster" {
     enabled = true
   }
 }
+*/
