@@ -20,14 +20,14 @@ data "http" "manifest_cert-approver" {
   url = "https://raw.githubusercontent.com/alex1989hu/kubelet-serving-cert-approver/main/deploy/standalone-install.yaml"
 }
 data "kubectl_path_documents" "cert-approver-docs" {
-  pattern  = data.http.manifest_cert-approver.response_body
+  pattern = data.http.manifest_cert-approver.response_body
 }
 output "kubectl_path_documents_cert-approver-docs" {
-  value = data.kubectl_path_documents.cert-approver-docs
+  value     = data.kubectl_path_documents.cert-approver-docs
   sensitive = true
 }
 output "kubectl_path_documents_cert-approver-docs_pattern" {
-  value = data.kubectl_path_documents.cert-approver-docs.pattern
+  value     = data.kubectl_path_documents.cert-approver-docs.pattern
   sensitive = true
 }
 
@@ -125,12 +125,12 @@ data "kubectl_file_documents" "metrics_server_doc" {
 }
 
 resource "kubectl_manifest" "metrics_server_east" {
-  provider = kubectl.kubectl-east
+  provider  = kubectl.kubectl-east
   for_each  = data.kubectl_file_documents.metrics_server_doc.manifests
   yaml_body = each.value
 }
 resource "kubectl_manifest" "metrics_server_west" {
-  provider = kubectl.kubectl-west
+  provider  = kubectl.kubectl-west
   for_each  = data.kubectl_file_documents.metrics_server_doc.manifests
   yaml_body = each.value
 }

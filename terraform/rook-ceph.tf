@@ -17,22 +17,22 @@
 
 
 resource "kubernetes_namespace" "rook-ceph-east" {
-  depends_on  =  [module.talos-proxmox-east.kubeconfig]
+  depends_on = [module.talos-proxmox-east.kubeconfig]
   metadata {
-    name   = "rook-ceph"
+    name = "rook-ceph"
     labels = {
-               "pod-security.kubernetes.io/enforce" = "privileged"
+      "pod-security.kubernetes.io/enforce" = "privileged"
     }
   }
   provider = kubernetes.talos-proxmox-east
 }
 
 resource "kubernetes_namespace" "rook-ceph-west" {
-  depends_on  =  [module.talos-proxmox-west.kubeconfig]
+  depends_on = [module.talos-proxmox-west.kubeconfig]
   metadata {
-    name   = "rook-ceph"
+    name = "rook-ceph"
     labels = {
-               "pod-security.kubernetes.io/enforce" = "privileged"
+      "pod-security.kubernetes.io/enforce" = "privileged"
     }
   }
   provider = kubernetes.talos-proxmox-west
@@ -48,62 +48,62 @@ resource "kubernetes_namespace" "rook-ceph-west" {
 
 resource "helm_release" "rook-operator-east" {
   depends_on = [kubernetes_namespace.rook-ceph-east,
-                doppler_secret.kubeconfig_east,
-                doppler_secret.kubeconfig-server-east,
-                doppler_secret.client_certificate_east,
-                doppler_secret.client_key_east,
-                doppler_secret.cluster_ca_certificate_east]
+    doppler_secret.kubeconfig_east,
+    doppler_secret.kubeconfig-server-east,
+    doppler_secret.client_certificate_east,
+    doppler_secret.client_key_east,
+  doppler_secret.cluster_ca_certificate_east]
 
   description = "HELM Chart to install the rook-operator."
-  provider = helm.helm-east
-  name  = "rook-ceph"
-  chart = "rook-ceph"
-  repository = "https://charts.rook.io/release"
-  namespace = "rook-ceph"
+  provider    = helm.helm-east
+  name        = "rook-ceph"
+  chart       = "rook-ceph"
+  repository  = "https://charts.rook.io/release"
+  namespace   = "rook-ceph"
 }
 
 resource "helm_release" "rook-operator-west" {
   depends_on = [kubernetes_namespace.rook-ceph-west,
-                doppler_secret.kubeconfig_west,
-                doppler_secret.kubeconfig-server-west,
-                doppler_secret.client_certificate_west,
-                doppler_secret.client_key_west,
-                doppler_secret.cluster_ca_certificate_west]
+    doppler_secret.kubeconfig_west,
+    doppler_secret.kubeconfig-server-west,
+    doppler_secret.client_certificate_west,
+    doppler_secret.client_key_west,
+  doppler_secret.cluster_ca_certificate_west]
   description = "HELM Chart to install the rook-operator."
-  provider = helm.helm-west
-  name  = "rook-ceph"
-  chart = "rook-ceph"
-  repository = "https://charts.rook.io/release"
-  namespace = "rook-ceph"
+  provider    = helm.helm-west
+  name        = "rook-ceph"
+  chart       = "rook-ceph"
+  repository  = "https://charts.rook.io/release"
+  namespace   = "rook-ceph"
 }
 
 resource "helm_release" "rook-ceph-cluster-east" {
   depends_on = [kubernetes_namespace.rook-ceph-east,
-                helm_release.rook-operator-east,
-                doppler_secret.kubeconfig-server-east,
-                doppler_secret.client_certificate_east,
-                doppler_secret.client_key_east,
-                doppler_secret.cluster_ca_certificate_east]
+    helm_release.rook-operator-east,
+    doppler_secret.kubeconfig-server-east,
+    doppler_secret.client_certificate_east,
+    doppler_secret.client_key_east,
+  doppler_secret.cluster_ca_certificate_east]
   description = "HELM Chart to install the rook-ceph cluster."
-  provider = helm.helm-east
-  name  = "rook-ceph-cluster"
-  chart = "rook-ceph-cluster"
-  repository = "https://charts.rook.io/release"
-  namespace = "rook-ceph"
+  provider    = helm.helm-east
+  name        = "rook-ceph-cluster"
+  chart       = "rook-ceph-cluster"
+  repository  = "https://charts.rook.io/release"
+  namespace   = "rook-ceph"
 }
 
 resource "helm_release" "rook-ceph-cluster-west" {
   depends_on = [kubernetes_namespace.rook-ceph-west,
-                helm_release.rook-operator-east,
-                doppler_secret.kubeconfig-server-west,
-                doppler_secret.client_certificate_west,
-                doppler_secret.client_key_west,
-                doppler_secret.cluster_ca_certificate_west]
+    helm_release.rook-operator-east,
+    doppler_secret.kubeconfig-server-west,
+    doppler_secret.client_certificate_west,
+    doppler_secret.client_key_west,
+  doppler_secret.cluster_ca_certificate_west]
   description = "HELM Chart to install the rook-ceph cluster."
-  provider = helm.helm-west
-  name  = "rook-ceph-cluster"
-  chart = "rook-ceph-cluster"
-  repository = "https://charts.rook.io/release"
-  namespace = "rook-ceph"
+  provider    = helm.helm-west
+  name        = "rook-ceph-cluster"
+  chart       = "rook-ceph-cluster"
+  repository  = "https://charts.rook.io/release"
+  namespace   = "rook-ceph"
 }
 

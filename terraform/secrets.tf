@@ -19,33 +19,33 @@ data "doppler_secrets" "aggrik8s-cluster" {
 
 resource "doppler_secret" "kubeconfig_east" {
   depends_on = [module.talos-proxmox-east.kubeconfig]
-  project = "aggrik8s-cluster"
-  config = "dev"
-  name = "KUBECONFIG_EAST"
-  value = module.talos-proxmox-east.kubeconfig
+  project    = "aggrik8s-cluster"
+  config     = "dev"
+  name       = "KUBECONFIG_EAST"
+  value      = module.talos-proxmox-east.kubeconfig
 }
 resource "doppler_secret" "kubeconfig_west" {
   depends_on = [module.talos-proxmox-west.kubeconfig]
-  project = "aggrik8s-cluster"
-  config = "dev"
-  name = "KUBECONFIG_WEST"
-  value = module.talos-proxmox-west.kubeconfig
+  project    = "aggrik8s-cluster"
+  config     = "dev"
+  name       = "KUBECONFIG_WEST"
+  value      = module.talos-proxmox-west.kubeconfig
 }
 resource "doppler_secret" "kubeconfig-server-east" {
   depends_on = [module.talos-proxmox-east.kubeconfig,
-                doppler_secret.kubeconfig_east]
+  doppler_secret.kubeconfig_east]
   project = "aggrik8s-cluster"
-  config = "dev"
-  name = "KUBECONFIG_SERVER_EAST"
-  value = yamldecode(module.talos-proxmox-east.kubeconfig)["clusters"][0]["cluster"]["server"]
+  config  = "dev"
+  name    = "KUBECONFIG_SERVER_EAST"
+  value   = yamldecode(module.talos-proxmox-east.kubeconfig)["clusters"][0]["cluster"]["server"]
 }
 resource "doppler_secret" "kubeconfig-server-west" {
   depends_on = [module.talos-proxmox-west.kubeconfig,
-                doppler_secret.kubeconfig_west]
+  doppler_secret.kubeconfig_west]
   project = "aggrik8s-cluster"
-  config = "dev"
-  name = "KUBECONFIG_SERVER_WEST"
-  value = yamldecode(module.talos-proxmox-west.kubeconfig)["clusters"][0]["cluster"]["server"]
+  config  = "dev"
+  name    = "KUBECONFIG_SERVER_WEST"
+  value   = yamldecode(module.talos-proxmox-west.kubeconfig)["clusters"][0]["cluster"]["server"]
 }
 
 //
@@ -53,18 +53,18 @@ resource "doppler_secret" "kubeconfig-server-west" {
 //
 resource "doppler_secret" "client_certificate_east" {
   depends_on = [module.talos-proxmox-east.kubeconfig,
-                doppler_secret.kubeconfig_east]
+  doppler_secret.kubeconfig_east]
   project = "aggrik8s-cluster"
-  config = "dev"
-  name = "CLIENT_CERTIFICATE_EAST"
-  value = yamldecode(doppler_secret.kubeconfig_east.computed)["users"][0]["user"]["client-certificate-data"]
+  config  = "dev"
+  name    = "CLIENT_CERTIFICATE_EAST"
+  value   = yamldecode(doppler_secret.kubeconfig_east.computed)["users"][0]["user"]["client-certificate-data"]
 }
 resource "doppler_secret" "client_certificate_west" {
   depends_on = [module.talos-proxmox-west.kubeconfig,
-                doppler_secret.kubeconfig_west]
+  doppler_secret.kubeconfig_west]
   project = "aggrik8s-cluster"
-  config = "dev"
-  name = "CLIENT_CERTIFICATE_WEST"
+  config  = "dev"
+  name    = "CLIENT_CERTIFICATE_WEST"
   // value = yamldecode(module.talos-proxmox-west.kubeconfig)["clusters"][0]["cluster"]["server"]
   value = yamldecode(doppler_secret.kubeconfig_west.computed)["users"][0]["user"]["client-certificate-data"]
 }
@@ -74,18 +74,18 @@ resource "doppler_secret" "client_certificate_west" {
 //
 resource "doppler_secret" "client_key_east" {
   depends_on = [module.talos-proxmox-east.kubeconfig,
-                doppler_secret.kubeconfig_east]
+  doppler_secret.kubeconfig_east]
   project = "aggrik8s-cluster"
-  config = "dev"
-  name = "CLIENT_KEY_EAST"
-  value = yamldecode(doppler_secret.kubeconfig_east.computed)["users"][0]["user"]["client-key-data"]
+  config  = "dev"
+  name    = "CLIENT_KEY_EAST"
+  value   = yamldecode(doppler_secret.kubeconfig_east.computed)["users"][0]["user"]["client-key-data"]
 }
 resource "doppler_secret" "client_key_west" {
   depends_on = [module.talos-proxmox-west.kubeconfig,
-                doppler_secret.kubeconfig_west]
+  doppler_secret.kubeconfig_west]
   project = "aggrik8s-cluster"
-  config = "dev"
-  name = "CLIENT_KEY_WEST"
+  config  = "dev"
+  name    = "CLIENT_KEY_WEST"
   // value = yamldecode(module.talos-proxmox-west.kubeconfig)["clusters"][0]["cluster"]["server"]
   value = yamldecode(doppler_secret.kubeconfig_west.computed)["users"][0]["user"]["client-key-data"]
 }
@@ -95,36 +95,36 @@ resource "doppler_secret" "client_key_west" {
 //
 resource "doppler_secret" "cluster_ca_certificate_east" {
   depends_on = [module.talos-proxmox-east.kubeconfig,
-                doppler_secret.kubeconfig_east]
-  project    = "aggrik8s-cluster"
-  config     = "dev"
-  name       = "CLUSTER_CA_CERTIFICATE_EAST"
-  value      = yamldecode(doppler_secret.kubeconfig_east.computed)["clusters"][0]["cluster"]["certificate-authority-data"]
+  doppler_secret.kubeconfig_east]
+  project = "aggrik8s-cluster"
+  config  = "dev"
+  name    = "CLUSTER_CA_CERTIFICATE_EAST"
+  value   = yamldecode(doppler_secret.kubeconfig_east.computed)["clusters"][0]["cluster"]["certificate-authority-data"]
 }
 resource "doppler_secret" "cluster_ca_certificate_west" {
   depends_on = [module.talos-proxmox-east.kubeconfig,
-                doppler_secret.kubeconfig_west]
-  project    = "aggrik8s-cluster"
-  config     = "dev"
-  name       = "CLUSTER_CA_CERTIFICATE_WEST"
-  value      = yamldecode(doppler_secret.kubeconfig_west.computed)["clusters"][0]["cluster"]["certificate-authority-data"]
+  doppler_secret.kubeconfig_west]
+  project = "aggrik8s-cluster"
+  config  = "dev"
+  name    = "CLUSTER_CA_CERTIFICATE_WEST"
+  value   = yamldecode(doppler_secret.kubeconfig_west.computed)["clusters"][0]["cluster"]["certificate-authority-data"]
 }
 
 resource "doppler_secret" "talosconfig_east" {
   depends_on = [module.talos-proxmox-east.talosconfig,
-                doppler_secret.kubeconfig_east]
+  doppler_secret.kubeconfig_east]
   project = "aggrik8s-cluster"
-  config = "dev"
-  name = "TALOSCONFIG_EAST"
-  value = module.talos-proxmox-east.talosconfig
+  config  = "dev"
+  name    = "TALOSCONFIG_EAST"
+  value   = module.talos-proxmox-east.talosconfig
 }
 resource "doppler_secret" "talosconfig_west" {
   depends_on = [module.talos-proxmox-west.talosconfig,
-                doppler_secret.kubeconfig_west]
+  doppler_secret.kubeconfig_west]
   project = "aggrik8s-cluster"
-  config = "dev"
-  name = "TALOSCONFIG_WEST"
-  value = module.talos-proxmox-west.talosconfig
+  config  = "dev"
+  name    = "TALOSCONFIG_WEST"
+  value   = module.talos-proxmox-west.talosconfig
 }
 
 /*

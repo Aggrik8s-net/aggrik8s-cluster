@@ -14,6 +14,6 @@ resource "auth0_client" "oidc_client" {
 
 # Configuring client_secret_post as an authentication method.
 resource "auth0_client_credentials" "oidc_client_creds" {
-  client_id = auth0_client.oidc_client.id
+  client_id             = auth0_client.oidc_client.id
   authentication_method = "client_secret_post"
 }

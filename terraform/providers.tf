@@ -11,18 +11,18 @@ terraform {
     }
     # endpoint = "https://nyc3.digitaloceanspaces.com"
 
-    bucket = "aggrik8s-cluster"
-    key    = "terraform.tfstate"
-
+    bucket       = "aggrik8s-cluster"
+    key          = "terraform.tfstate"
+    use_lockfile = true
     # Deactivate a few AWS-specific checks
     skip_credentials_validation = true
     # skip_requesting_account_id  = true
-    skip_requesting_account_id  = true
-    skip_metadata_api_check     = true
-    skip_region_validation      = true
+    skip_requesting_account_id = true
+    skip_metadata_api_check    = true
+    skip_region_validation     = true
     # skip_s3_checksum            = true
-    skip_s3_checksum            = true
-    region                      = "nyc3"
+    skip_s3_checksum = true
+    region           = "nyc3"
   }
 
   required_providers {
@@ -37,21 +37,21 @@ terraform {
     cilium = {
       source  = "littlejo/cilium"
       version = "~> 0.3.1"
-      configuration_aliases = [ cilium.cilium-east,
-                                cilium.cilium-west ]
+      configuration_aliases = [cilium.cilium-east,
+      cilium.cilium-west]
     }
     kubernetes = {
       source = "hashicorp/kubernetes"
       configuration_aliases = [ # kubernetes.kubeconfig-east,
-                                # kubernetes.kubeconfig-west,
-                               kubernetes.talos-proxmox-east,
-                               kubernetes.talos-proxmox-west ]
+        # kubernetes.kubeconfig-west,
+        kubernetes.talos-proxmox-east,
+      kubernetes.talos-proxmox-west]
     }
     helm = {
-      source = "hashicorp/helm"
+      source  = "hashicorp/helm"
       version = "3.0.2"
       configuration_aliases = [helm.helm-east,
-                               helm.helm-west ]
+      helm.helm-west]
     }
     // kubectl = {
     //   source = "gavinbunney/kubectl"
@@ -59,30 +59,30 @@ terraform {
     //   configuration_aliases = [kubectl.kubectl-east, kubectl.kubectl-west]
     // }
     kubectl = {
-      source = "alekc/kubectl"
+      source  = "alekc/kubectl"
       version = "2.1.3"
     }
     doppler = {
       source = "DopplerHQ/doppler"
     }
     auth0 = {
-      source = "auth0/auth0"
+      source  = "auth0/auth0"
       version = ">= 1.28.0" # Use the latest stable version
     }
     digitalocean = {
-      source = "digitalocean/digitalocean"
+      source  = "digitalocean/digitalocean"
       version = "2.66.0"
     }
   }
 }
 
 provider "proxmox" {
-  endpoint   = var.proxmox_api_endpoint
+  endpoint = var.proxmox_api_endpoint
   // api_token  =  var.proxmox_api_token
-  api_token  =  data.doppler_secrets.aggrik8s-cluster.map.PROXMOX_API_TOKEN
-  insecure   = true
+  api_token = data.doppler_secrets.aggrik8s-cluster.map.PROXMOX_API_TOKEN
+  insecure  = true
   ssh {
-    agent    = true
+    agent = true
     // username = var.proxmox_user
     username = data.doppler_secrets.aggrik8s-cluster.map.PROXMOX_USER
     // password = var.proxmox_root_pwd
@@ -95,11 +95,11 @@ provider "cilium" {
   // config_path = "${path.module}/kubeconfig-east"
   // config_path = "${path.module}/kubeconfig"
   // config_context = "admin@talos-east"
-  alias = "cilium-east"
-  host                        = doppler_secret.kubeconfig-server-east.computed
-  client_certificate          = base64decode(doppler_secret.client_certificate_east.computed)
-  client_key                  = base64decode(doppler_secret.client_key_east.computed)
-  cluster_ca_certificate      = base64decode(doppler_secret.cluster_ca_certificate_east.computed)
+  alias                  = "cilium-east"
+  host                   = doppler_secret.kubeconfig-server-east.computed
+  client_certificate     = base64decode(doppler_secret.client_certificate_east.computed)
+  client_key             = base64decode(doppler_secret.client_key_east.computed)
+  cluster_ca_certificate = base64decode(doppler_secret.cluster_ca_certificate_east.computed)
 }
 
 /*
@@ -118,34 +118,34 @@ provider "cilium" {
   # Configuration options
   // config_path = "${path.module}/kubeconfig"
   // config_context = "admin@talos-west"
-  alias = "cilium-west"
-  host                        = doppler_secret.kubeconfig-server-west.computed
-  client_certificate          = base64decode(doppler_secret.client_certificate_west.computed)
-  client_key                  = base64decode(doppler_secret.client_key_west.computed)
-  cluster_ca_certificate      = base64decode(doppler_secret.cluster_ca_certificate_west.computed)
+  alias                  = "cilium-west"
+  host                   = doppler_secret.kubeconfig-server-west.computed
+  client_certificate     = base64decode(doppler_secret.client_certificate_west.computed)
+  client_key             = base64decode(doppler_secret.client_key_west.computed)
+  cluster_ca_certificate = base64decode(doppler_secret.cluster_ca_certificate_west.computed)
 }
 
 provider "kubectl" {
-  alias          = "kubectl-east"
+  alias = "kubectl-east"
   // config_path    = "${path.module}/tmp/kubeconfig"
   // config_context = "admin@talos-east"
 
-  host                        = doppler_secret.kubeconfig-server-east.computed
-  client_certificate          = base64decode(doppler_secret.client_certificate_east.computed)
-  client_key                  = base64decode(doppler_secret.client_key_east.computed)
-  cluster_ca_certificate      = base64decode(doppler_secret.cluster_ca_certificate_east.computed)
+  host                   = doppler_secret.kubeconfig-server-east.computed
+  client_certificate     = base64decode(doppler_secret.client_certificate_east.computed)
+  client_key             = base64decode(doppler_secret.client_key_east.computed)
+  cluster_ca_certificate = base64decode(doppler_secret.cluster_ca_certificate_east.computed)
 }
 
 provider "kubectl" {
   #depends_on = [ doppler_secret.kubeconfig_west ]
-  alias          = "kubectl-west"
+  alias = "kubectl-west"
   // config_path    = "${path.module}/tmp/kubeconfig"
   // config_context = "admin@talos-west"
 
-  host                        = doppler_secret.kubeconfig-server-west.computed
-  client_certificate          = base64decode(doppler_secret.client_certificate_west.computed)
-  client_key                  = base64decode(doppler_secret.client_key_west.computed)
-  cluster_ca_certificate      = base64decode(doppler_secret.cluster_ca_certificate_west.computed)
+  host                   = doppler_secret.kubeconfig-server-west.computed
+  client_certificate     = base64decode(doppler_secret.client_certificate_west.computed)
+  client_key             = base64decode(doppler_secret.client_key_west.computed)
+  cluster_ca_certificate = base64decode(doppler_secret.cluster_ca_certificate_west.computed)
 }
 
 provider "kubernetes" {
@@ -154,10 +154,10 @@ provider "kubernetes" {
   // config_path    = "${path.module}/tmp/kubeconfig"
   // config_context = "admin@talos-east"
   // config_path = module.talos-proxmox-east.kubeconfig
-  host                        = doppler_secret.kubeconfig-server-east.computed
-  client_certificate          = base64decode(doppler_secret.client_certificate_east.computed)
-  client_key                  = base64decode(doppler_secret.client_key_east.computed)
-  cluster_ca_certificate      = base64decode(doppler_secret.cluster_ca_certificate_east.computed)
+  host                   = doppler_secret.kubeconfig-server-east.computed
+  client_certificate     = base64decode(doppler_secret.client_certificate_east.computed)
+  client_key             = base64decode(doppler_secret.client_key_east.computed)
+  cluster_ca_certificate = base64decode(doppler_secret.cluster_ca_certificate_east.computed)
 }
 
 /*
@@ -180,10 +180,10 @@ output "kube_secret_cluster_server" {
 provider "kubernetes" {
   alias = "talos-proxmox-west"
 
-  host                        = doppler_secret.kubeconfig-server-west.computed
-  client_certificate          = base64decode(doppler_secret.client_certificate_west.computed)
-  client_key                  = base64decode(doppler_secret.client_key_west.computed)
-  cluster_ca_certificate      = base64decode(doppler_secret.cluster_ca_certificate_west.computed)
+  host                   = doppler_secret.kubeconfig-server-west.computed
+  client_certificate     = base64decode(doppler_secret.client_certificate_west.computed)
+  client_key             = base64decode(doppler_secret.client_key_west.computed)
+  cluster_ca_certificate = base64decode(doppler_secret.cluster_ca_certificate_west.computed)
   // config_path = module.talos-proxmox-west.kubeconfig
   // config_path = "${path.module}/tmp/kubeconfig"
   // config_context = "admin@talos-west"
@@ -196,10 +196,10 @@ provider "helm" {
     # config_path = module.talos-proxmox-east.kubeconfig
     // config_path = "${path.module}/tmp/kubeconfig"
     // config_context = "admin@talos-east"
-    host                        = doppler_secret.kubeconfig-server-east.computed
-    client_certificate          = base64decode(doppler_secret.client_certificate_east.computed)
-    client_key                  = base64decode(doppler_secret.client_key_east.computed)
-    cluster_ca_certificate      = base64decode(doppler_secret.cluster_ca_certificate_east.computed)
+    host                   = doppler_secret.kubeconfig-server-east.computed
+    client_certificate     = base64decode(doppler_secret.client_certificate_east.computed)
+    client_key             = base64decode(doppler_secret.client_key_east.computed)
+    cluster_ca_certificate = base64decode(doppler_secret.cluster_ca_certificate_east.computed)
   }
 }
 
@@ -209,10 +209,10 @@ provider "helm" {
     // config_path = doppler_secrets.talos-proxmox-west.kubeconfig
     // config_path = "${path.module}/tmp/kubeconfig"
     // config_context = "admin@talos-west"
-    host                        = doppler_secret.kubeconfig-server-west.computed
-    client_certificate          = base64decode(doppler_secret.client_certificate_west.computed)
-    client_key                  = base64decode(doppler_secret.client_key_west.computed)
-    cluster_ca_certificate      = base64decode(doppler_secret.cluster_ca_certificate_west.computed)
+    host                   = doppler_secret.kubeconfig-server-west.computed
+    client_certificate     = base64decode(doppler_secret.client_certificate_west.computed)
+    client_key             = base64decode(doppler_secret.client_key_west.computed)
+    cluster_ca_certificate = base64decode(doppler_secret.cluster_ca_certificate_west.computed)
   }
 }
 
