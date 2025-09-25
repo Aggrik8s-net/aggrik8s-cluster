@@ -51,7 +51,7 @@ This recipe has been tested and verified to orchestrate the provisioning of our 
 10. [../bin/cilium_config.sh -i 2 -n talos-west -c admin@talos-west --pod_cidr "10.245.0.0/16"](https://github.com/Aggrik8s-net/aggrik8s-cluster/blob/cilium/bin/cilium_config.sh) install Cilium on `talos-west`.
 11. `mv rook-ceph.tf- rook-ceph.tf` enable `rook-ceph` provisioning now that Cilium CNI is installed.
 12. `mv metrics-server.tf- metrics-server.tf` enable `rook-ceph` provisioning now that Cilium CNI is installed.
-    13. `doppler run --name-transformer tf-var -- terraform apply` installs or Kubernetes bits including CRD's we need to start Cilium.
+13. `doppler run --name-transformer tf-var -- terraform apply` installs or Kubernetes bits including CRD's we need to start Cilium.
 14. `kubectl --context admin@talos-west delete secret cilium-ca -n kube-system` => secret "cilium-ca" deleted
 15. `kubectl --context admin@talos-east get secret -n kube-system cilium-ca -o yaml |  kubectl --context admin@talos-west  create -f -`  => secret/cilium-ca created
 16. ` cilium clustermesh enable --context admin@talos-east --service-type NodePort` enable 1/2 of our Cluster Mesh.

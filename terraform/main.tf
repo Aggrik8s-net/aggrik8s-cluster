@@ -43,19 +43,19 @@ module "talos-proxmox-east" {
   worker_extra_disks = {
     "wrk-e-1" = [{
       datastore_id = "cluster-lvm"
-      size         = 80
+      size         = 48
       #file_format  = optional(string)
       #file_id      = optional(string)
     }, ]
     "wrk-e-2" = [{
       datastore_id = "cluster-lvm"
-      size         = 80
+      size         = 48
       #file_format  = optional(string)
       #file_id      = optional(string)
     }, ]
     "wrk-e-3" = [{
       datastore_id = "cluster-lvm"
-      size         = 80
+      size         = 48
       #file_format  = optional(string)
       #file_id      = optional(string)
     }, ]
@@ -87,19 +87,19 @@ module "talos-proxmox-west" {
   worker_extra_disks = {
     "wrk-w-1" = [{
       datastore_id = "cluster-lvm"
-      size         = 80
+      size         = 48
       #file_format  = optional(string)
       #file_id      = optional(string)
     }, ]
     "wrk-w-2" = [{
       datastore_id = "cluster-lvm"
-      size         = 80
+      size         = 48
       #file_format  = optional(string)
       #file_id      = optional(string)
     }, ]
     "wrk-w-3" = [{
       datastore_id = "cluster-lvm"
-      size         = 80
+      size         = 48
       #file_format  = optional(string)
       #file_id      = optional(string)
     }, ]
@@ -134,7 +134,7 @@ cluster:
 
   extraManifests:
     - https://raw.githubusercontent.com/alex1989hu/kubelet-serving-cert-approver/main/deploy/standalone-install.yaml
-    - https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yamldshea@pi-manage-01:~/git/aggrik8s-cluster/terraformEOF
+    - https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
 EOF
   ]
 

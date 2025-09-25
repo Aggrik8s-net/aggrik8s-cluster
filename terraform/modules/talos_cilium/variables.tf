@@ -1,7 +1,7 @@
 variable "virtual_environment_endpoint" {
     description = "Proxmox Node URL"
     type        = string
-    default     = "https://192.168.10.10:8006"
+    default     = "https://192.168.88.10:8006"
 }
 
 # Copyright (c) 2024 BB Tech Systems LLC
@@ -51,13 +51,13 @@ variable "proxmox_vm_type" {
 variable "proxmox_control_vm_disk_size" {
     description = "Proxmox control VM disk size in GB"
     type        = number
-    default     = 24
+    default     = 16
 }
 
 variable "proxmox_worker_vm_disk_size" {
     description = "Proxmox worker VM disk size in GB"
     type        = number
-    default     = 32
+    default     = 24
 }
 
 variable "proxmox_network_vlan_id" {
@@ -157,7 +157,7 @@ cluster:
 
   extraManifests:
     - https://raw.githubusercontent.com/alex1989hu/kubelet-serving-cert-approver/main/deploy/standalone-install.yaml
-    - https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yamldshea@pi-manage-01:~/git/aggrik8s-cluster/terraform
+    - https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
 EOT
     ]
 }
