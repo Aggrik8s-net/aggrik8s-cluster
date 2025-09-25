@@ -1,6 +1,6 @@
 #!/bin/bash
 
-kubeProxyReplacement="false"
+kubeProxyReplacement="true"
 
 POSITIONAL_ARGS=()
 
@@ -41,6 +41,11 @@ set -- "${POSITIONAL_ARGS[@]}" # restore positional parameters
 echo "CLUSTER_NAME    = ${CLUSTER_NAME}"
 echo "CLUSTER_CONTEXT = ${CLUSTER_CONTEXT}"
 echo "CLUSTER_ID      = ${CLUSTER_ID}"
+# Use our Cluster ID to offset from base nodeport value
+NODE_PORT_BASE="3000"
+NODE_PORT="${NODE_PORT_BASE}${CLUSTER_ID}"
+echo "NODE_PORT_BASE  = ${NODE_PORT_BASE}"
+echo "NODE_PORT       = ${NODE_PORT}"
 # echo "DEFAULT         = ${DEFAULT}"
 # echo "Number files in SEARCH PATH with EXTENSION:" $(ls -1 "${SEARCHPATH}"/*."${EXTENSION}" | wc -l)
 
@@ -68,6 +73,9 @@ cilium install \
   --set cluster.name=${CLUSTER_NAME} \
   --set cluster.id=${CLUSTER_ID}   \
   --context ${CLUSTER_CONTEXT}  \
+    --set clustermesh.useAPIServer=true \
+    --set clustermesh.apiserver.service.type=NodePort \
+    --set clustermesh.apiserver.service.nodeport.port=${NODE_PORT} \
   --set ipam.mode=kubernetes \
   --set kubeProxyReplacement=${kubeProxyReplacement} \
   --set k8sServiceHost=localhost \
@@ -87,7 +95,8 @@ cilium install \
     --set gatewayAPI.enableAlpn=true \
     --set gatewayAPI.enableAppProtocol=true \
     --set ipv4NativeRoutingCIDR=10.0.0.0/8 \
-    --set l7Proxy=true
+    --set l7Proxy=true \
+
 
 
 # cilium hubble enable
