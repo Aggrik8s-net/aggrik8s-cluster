@@ -1,12 +1,32 @@
 # Welcome to Aggrik8s-net/aggrik8s-cluster 
 ## Objective
-This project uses [Cilium](https://cilium.io/use-cases/cluster-mesh/) to provision a mesh of [Talos Kubernetes](https://www.talos.dev) clusters ready to support development.
-## TL;DR
+This project uses [Cilium](https://cilium.io/use-cases/cluster-mesh/) and [Talos](https://www.talos.dev) to provision a  Kubernetes cluster mesh running on [Proxmox SDN](https://pve.proxmox.com/pve-docs/chapter-pvesdn.html).
+
 A Cluster Mesh extends Kubernetes to allow application deployment and administration across multiple clusters.
 <p align="center">
   <img src="https://cdn.sanity.io/images/xinsvxfu/production/52945d699a34350e33de7dc1d85182ae37b0715e-1600x938.png?auto=format&q=80&fit=clip&w=2560" width="675" title="Cilium Cluster Mesh">
 </p>
-Use cases such as `Follow-the-Sun NOC` or `Disaster Recovery` are dramatically simplified using meshed clusters.
+
+## Installation
+Refer to [Cluster Mesh Cookbook](./CLUSTER_COOKBOOK.md) for detailed instructions for using [Aggrik8s-net/aggrik8s-cluster](https://github.com/Aggrik8s-net/aggrik8s-cluster/tree/main/terraform).
+
+## TL;DR
+Our IaC stack provisions immutable Kubernetes Cluster meshes to allow `digital twin` infrastructure.
+Benefits of a turn-key infrastructure plaform:
+- infrastructure repeatability, reliability, and transparency,
+- `Blue Green Deployments`,
+- `Disaster Recovery`,
+- `Follow the Sun Operations Centers`.
+
+Our IaC platform provisions turn-key cluster meshes - this is game changer.
+
+- 
+- we can create `digital twins` turn-key infrastructure to meet Development, Staging, and Production requirements.
+
+This repository contains an IaC stack to spin up turn-key Kubernetes clusters mesh. 
+Cilium uses [eBPF](.) to implement [Kubernetes CNI](https://github.com/containernetworking/cni) and add Observability toolssuch as:
+- [Hubble](https://github.com/cilium/hubble) network observaability,
+- [Tetragon](https://github.com/cilium/tetragon) Linux Kernel observibility.
 ## Introduction
 [Talos](https://github.com/siderolabs/talos) is an immutable Linux distribution purpose built to run Kubernetes - it is configured using a single `YAML` and there no `ssh` . 
 
@@ -38,34 +58,7 @@ We have verified the reusability of existing `Ansible Playbooks` to install `Day
 
 
 
-## Cluster Mesh Deployment
-This recipe has been tested and verified to orchestrate the provisioning of our meshed Talos clusters; the procedure does depend on `podCIDR` to be unique for each cluster.
-1. [../bin/spinUp.sh](https://github.com/Aggrik8s-net/aggrik8s-cluster/blob/cilium/bin/spinUp.sh) provisions the Talos Clusters and sets up our Doppler secrets.
-2. [../bin/getCreds.sh](https://github.com/Aggrik8s-net/aggrik8s-cluster/blob/cilium/bin/getCreds.sh) create local `talosconfig` and `kubeconfig` files and merge our `kubeconfig` files to support `kubectx -`.
-3. [../bin/wipeVdb.sh](https://github.com/Aggrik8s-net/aggrik8s-cluster/blob/cilium/bin/getCreds.sh)  -  prepare`vdb`to be adopted by Rook.
-4. `export KUBECONFIG=./tmp/kubeconfig` point to our merged `kubeconfig` file.
-5. `mv rook-ceph.tf rook-ceph.tf-` disable `rook-ceph` provisioning until after Cilium is installed.
-5. `mv metrics-server.tf metrics-server.tf-` disable metrics-server provisioning until we patch config.
-7. `terraform taint doppler_secret.kubeconfig_west` => fix this suspected race condition issue
-8. `doppler run --name-transformer tf-var -- terraform apply` installs our Kubernetes bits including CRD's we need to start Cilium.
-9. [../bin/cilium_config.sh -i 1 -n talos-east -c admin@talos-east --pod_cidr "10.244.0.0/16"](https://github.com/Aggrik8s-net/aggrik8s-cluster/blob/cilium/bin/cilium_config.sh) install Cilium on `talos-east`.
-10. [../bin/cilium_config.sh -i 2 -n talos-west -c admin@talos-west --pod_cidr "10.245.0.0/16"](https://github.com/Aggrik8s-net/aggrik8s-cluster/blob/cilium/bin/cilium_config.sh) install Cilium on `talos-west`.
-11. `mv rook-ceph.tf- rook-ceph.tf` enable `rook-ceph` provisioning now that Cilium CNI is installed.
-12. `mv metrics-server.tf- metrics-server.tf` enable `rook-ceph` provisioning now that Cilium CNI is installed.
-13. `doppler run --name-transformer tf-var -- terraform apply` installs or Kubernetes bits including CRD's we need to start Cilium.
-14. `kubectl --context admin@talos-west delete secret cilium-ca -n kube-system` => secret "cilium-ca" deleted
-15. `kubectl --context admin@talos-east get secret -n kube-system cilium-ca -o yaml |  kubectl --context admin@talos-west  create -f -`  => secret/cilium-ca created
-16. ` cilium clustermesh enable --context admin@talos-east --service-type NodePort` enable 1/2 of our Cluster Mesh.
-17. ` cilium clustermesh enable --context admin@talos-west --service-type NodePort` enable the other 1/2 of the Mesh.
-18. `cilium clustermesh connect --context admin@talos-east --destination-context admin@talos-west` is how we make it so
-19. `cilium connectivity test --context admin@talos-east --multi-cluster admin@talos-west`  -  run cilium conn3ctivity test
 
-Both clusters are good to go.
-
-Our Cluster credentials for Talos and Kubernetes have been exported both as [Doppler secrets](https://www.doppler.com/integrations/kubernetes) and as local `talosconfig` and `kubeconfig` files. 
-We are using the Cilium CLI to manage our environment because `Cilium Helm charts` do not always work correctly.
-Our existing Ansible Playbooks have been verified to be reusable to configure `Day 2 Services` such as [Robusta](https://github.com/robusta-dev/robusta), [Honeycomb OTEL](https://docs.honeycomb.io/send-data/opentelemetry/).
-SecOps is addressed using [Doppler](https://www.doppler.com/platform/secrets-manager) to manage our platform secrets and eBPF tools such as [Kubescape](https://kubescape.io/) with [Armo](https://hub.armosec.io/docs/armo-platform#how-armo-platform-works), [Inspektor-Gadget](https://github.com/inspektor-gadget/inspektor-gadget),  [Groundcover](https://www.groundcover.com/ebpf-sensor) and [Tetragon](https://github.com/cilium/tetragon/).
 
 <p align="center">
   <img src="https://tetragon.io/images/smart_observability.png" width="500" title="Tetragon eBPF Sensor">
