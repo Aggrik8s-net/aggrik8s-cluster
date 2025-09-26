@@ -7,7 +7,8 @@ A Cluster Mesh extends Kubernetes to allow application deployment and administra
   <img src="https://cdn.sanity.io/images/xinsvxfu/production/52945d699a34350e33de7dc1d85182ae37b0715e-1600x938.png?auto=format&q=80&fit=clip&w=2560" width="675" title="Cilium Cluster Mesh">
 </p>
 
-Refer to [Cluster Mesh Cookbook](./CLUSTER_COOKBOOK.md) for detailed instructions on how to create and destroy cluster meshes using [Aggrik8s-net/aggrik8s-cluster]().
+## Installation
+Refer to [Cluster Mesh Cookbook](./CLUSTER_COOKBOOK.md) for detailed instructions for using [Aggrik8s-net/aggrik8s-cluster](https://github.com/Aggrik8s-net/aggrik8s-cluster/tree/main/terraform).
 
 ## TL;DR
 Our IaC stack provisions immutable Kubernetes Cluster meshes to allow `digital twin` infrastructure.
