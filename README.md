@@ -1,12 +1,13 @@
-## TLDR;
-This project provisions a mesh of [Talos](https://www.talos.dev) Kubernetes clusters using [Cilium cluster Mesh](https://cilium.io/use-cases/cluster-mesh/). 
-A cluster mesh extends the Kubernetes' control-plane allowing applications to be composed of resources hosted on multiple clusters. 
-Use cases such as `Follow-the-Sun NOC` or `Disaster Recovery` are simplified dramatically using applications hosted on meshed clusters.
+# Welcome to Aggrik8s-net/aggrik8s-cluster 
+## Objective
+This project uses [Cilium](https://cilium.io/use-cases/cluster-mesh/) to provision a mesh of [Talos Kubernetes](https://www.talos.dev) clusters ready to support development.
+## TL;DR
+A Cluster Mesh extends Kubernetes to allow application deployment and administration across multiple clusters.
 <p align="center">
   <img src="https://cdn.sanity.io/images/xinsvxfu/production/52945d699a34350e33de7dc1d85182ae37b0715e-1600x938.png?auto=format&q=80&fit=clip&w=2560" width="675" title="Cilium Cluster Mesh">
 </p>
-
-## Description
+Use cases such as `Follow-the-Sun NOC` or `Disaster Recovery` are dramatically simplified using meshed clusters.
+## Introduction
 [Talos](https://github.com/siderolabs/talos) is an immutable Linux distribution purpose built to run Kubernetes - it is configured using a single `YAML` and there no `ssh` . 
 
 [Cilium](https://github.com/cilium/cilium) is an [eBPF](https://ebpf.io/) based Kubernetes CNI which improves scalability, cost efficiency, and observability of the cluster.
