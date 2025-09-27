@@ -1,32 +1,47 @@
-# Welcome to Aggrik8s-net/aggrik8s-cluster 
-## Objective
+# Aggrik8s-net/aggrik8s-cluster
+## What are we trying to do?
 This project uses [Cilium](https://cilium.io/use-cases/cluster-mesh/) and [Talos](https://www.talos.dev) to provision a  Kubernetes cluster mesh running on [Proxmox SDN](https://pve.proxmox.com/pve-docs/chapter-pvesdn.html).
-
+## Why
 A Cluster Mesh extends Kubernetes to allow application deployment and administration across multiple clusters.
+
 <p align="center">
-  <img src="https://cdn.sanity.io/images/xinsvxfu/production/52945d699a34350e33de7dc1d85182ae37b0715e-1600x938.png?auto=format&q=80&fit=clip&w=2560" width="675" title="Cilium Cluster Mesh">
+  <img src="https://tetragon.io/images/smart_observability.png" width="500" title="Tetragon eBPF Sensor">
 </p>
 
+We will use this stack for research & development as well as any MVC projects which come along.
+### How
+This repo hosts [Aggrik8s-net/aggrik8s-cluster](https://github.com/Aggrik8s-net/aggrik8s-cluster/tree/main/terraform) which is an IaC stack tp spin up Cilium Cluster Meshes.
+
+Cilium uses [eBPF](https://ebpf.io/what-is-ebpf/) to implement the [Kubernetes CNI](https://github.com/containernetworking/cni/).
+Each node in our cluster has the following services shown below.
+<p align="center">
+  <img src="docs/Cilium_node.png" width="675" title="Cilium Cluster Mesh">
+</p>
+
+<p align="center">
+  <img src="docs/Cilium_node.png" width="675" title="Cilium Cluster Mesh">
+</p>
+
+
+Cilium's eBPF foundation enables several observability and policy management tools.
+- [Cilim CLI](https://github.com/cilium/cilium-cli) to configure and test Cilium itself,
+- [Hubble](https://github.com/cilium/hubble) plugin focused on network traffic policy & observability,
+- [Tetragon](https://github.com/cilium/tetragon) plugin providing Kernel observibility.
+- 
 ## Installation
 Refer to [Cluster Mesh Cookbook](./CLUSTER_COOKBOOK.md) for detailed instructions for using [Aggrik8s-net/aggrik8s-cluster](https://github.com/Aggrik8s-net/aggrik8s-cluster/tree/main/terraform).
 
-## TL;DR
-Our IaC stack provisions immutable Kubernetes Cluster meshes to allow `digital twin` infrastructure.
-Benefits of a turn-key infrastructure plaform:
+## Description
+Our IaC stack allows `digital twin` cluster meshes to be spun up and scaled as needed for `development`, `staging`, and `production` purposes.
+Some of the benefits of stamping out turn-key plaforms are:
 - infrastructure repeatability, reliability, and transparency,
 - `Blue Green Deployments`,
 - `Disaster Recovery`,
 - `Follow the Sun Operations Centers`.
 
-Our IaC platform provisions turn-key cluster meshes - this is game changer.
+[Aggrik8s-net/aggrik8s-cluster](https://github.com/Aggrik8s-net/aggrik8s-cluster/tree/main/terraform) provisions turn-key cluster meshes - this is game changer.
 
-- 
-- we can create `digital twins` turn-key infrastructure to meet Development, Staging, and Production requirements.
 
-This repository contains an IaC stack to spin up turn-key Kubernetes clusters mesh. 
-Cilium uses [eBPF](.) to implement [Kubernetes CNI](https://github.com/containernetworking/cni) and add Observability toolssuch as:
-- [Hubble](https://github.com/cilium/hubble) network observaability,
-- [Tetragon](https://github.com/cilium/tetragon) Linux Kernel observibility.
 ## Introduction
 [Talos](https://github.com/siderolabs/talos) is an immutable Linux distribution purpose built to run Kubernetes - it is configured using a single `YAML` and there no `ssh` . 
 
@@ -60,9 +75,6 @@ We have verified the reusability of existing `Ansible Playbooks` to install `Day
 
 
 
-<p align="center">
-  <img src="https://tetragon.io/images/smart_observability.png" width="500" title="Tetragon eBPF Sensor">
-</p>
 
 
 ## Design
@@ -83,3 +95,8 @@ We use Terraform to provision Cilium Mesh of Talos based Kubernetes clusters.
 ## Applications
 - Ollama
 - 
+
+
+<p align="center">
+  <img src="https://cdn.sanity.io/images/xinsvxfu/production/52945d699a34350e33de7dc1d85182ae37b0715e-1600x938.png?auto=format&q=80&fit=clip&w=2560" width="675" title="Cilium Cluster Mesh">
+</p>
