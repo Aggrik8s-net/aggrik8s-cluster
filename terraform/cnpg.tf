@@ -46,6 +46,15 @@ data "http" "cnpg_yaml_raw" {
 data "kubectl_file_documents" "cnpg_multi_doc" {
   content = data.http.cnpg_yaml_raw.response_body
 }
+data "http" "cnpg_operator_multidoc_yaml" {
+  url = local.cnpg_manifest_url
+}
+
+resource "kubernetes_manifest" "cnpg_operator_crd" {
+  for_each = toset(split("---", data.http.cnpg_operator_multidoc_yaml.response_body))
+  // yaml_body = each.value
+  manifest = yamldecode(each.value)
+}
 
 
 resource "kubectl_manifest" "cnpg_east" {
