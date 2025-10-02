@@ -25,7 +25,8 @@ module "talos-proxmox-east" {
   source = "./modules/talos_cilium"
   #version = "0.1.5"
   talos_cluster_name = "talos-east"
-  talos_version      = "1.10.4"
+  # talos_version      = "1.10.4"
+  talos_version      = "1.11.2"
 
   proxmox_network_vlan_id = 1500
 
@@ -70,7 +71,8 @@ module "talos-proxmox-west" {
   source = "./modules/talos_cilium"
   #version = "0.1.5"
   talos_cluster_name = "talos-west"
-  talos_version      = "1.10.4"
+  # talos_version      = "1.10.4"
+  talos_version      = "1.11.2"
 
   proxmox_network_vlan_id = 2000
 
