@@ -18,7 +18,7 @@ variable "proxmox_api_endpoint" {
   description = "Doppler managed secret injected as a TF_VAR."
   type        = string
   sensitive   = false
-  default     = "https://192.168.88.10:8006"
+  default     = "https://192.168.88.10:8006/"
 }
 
 variable "proxmox_root_pwd" {
