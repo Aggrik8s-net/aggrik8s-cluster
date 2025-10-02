@@ -46,6 +46,7 @@ terraform {
         # kubernetes.kubeconfig-west,
         kubernetes.talos-proxmox-east,
       kubernetes.talos-proxmox-west]
+      version = "2.38.0"
     }
     helm = {
       source  = "hashicorp/helm"
@@ -64,6 +65,7 @@ terraform {
     }
     doppler = {
       source = "DopplerHQ/doppler"
+      version = "1.20.0"
     }
     auth0 = {
       source  = "auth0/auth0"
@@ -71,7 +73,7 @@ terraform {
     }
     digitalocean = {
       source  = "digitalocean/digitalocean"
-      version = "2.66.0"
+      version = "2.67.0"
     }
   }
 }
