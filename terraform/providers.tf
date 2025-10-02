@@ -28,11 +28,11 @@ terraform {
   required_providers {
     proxmox = {
       source  = "bpg/proxmox"
-      version = "~> 0.75.0"
+      version = "0.84.1"
     }
     talos = {
       source  = "siderolabs/talos"
-      version = "~> 0.7.1"
+      version = "0.9.0"
     }
     cilium = {
       source  = "littlejo/cilium"
@@ -84,8 +84,8 @@ provider "proxmox" {
   ssh {
     agent = true
     // username = var.proxmox_user
-    username = data.doppler_secrets.aggrik8s-cluster.map.PROXMOX_USER
     // password = var.proxmox_root_pwd
+    username = data.doppler_secrets.aggrik8s-cluster.map.PROXMOX_USER
     password = data.doppler_secrets.aggrik8s-cluster.map.PROXMOX_ROOT_PWD
   }
 }
