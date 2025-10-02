@@ -42,7 +42,9 @@ resource "proxmox_virtual_environment_vm" "talos_control_vm" {
         size         = var.proxmox_control_vm_disk_size
     }
     network_device {
-        vlan_id = var.proxmox_network_vlan_id
+       // SDN VLAN does not require VLAN Tag at VM level
+       // vlan_id = var.proxmox_network_vlan_id
+       // should be set to `vlan1500` or `vlan2000` (PVE SDN vlans)
         bridge  = var.proxmox_network_bridge
     }
     operating_system {
@@ -74,7 +76,9 @@ resource "proxmox_virtual_environment_vm" "talos_worker_vm" {
         size         = var.proxmox_worker_vm_disk_size
     }
     network_device {
-        vlan_id = var.proxmox_network_vlan_id
+        // SDN VLAN does not require VLAN Tag at VM level
+        // vlan_id = var.proxmox_network_vlan_id
+        // should be set to `vlan1500` or `vlan2000` (PVE SDN vlans)
         bridge  = var.proxmox_network_bridge
     }
     dynamic "disk" {
