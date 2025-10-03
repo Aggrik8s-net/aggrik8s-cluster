@@ -28,7 +28,8 @@ module "talos-proxmox-east" {
   # talos_version      = "1.10.4"
   talos_version      = "1.11.2"
 
-  proxmox_network_vlan_id = 1500
+  # proxmox_network_vlan_id = 1500
+  proxmox_network_bridge = "vlan1500"
 
   control_nodes = {
     "cp-e-1" = "pve"
@@ -74,7 +75,8 @@ module "talos-proxmox-west" {
   # talos_version      = "1.10.4"
   talos_version      = "1.11.2"
 
-  proxmox_network_vlan_id = 2000
+  # proxmox_network_vlan_id = 2000
+  proxmox_network_bridge = "vlan2000"
 
   control_nodes = {
     "cp-w-1" = "pve"

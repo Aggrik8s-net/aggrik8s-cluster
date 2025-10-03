@@ -17,4 +17,4 @@ terraform output --raw kubeconfig-west  > tmp/kubeconfig-west
 chmod 600 tmp/kubeconfig-west
 
 KUBECONFIG=tmp/kubeconfig-east:tmp/kubeconfig-west kubectl config view --flatten > tmp/kubeconfig
-chmod 600 $KUBECONFIG
+chmod 600 tmp/kubeconfig
