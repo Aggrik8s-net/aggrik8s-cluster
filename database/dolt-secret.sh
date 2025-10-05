@@ -1,0 +1,1 @@
+kubectl create secret generic dolt-secrets --from-literal=dolt-password='my-secret-password'
