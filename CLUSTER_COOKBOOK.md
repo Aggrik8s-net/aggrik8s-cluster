@@ -28,14 +28,15 @@ This recipe has been tested and verified to orchestrate the provisioning of our 
 9. [../bin/cilium_config.sh -i 1 -n talos-east -c admin@talos-east --pod_cidr "10.244.0.0/16"](https://github.com/Aggrik8s-net/aggrik8s-cluster/blob/cilium/bin/cilium_config.sh) install Cilium on `talos-east`.
 10. [../bin/cilium_config.sh -i 2 -n talos-west -c admin@talos-west --pod_cidr "10.245.0.0/16"](https://github.com/Aggrik8s-net/aggrik8s-cluster/blob/cilium/bin/cilium_config.sh) install Cilium on `talos-west`.
 11. `mv rook-ceph.tf- rook-ceph.tf` enable `rook-ceph` provisioning now that Cilium CNI is installed.
-12. `mv metrics-server.tf- metrics-server.tf` enable `rook-ceph` provisioning now that Cilium CNI is installed.
-13. `doppler run --name-transformer tf-var -- terraform apply` installs or Kubernetes bits including CRD's we need to start Cilium.
-14. `kubectl --context admin@talos-west delete secret cilium-ca -n kube-system` => secret "cilium-ca" deleted
-15. `kubectl --context admin@talos-east get secret -n kube-system cilium-ca -o yaml |  kubectl --context admin@talos-west  create -f -`  => secret/cilium-ca created
-16. ` cilium clustermesh enable --context admin@talos-east --service-type NodePort` enable 1/2 of our Cluster Mesh.
-17. ` cilium clustermesh enable --context admin@talos-west --service-type NodePort` enable the other 1/2 of the Mesh.
-18. `cilium clustermesh connect --context admin@talos-east --destination-context admin@talos-west` is how we make it so
-19. `cilium connectivity test --context admin@talos-east --multi-cluster admin@talos-west`  -  run cilium conn3ctivity test
+12. `doppler run --name-transformer tf-var -- terraform apply` -> install ROOK & CEPH for CSI features
+13. `mv metrics-server.tf- metrics-server.tf` enable `metrics-server` provisioning now that Cilium CNI is installed.
+14. `doppler run --name-transformer tf-var -- terraform apply` -> install METRICS SERVER.
+15. `kubectl --context admin@talos-west delete secret cilium-ca -n kube-system` => secret "cilium-ca" deleted
+16. `kubectl --context admin@talos-east get secret -n kube-system cilium-ca -o yaml |  kubectl --context admin@talos-west  create -f -`  => secret/cilium-ca created
+17. ` cilium clustermesh enable --context admin@talos-east --service-type NodePort` enable 1/2 of our Cluster Mesh.
+18. ` cilium clustermesh enable --context admin@talos-west --service-type NodePort` enable the other 1/2 of the Mesh.
+19. `cilium clustermesh connect --context admin@talos-east --destination-context admin@talos-west` is how we make it so
+20. `cilium connectivity test --context admin@talos-east --multi-cluster admin@talos-west`  -  run cilium conn3ctivity test
 
 Both clusters are good to go.
 

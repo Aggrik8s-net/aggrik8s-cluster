@@ -26,7 +26,8 @@ module "talos-proxmox-east" {
   #version = "0.1.5"
   talos_cluster_name = "talos-east"
   # talos_version      = "1.10.4"
-  talos_version      = "1.11.2"
+  # talos_version      = "1.11.2"
+  talos_version      = "1.11.3"
 
   # proxmox_network_vlan_id = 1500
   proxmox_network_bridge = "vlan1500"
@@ -45,19 +46,19 @@ module "talos-proxmox-east" {
   worker_extra_disks = {
     "wrk-e-1" = [{
       datastore_id = "cluster-lvm"
-      size         = 48
+      size         = 128
       #file_format  = optional(string)
       #file_id      = optional(string)
     }, ]
     "wrk-e-2" = [{
       datastore_id = "cluster-lvm"
-      size         = 48
+      size         = 128
       #file_format  = optional(string)
       #file_id      = optional(string)
     }, ]
     "wrk-e-3" = [{
       datastore_id = "cluster-lvm"
-      size         = 48
+      size         = 128
       #file_format  = optional(string)
       #file_id      = optional(string)
     }, ]
@@ -73,7 +74,8 @@ module "talos-proxmox-west" {
   #version = "0.1.5"
   talos_cluster_name = "talos-west"
   # talos_version      = "1.10.4"
-  talos_version      = "1.11.2"
+  # talos_version      = "1.11.2"
+  talos_version      = "1.11.3"
 
   # proxmox_network_vlan_id = 2000
   proxmox_network_bridge = "vlan2000"
@@ -91,19 +93,19 @@ module "talos-proxmox-west" {
   worker_extra_disks = {
     "wrk-w-1" = [{
       datastore_id = "cluster-lvm"
-      size         = 48
+      size         = 64
       #file_format  = optional(string)
       #file_id      = optional(string)
     }, ]
     "wrk-w-2" = [{
       datastore_id = "cluster-lvm"
-      size         = 48
+      size         = 64
       #file_format  = optional(string)
       #file_id      = optional(string)
     }, ]
     "wrk-w-3" = [{
       datastore_id = "cluster-lvm"
-      size         = 48
+      size         = 64
       #file_format  = optional(string)
       #file_id      = optional(string)
     }, ]
