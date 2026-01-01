@@ -1,0 +1,91 @@
+---
+- name: Robusta helm repo
+  hosts: localhost
+  vars:
+    myProject: "robusta"
+    helm_chart_name: "robusta"
+    helm_chart_ref:  "robusta/robusta"
+    helm_chart_url:  "https://robusta-charts.storage.googleapis.com"
+    #
+    myState: "present"
+    # myState: "absent"
+    #
+    # We should determine this from KUBECONFIG or Ansible 
+    myCluster: "talos-east"
+    valuesFile: "./talos_proxmox_values.yaml"
+  tasks:
+    - name: Display the value of the DOPPLER_ENVIRONMENT variable
+      ansible.builtin.debug:
+        msg: "The DOPPLER_ENVIRONMENT is {{ lookup('ansible.builtin.env', 'DOPPLER_ENVIRONMENT') }}"
+
+    - name: Display the value of the DOPPLER_PROJECT variable
+      ansible.builtin.debug:
+        msg: "The DOPPLER_PROJECT is {{ lookup('ansible.builtin.env', 'DOPPLER_PROJECT') }}"
+
+    - name: Display the value of the DOPPLER_CONFIG environment variable
+      ansible.builtin.debug:
+        msg: "The DOPPLER_CONFIG is {{ lookup('ansible.builtin.env', 'DOPPLER_CONFIG') }}"
+
+    - name: Retreive Robusta AccounteID
+      ansible.builtin.debug:
+        msg: "The robustaAccountID is {{ lookup('ansible.builtin.env', 'ROBUSTA_ACCOUNT_ID') }}"
+
+    - name: Retreive Robusta SigningKey
+      ansible.builtin.debug:
+        msg: "The robustaSigningKey is {{ lookup('ansible.builtin.env', 'ROBUSTA_SIGNING_ID') }}"
+
+#    - name: Use a default value if the variable is not defined
+#      ansible.builtin.debug:
+#        msg: "The UNDEFINED_VAR variable is {{ lookup('ansible.builtin.env', 'UNDEFINED_VAR', default='the <default value>') }}"
+
+    - name: helm repo present
+      kubernetes.core.helm_repository:
+        name: "{{ helm_chart_name }}"
+        repo_url: "{{ helm_chart_url }}"
+        repo_state: "{{ myState }}"
+
+    - name: namespace present
+      kubernetes.core.k8s:
+        api_version: v1
+        kind: Namespace
+        name: "{{ myProject }}"
+        state: "{{ myState }}"
+
+    # Patch existing namespace : add label
+    - name: add label to existing namespace
+      kubernetes.core.k8s:
+        state: patched
+        kind: Namespace
+        name: robusta
+        definition:
+          metadata:
+            labels:
+              pod-security.kubernetes.io/enforce:  privileged
+
+ #   - name: helm chart present
+ #     kubernetes.core.helm:
+ #       name: "{{ helm_chart_name }}"
+ #       namespace: "{{ myProject }}"
+ #       chart_ref: "{{ helm_chart_ref }}"
+ #       release_state: "{{ myState }}"
+
+    - name: helm chart installed
+      kubernetes.core.helm:
+        name: "{{ helm_chart_name }}"
+        namespace: "{{ myProject }}"
+        chart_ref: "{{ helm_chart_ref }}"
+        release_state: "{{ myState }}"
+        #release_state: present
+        values_files:
+        #- ./generated_values.yaml
+        - '{{ valuesFile }}'
+        # disable the replication bits
+        values:
+          clusterName:                    "{{ myCluster }}"
+          globalConfig: 
+            account_id:        "{{ lookup('ansible.builtin.env', 'ROBUSTA_ACCOUNT_ID') }}"
+            signing_key:       "{{ lookup('ansible.builtin.env', 'ROBUSTA_SIGNING_KEY') }}"
+          sinksConfig: 
+            - robusta_sink:
+                name: robusta_ui_sink
+                token: "{{ lookup('ansible.builtin.env', 'ROBUSTA_UI_SINK_TOKEN') }}"
