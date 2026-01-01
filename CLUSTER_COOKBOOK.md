@@ -40,7 +40,33 @@ This recipe has been tested and verified to orchestrate the provisioning of our 
 
 Both clusters are good to go.
 
-## Cluster Cleanup
+# Cluster Cleanup
 Usually, we can do a `terraform destroy` and remove all provisioned resources, occasionally this will not work. 
 
-When it is necessary we can zap all provisioned state  can `un-hork` whatever is wedged or sometimes its simpler to reset.
+## There are two parts to a manual cleanup. 
+ - First we need to destroy terraform state which is held in Digital Ocean Spaces.
+ - Second we need to remove all resources that were terraformed in Proxmox.
+
+### Destroy Terraform state
+A bash for loop simplifies this step:
+```bash
+$ for i in `terraform state list`
+do 
+  terraform state rm $i
+done  
+```
+
+### Remove Proxmox Resources
+There are three parts to this, all are done in a shell on the PVE node. 
+- First we remove the `talos` images that were downloaded.
+```shell
+root@pve:~# rm /var/lib/vz/template/iso/talos-*
+```
+- Next we remove all `control plane` nodes
+```shell
+root@pve:~# for i in `qm list |grep cp |cut -c 8-10`; do qm stop $i; qm destroy $i; done
+```
+- Finally we remove all `worker` nodes.
+```shell
+root@pve:~# for i in `qm list |grep wrk |cut -c 8-10`; do qm stop $i; qm destroy $i; done
+```

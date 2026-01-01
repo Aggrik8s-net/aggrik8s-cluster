@@ -1,5 +1,7 @@
 #!/bin/bash
 
+CILIUM_VERSION="1.18.5"
+
 kubeProxyReplacement="true"
 
 POSITIONAL_ARGS=()
@@ -37,7 +39,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 set -- "${POSITIONAL_ARGS[@]}" # restore positional parameters
-
+echo "CILIUM_VERSION  = ${CILIUM_VERSION}"
 echo "CLUSTER_NAME    = ${CLUSTER_NAME}"
 echo "CLUSTER_CONTEXT = ${CLUSTER_CONTEXT}"
 echo "CLUSTER_ID      = ${CLUSTER_ID}"
@@ -69,7 +71,7 @@ echo "NODE_PORT       = ${NODE_PORT}"
 #
 
 cilium install \
-  --version v1.18.0-rc.0 \
+  --version ${CILIUM_VERSION} \
   --set cluster.name=${CLUSTER_NAME} \
   --set cluster.id=${CLUSTER_ID}   \
   --context ${CLUSTER_CONTEXT}  \
