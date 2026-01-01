@@ -1,0 +1,7 @@
+setup:
+  - project: aggrik8s-cluster
+    config: dev
+    path: ./terraform
+  - project: aggrik8s-ansible
+    config: dev
+    path: ./ansible
