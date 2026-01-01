@@ -30,9 +30,13 @@
       ansible.builtin.debug:
         msg: "The robustaAccountID is {{ lookup('ansible.builtin.env', 'ROBUSTA_ACCOUNT_ID') }}"
 
-    - name: Retreive Robusta SigningKey
-      ansible.builtin.debug:
-        msg: "The robustaSigningKey is {{ lookup('ansible.builtin.env', 'ROBUSTA_SIGNING_ID') }}"
+#    - name: Retreive Robusta SigningKey
+#      ansible.builtin.debug:
+#        msg: "The robustaSigningKey is {{ lookup('ansible.builtin.env', 'ROBUSTA_SIGNING_KEY') }}"
+
+#    - name: Retreive Robusta AccessToken
+#      ansible.builtin.debug:
+#        msg: "The robustaUiSinkToken is {{ lookup('ansible.builtin.env', 'ROBUSTA_UI_SINK_TOKEN') }}"
 
 #    - name: Use a default value if the variable is not defined
 #      ansible.builtin.debug:
