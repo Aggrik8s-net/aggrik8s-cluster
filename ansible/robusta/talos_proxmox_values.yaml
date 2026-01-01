@@ -1,0 +1,38 @@
+# This file contains API keys. To load them from secrets, refer to https://docs.robusta.dev/master/setup-robusta/configuration-secrets.html
+
+# clusterName: talos-east # NOTE - adjust the clusterName when adding additional clusters
+globalConfig:
+  signing_key: default_value
+  account_id:  default_value
+sinksConfig:
+  - robusta_sink:
+      name:  robusta_ui_sink
+      token: default_value 
+enablePrometheusStack: true
+enablePlatformPlaybooks: true
+runner:
+  sendAdditionalTelemetry: true
+enableHolmesGPT: true
+#enableHolmesGPT: false
+enabledManagedConfiguration: true
+holmes:
+  additionalEnvVars:
+    - name: ROBUSTA_AI
+      value: "true"
+  resources:
+    requests:
+      memory: 512Mi
+kube-prometheus-stack:
+  prometheus:
+    prometheusSpec:
+      retentionSize: 9GB
+      storageSpec:
+        volumeClaimTemplate:
+          spec:
+            resources:
+              requests:
+                storage: 10Gi
+      resources:
+        requests:
+          memory: 512Mi
+isSmallCluster: true

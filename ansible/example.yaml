@@ -1,0 +1,21 @@
+---
+- name: Read environment variable from control node
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+    - name: Display the value of the DOPPLER_ENVIRONMENT variable
+      ansible.builtin.debug:
+        msg: "The DOPPLER_ENVIRONMENT is {{ lookup('ansible.builtin.env', 'DOPPLER_ENVIRONMENT') }}"
+
+    - name: Display the value of the DOPPLER_PROJECT variable
+      ansible.builtin.debug:
+        msg: "The DOPPLER_PROJECT is {{ lookup('ansible.builtin.env', 'DOPPLER_PROJECT') }}"
+
+    - name: Display the value of the DOPPLER_CONFIG environment variable
+      ansible.builtin.debug:
+        msg: "The DOPPLER_CONFIG is {{ lookup('ansible.builtin.env', 'DOPPLER_CONFIG') }}"
+
+    - name: Use a default value if the variable is not defined
+      ansible.builtin.debug:
+        msg: "The UNDEFINED_VAR variable is {{ lookup('ansible.builtin.env', 'UNDEFINED_VAR', default='the <default value>') }}"
