@@ -13,10 +13,8 @@ We need to enhance this procedure to remove stale secrets when we manually destr
 We use the Cilium CLI to manage our environment as `Cilium Helm charts` do not always work correctly.
 
 Our existing Ansible Playbooks have been verified to be reusable to configure `Day 2 Services` such as [Robusta](https://github.com/robusta-dev/robusta), [Honeycomb OTEL](https://docs.honeycomb.io/send-data/opentelemetry/).
-SecOps is addressed using [Doppler](https://www.doppler.com/platform/secrets-manager) to manage our platform secrets and eBPF tools such as [Kubescape](https://kubescape.io/) with [Armo](https://hub.armosec.io/docs/armo-platform#how-armo-platform-works), [Inspektor-Gadget](https://github.com/inspektor-gadget/inspektor-gadget),  [Groundcover](https://www.groundcover.com/ebpf-sensor) and [Tetragon](https://github.com/cilium/tetragon/).
-
-## Cluster Mesh Deployment
-This recipe has been tested and verified to orchestrate the provisioning of our meshed Talos clusters; the procedure does depend on `podCIDR` to be unique for each cluster.
+SecOps is addressed using [Doppler](https://www.doppler.com/platform/secrets-manager) to manage our platform secrets and eBPF tools such as [Kubescape](https://kubescape.io/) with [Armo](https://hub.armosec.io/docs/armo-platform#how-armo-platform-works), [Inspektor-Gadget](https://github.com/inspektor-gadget/inspektor-gadget),  [Groundcover](https://www.groundcover.com/ebpf-sensor) and [Tetragon](https://github.com/cilium/tetragon/). 
+orchestrate the provisioning of our meshed Talos clusters; the procedure does depend on `podCIDR` to be unique for each cluster.
 1. [../bin/spinUp.sh](https://github.com/Aggrik8s-net/aggrik8s-cluster/blob/cilium/bin/spinUp.sh) provisions the Talos Clusters and sets up our Doppler secrets.
 2. [../bin/getCreds.sh](https://github.com/Aggrik8s-net/aggrik8s-cluster/blob/cilium/bin/getCreds.sh) create local `talosconfig` and `kubeconfig` files and merge our `kubeconfig` files to support `kubectx -`.
 3. [../bin/wipeVdb.sh](https://github.com/Aggrik8s-net/aggrik8s-cluster/blob/cilium/bin/getCreds.sh)  -  prepare`vdb`to be adopted by Rook.
