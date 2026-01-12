@@ -1,6 +1,114 @@
-# Welcome to Aggrik8s-net/aggrik8s-cluster 
-## Objective
-This project uses [Cilium](https://cilium.io/use-cases/cluster-mesh/) and [Talos](https://www.talos.dev) to provision a  Kubernetes cluster mesh running on [Proxmox SDN](https://pve.proxmox.com/pve-docs/chapter-pvesdn.html).
+# Introduction to aggrik8s-cluster
+This repository provides an Open Source platform of [meshed Kubernetes clusters](https://cilium.io/use-cases/cluster-mesh/) ready to host Edge based IoT applications.
+
+The Kubernetes nodes run [Talos Linux](https://github.com/siderolabs/talos) with [Cilium](https://cilium.io/) as the CNI and [Rook Ceph](https://rook.io) for CSI services.
+## Secret Ops
+[Doppler](https://www.doppler.com) is used to manage all platform secrets for Kubernetes, Talos, Ansible and Terraform.
+
+<img src="./images/SecretOps_model.png" alt="Doppler SecretOps Model" width="35%"/>
+
+Watch [Doppler SecretOps Introduction](https://www.youtube.com/watch?v=sYKc4mcxWbM) for more info on how Doppler decouples **_Code_**, **_Compute_**, and **_Secrets_**.
+
+## Platform observability
+We use Cilium's eBPF based [Hubble](https://docs.cilium.io/en/stable/observability/hubble/#hubble-intro) for network traffic analysis and [Tetragon](https://github.com/cilium/tetragon) for Linux System calls.
+
+Several Prometheus based tools such as [Robusta](https://home.robusta.dev/), [Honeycomb OTEL](https://www.honeycomb.io/), and [Groundcover](https://www.groundcover.com/).
+### Cilium eBPF based CNI
+Cilium provides the Kubernetes cluster's [Container Network Services](https://cilium.io/use-cases/cni/) using eBPF to run features directly in the Linux kernel.
+
+<img src="https://docs.cilium.io/en/stable/_images/cilium-arch.png" width="25%">
+
+### Hubble and Tetragon
+The Cilium ecosystem includes two eBPF based plugins to provide network traffic and system call analysis.
+
+<img src="images/cilium_suite.png" width="35%">
+
+Hubble allows traffic capture and analysis and Tetragon provides Security and Application deep dive analysis.
+
+## Cilium Cluster Mesh
+<img src="images/clustermesh-4-1a200e569e979d92696822a58c5beda4.png" width="45%">
+
+<img src="https://cilium.io/static/04d2d06e7e32665b74c968a9f7fc0a40/b75cb/usecase_ha.png" width="45%">
+
+A Cluster mesh simplifies scenarios such as High Availability by allowing cross cluster application fall over.
+
+Applications deployed to one cluster can securely access resources in the second.
+
+### Secret Ops
+The stack uses [Doppler SecretOps](https://www.youtube.com/watch?v=sYKc4mcxWbM) to decouple **_Code_**, **_Compute_**, and **_Secrets_**.
+
+<img src="./images/SecretOps_model.png" alt="Doppler SecretOps Model" width="50%"/>
+
+Our **_Code_** is contained in this repo in the [./terraform](https://github.com/Aggrik8s-net/aggrik8s-cluster/tree/main/terraform) and [./ansible](https://github.com/Aggrik8s-net/aggrik8s-cluster/tree/main/ansible) directories.
+
+Our **_Secrets_** are kept in [Dopper](https://github.com/Aggrik8s-net/aggrik8s-cluster/tree/main/ansible) and injected into our Terraform and Ansible **_Code_**.
+
+Our **_Compute_** is the infrastructure and applications provisioned using our **_Code_** and **_Secrets_**. 
+
+
+## Platform Description
+### All nodes run Talos
+The platform uses [Proxmox PVE](https://www.proxmox.com/en/) to host multiple Kubernetes clusters running [Sidero Talos Linux](https://www.siderolabs.com/talos-linux/).
+
+Each Talos node is immutable and runs Kubernetes as a native service; it is declaratively managed using a single YAML.
+Nodes have no traditional Linux administrative interface - there is not even an SSH console.
+All administration of Talos nodes is done using either the `talosctl` CLI command or the Talos API.  
+
+### Cilium is our Kubernetes CNI
+The Cilium CNI provides network services to the Talos cluster.
+
+### Rook & CEPH are our Kubernetes CSI
+
+
+### Robusta is our Cluster Observibility tool
+
+
+[./terraform](https://github.com/Aggrik8s-net/aggrik8s-cluster/tree/robusta/terraform) and [./ansible](https://github.com/Aggrik8s-net/aggrik8s-cluster/tree/robusta/ansible) as CODE, provisions platform infrastructure such as Talos based VMs hosted in Proxmox while Ansible Playbooks automate `Day 2 Applications` such as Robusta and Honeycomb OTEL support.
+The platform uses the 
+https://github.com/Aggrik8s-net/aggrik8s-cluster/blob/robusta/CLUSTER_COOKBOOK.md) describes the recipe to create and destroy cluster meshes with Cilium, Rook/CEPH, Robusta and Honeycomb.
+
+[Aggrik8s-net]() is the parent project providing 
+
+Platform features include:
+- Proxmox is Terraformed to host Talos based VMs wired into Kubernetes clusters,
+- The Talos Linux distribution runs Kubernetes natively with no SSH or related issues,
+- Cilium provides the eBPF based Kubernetes CNI services,
+- Rook and CEPH provide the Kubernetes CSI services,
+- to declaritively control `Day 2 Applications` on our a
+
+- Proxmox based Talos nodes wired up into two seperate Kubernetes clusters,
+- 
+- Cilium CNI,
+- ROOK/CEPH CSI.
+
+Ansible 
+ 
+hosted in Proxmox and Ansible to with all secrets stored in Doppler.
+
+We use the following tools:
+- Talos - Sideros Labs purpose built Linux which runs Kubernetes and nothing else,
+- Cilium - Isovalent's CNI built using eBPF provides advanced features such as:
+  - High-Performance Networking: Cilium uses eBPF programs to handle packet processing in the kernel,
+  - Network Security Policies: Cilium extends standard Kubernetes NetworkPolicy with custom resources,
+  - eBPF-based Service Load Balancing: Cilium can replace kube-proxy entirely, using eBPF,
+  - Transparent Encryption: all pod-to-pod data is encrypted which helps meet compliance requirements,
+
+  - Multi-Cluster Connectivity (Cluster Mesh): The Cluster Mesh feature allows connecting multiple Kubernetes clusters across different cloud providers or on-premise data centers into a unified network. This enables seamless pod-to-pod connectivity and global service load balancing across clusters.
+  - Sidecar-free Service Mesh: Cilium provides service mesh capabilities, such as traffic management and mutual TLS (mTLS), without the overhead of a traditional sidecar proxy architecture. It integrates with the Kubernetes Gateway API.
+  - Transparent Encryption: Cilium supports transparent encryption of all pod-to-pod data in transit using technologies like WireGuard or IPsec, which helps meet compliance and regulatory requirements.
+  - Cloud-Native IP Address Management (IPAM): Cilium integrates with various cloud provider networking, such as AWS ENI and Azure IPAM, for native routing performance, or uses its own CRD-backed
+- Doppler - all secrets are managed in Doppler and injected, created, or retreived using Ansible and Terraform tooling,
+- Hubble
+- Tetragon
+
+- ,
+- .
+
+The Kubernetes clusters run a Linus distribution called `Talos` which is purpose built to run Kubernetes.
+
+The Talos meshed using Cilium.
+
+uses [Cilium](https://cilium.io/use-cases/cluster-mesh/) and [Talos](https://www.talos.dev) to provision a  Kubernetes cluster mesh running on [Proxmox SDN](https://pve.proxmox.com/pve-docs/chapter-pvesdn.html).
 
 A Cluster Mesh extends Kubernetes to allow application deployment and administration across multiple clusters.
 <p align="center">
