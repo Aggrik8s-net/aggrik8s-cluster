@@ -1,15 +1,16 @@
-# Introduction to aggrik8s-cluster
-## TL;DR
-This repository provides an Edge based Open Source platform of [meshed Kubernetes clusters](https://cilium.io/use-cases/cluster-mesh/) ready to host IoT applications.
+# Introduction to the aggrik8s-cluster platform
+This project provisions an IoT platform of meshed Kubernetes clusters ready to deploy at the Edge.
 
-A cluster mesh allows applications to have policy based access to resources in a remote cluster.  
-Access to remote resources simplifies high value features such as high availability and shared services.
-disaster recovery using failover.
+Our Kubernetes clusters run [Talos Linux](https://github.com/siderolabs/talos) with [Cilium](https://cilium.io/) as the CNI and [Rook Ceph](https://rook.io) for CSI services.
+
+We use [Cilium Cluster Mesh](https://cilium.io/use-cases/cluster-mesh/) to federate multiple Kubernetes Clusters into a unified control plane.
+Policy based control of Kubernetes resources in multiple clusters simplifies use cases such as high availability, follow the sun data centers, and shared services.
 <p align="left">
   <img src="https://cilium.io/static/04d2d06e7e32665b74c968a9f7fc0a40/b75cb/usecase_ha.png" width="45%">
 </p>
+The diagram above shows a front-end in one cluster transparently failing over to services in a remote cluster.
 
-Our Kubernetes clusters run [Talos Linux](https://github.com/siderolabs/talos) with [Cilium](https://cilium.io/) as the CNI and [Rook Ceph](https://rook.io) for CSI services.
+The intent of this tooling is to support development of Edge based IoT applications distributed across multiple locations or cloud providers.  
 ## Platform Features
 ### All nodes run Talos
 The platform uses [Sideros' Talos Linux](https://www.siderolabs.com/talos-linux/) running on [Proxmox PVE](https://www.proxmox.com/en/) hosted Virtual Machines.
