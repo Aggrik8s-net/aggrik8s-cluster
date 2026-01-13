@@ -1,10 +1,4 @@
-<style>
-  body {
-    max-width: 800px; /* Adjust the width as needed (e.g., 60ch for readability) */
-    margin-left: auto; /* Center the content */
-    margin-right: auto; /* Center the content */
-  }
-</style>
+<div class="markdown-body">
 
 # Introduction to the aggrik8s-cluster platform
 This project provisions an IoT platform of meshed Kubernetes clusters ready to deploy at the Edge.
@@ -212,4 +206,15 @@ We use Terraform to provision Cilium Mesh of Talos based Kubernetes clusters.
 - `Groundcover` for Inversion of Cost for OTEL Cloud storage. They only ingest metadaata, all actual OTEL data remains in cluster.
 ## Applications
 - Ollama
-- 
+
+</div>
+
+<style>
+.markdown-body {
+  box-sizing: border-box;
+  min-width: 200px;
+  max-width: 980px; /* Example max-width used by GitHub */
+  margin: 0 auto;
+  padding: 45px;
+}
+</style>
