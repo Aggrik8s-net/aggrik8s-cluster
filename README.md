@@ -1,15 +1,38 @@
 # Introduction to aggrik8s-cluster
-This repository provides an Open Source platform of [meshed Kubernetes clusters](https://cilium.io/use-cases/cluster-mesh/) ready to host Edge based IoT applications.
+## TL;DR
+This repository provides an Edge based Open Source platform of [meshed Kubernetes clusters](https://cilium.io/use-cases/cluster-mesh/) ready to host IoT applications.
 
-The Kubernetes nodes run [Talos Linux](https://github.com/siderolabs/talos) with [Cilium](https://cilium.io/) as the CNI and [Rook Ceph](https://rook.io) for CSI services.
-## Secret Ops
-[Doppler](https://www.doppler.com) is used to manage all platform secrets for Kubernetes, Talos, Ansible and Terraform.
+A cluster mesh allows applications to have policy based access to resources in a remote cluster.  
+Access to remote resources simplifies high value features such as high availability and shared services.
+disaster recovery using failover.
+<p align="left">
+  <img src="https://cilium.io/static/04d2d06e7e32665b74c968a9f7fc0a40/b75cb/usecase_ha.png" width="45%">
+</p>
 
-<img src="./images/SecretOps_model.png" alt="Doppler SecretOps Model" width="35%"/>
+Our Kubernetes clusters run [Talos Linux](https://github.com/siderolabs/talos) with [Cilium](https://cilium.io/) as the CNI and [Rook Ceph](https://rook.io) for CSI services.
+## Platform Features
+### All nodes run Talos
+The platform uses [Sideros' Talos Linux](https://www.siderolabs.com/talos-linux/) running on [Proxmox PVE](https://www.proxmox.com/en/) hosted Virtual Machines.
+
+Each Talos node is immutable and runs Kubernetes as a native service.
+All Talos nodes are declaratively managed using a single YAML file.
+
+Nodes have no traditional Linux administrative interface - there is not even an SSH daemon running to provide access to a console.
+All administration of Talos nodes is done using either the Talos API or the `talosctl` CLI.
+### Secret Ops
+[Doppler](https://www.doppler.com) is used to decouple **_Code_**, **_Compute_**, and **_Secrets_** for our platform.
+
+<img src="./images/SecretOps_model.png" alt="Doppler SecretOps Model" width="35%">
+
+Our **_Code_** is contained in this repo in the [./terraform](https://github.com/Aggrik8s-net/aggrik8s-cluster/tree/main/terraform) and [./ansible](https://github.com/Aggrik8s-net/aggrik8s-cluster/tree/main/ansible) directories.
+
+Our **_Secrets_** are kept in [Dopper](https://github.com/Aggrik8s-net/aggrik8s-cluster/tree/main/ansible) and injected into our Terraform and Ansible **_Code_**.
+
+Our **_Compute_** is the infrastructure and applications resources provisioned using our **_Code_** and **_Secrets_**.
 
 Watch [Doppler SecretOps Introduction](https://www.youtube.com/watch?v=sYKc4mcxWbM) for more info on how Doppler decouples **_Code_**, **_Compute_**, and **_Secrets_**.
 
-## Platform observability
+## Observability
 We use Cilium's eBPF based [Hubble](https://docs.cilium.io/en/stable/observability/hubble/#hubble-intro) for network traffic analysis and [Tetragon](https://github.com/cilium/tetragon) for Linux System calls.
 
 Several Prometheus based tools such as [Robusta](https://home.robusta.dev/), [Honeycomb OTEL](https://www.honeycomb.io/), and [Groundcover](https://www.groundcover.com/).
@@ -33,19 +56,7 @@ Hubble allows traffic capture and analysis and Tetragon provides Security and Ap
 A Cluster mesh simplifies scenarios such as High Availability by allowing cross cluster application fall over.
 
 Applications deployed to one cluster can securely access resources in the second.
-
-### Secret Ops
-The stack uses [Doppler SecretOps](https://www.youtube.com/watch?v=sYKc4mcxWbM) to decouple **_Code_**, **_Compute_**, and **_Secrets_**.
-
-<img src="./images/SecretOps_model.png" alt="Doppler SecretOps Model" width="50%"/>
-
-Our **_Code_** is contained in this repo in the [./terraform](https://github.com/Aggrik8s-net/aggrik8s-cluster/tree/main/terraform) and [./ansible](https://github.com/Aggrik8s-net/aggrik8s-cluster/tree/main/ansible) directories.
-
-Our **_Secrets_** are kept in [Dopper](https://github.com/Aggrik8s-net/aggrik8s-cluster/tree/main/ansible) and injected into our Terraform and Ansible **_Code_**.
-
-Our **_Compute_** is the infrastructure and applications provisioned using our **_Code_** and **_Secrets_**. 
-
-
+Watch [Cluster mesh Starwars demo](https://youtu.be/1fsXtqg4Pkw) to see how applications can run accross clusters.
 ## Platform Description
 ### All nodes run Talos
 The platform uses [Proxmox PVE](https://www.proxmox.com/en/) to host multiple Kubernetes clusters running [Sidero Talos Linux](https://www.siderolabs.com/talos-linux/).
