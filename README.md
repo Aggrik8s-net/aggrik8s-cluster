@@ -1,5 +1,14 @@
+<style>
+  body {
+    max-width: 800px; /* Adjust the width as needed (e.g., 60ch for readability) */
+    margin-left: auto; /* Center the content */
+    margin-right: auto; /* Center the content */
+  }
+</style>
+
 # Introduction to the aggrik8s-cluster platform
 This project provisions an IoT platform of meshed Kubernetes clusters ready to deploy at the Edge.
+
 A cluster mesh allows Pods in one cluster to discover and access services in all clusters.
 Policy based control of Kubernetes resources in multiple federated clusters simplifies use cases such as high availability, follow the sun data centers, and centralized shared services.
 
