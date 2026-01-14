@@ -12,6 +12,7 @@ The diagram below shows a front-end in one cluster transparently failing over to
   <img src="https://cilium.io/static/04d2d06e7e32665b74c968a9f7fc0a40/b75cb/usecase_ha.png" width="45%">
 </p>
 Policy based control of Kubernetes resources across multiple federated clusters simplifies use cases such as high availability, follow the sun data centers, and centralized shared services.
+
 ## Platform Features
 ### All nodes run Talos
 The platform uses [Sideros' Talos Linux](https://www.siderolabs.com/talos-linux/) running on [Proxmox PVE](https://www.proxmox.com/en/) hosted Virtual Machines.
