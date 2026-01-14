@@ -1,12 +1,12 @@
 # Introduction to the aggrik8s-cluster platform
 This project provisions an IoT platform of meshed Kubernetes clusters ready to deploy at the Edge.
-The intent of this project is to allow development of Edge based IoT applications distributed across multiple locations or cloud providers.
+The intent of this project is to allow development of IoT applications distributed across multiple Edge locations and cloud providers.
 
-Our Kubernetes nodes run [Talos Linux](https://github.com/siderolabs/talos) with [Cilium CNI](https://github.com/cilium/cilium) for networking and storage provided using [Ceph CSI](https://github.com/ceph/ceph) orchestrated by [Rook](https://rook.io).
-All platform infrastructure is provisioned using Terraform while `Day 2 applications` such as Observability use Ansible.
+All Kubernetes nodes run [Talos Linux](https://github.com/siderolabs/talos) with [Cilium CNI](https://github.com/cilium/cilium) for networking and storage provided using [Ceph CSI](https://github.com/ceph/ceph) orchestrated by [Rook](https://rook.io).
+The platforms infrastructure is provisioned using Terraform while Ansible is used for`Day 2 applications` such as Observability.
 
-We use [Cilium Cluster Mesh](https://cilium.io/use-cases/cluster-mesh/) to federate multiple Kubernetes Clusters into a unified control plane.
-A cluster mesh allows Pods in one cluster to discover and access services in all clusters.
+We federate multiple Kubernetes clusters using [Cilium Cluster Mesh](https://cilium.io/use-cases/cluster-mesh/).
+A cluster mesh allows Pods in one cluster to discover and access services in remote clusters.
 The diagram below shows a front-end in one cluster transparently failing over to back-end services in a remote cluster.
 <p align="left">
   <img src="https://cilium.io/static/04d2d06e7e32665b74c968a9f7fc0a40/b75cb/usecase_ha.png" width="45%">
