@@ -1,20 +1,17 @@
-<div class="markdown-body">
-
 # Introduction to the aggrik8s-cluster platform
 This project provisions an IoT platform of meshed Kubernetes clusters ready to deploy at the Edge.
 
-A cluster mesh allows Pods in one cluster to discover and access services in all clusters.
-Policy based control of Kubernetes resources in multiple federated clusters simplifies use cases such as high availability, follow the sun data centers, and centralized shared services.
-
-Our Kubernetes clusters run [Talos Linux](https://github.com/siderolabs/talos) with [Cilium](https://cilium.io/) as the CNI and [Rook Ceph](https://rook.io) for CSI services.
+Our Kubernetes nodes run [Talos Linux](https://github.com/siderolabs/talos) with [Cilium CNI](https://github.com/cilium/cilium) for networking and storage provided using [Ceph CSI](https://github.com/ceph/ceph) orchestrated by [Rook](https://rook.io).
 
 We use [Cilium Cluster Mesh](https://cilium.io/use-cases/cluster-mesh/) to federate multiple Kubernetes Clusters into a unified control plane.
+A cluster mesh allows Pods in one cluster to discover and access services in all clusters.
+The diagram below shows a front-end in one cluster transparently failing over to back-end services in a remote cluster.
 <p align="left">
   <img src="https://cilium.io/static/04d2d06e7e32665b74c968a9f7fc0a40/b75cb/usecase_ha.png" width="45%">
 </p>
-The diagram above shows a front-end in one cluster transparently failing over to services in a remote cluster.
+Policy based control of Kubernetes resources across multiple federated clusters simplifies use cases such as high availability, follow the sun data centers, and centralized shared services.
 
-The intent of this tooling is to support development of Edge based IoT applications distributed across multiple locations or cloud providers.  
+The intent of this project is to allow development of Edge based IoT applications distributed across multiple locations or cloud providers.  
 ## Platform Features
 ### All nodes run Talos
 The platform uses [Sideros' Talos Linux](https://www.siderolabs.com/talos-linux/) running on [Proxmox PVE](https://www.proxmox.com/en/) hosted Virtual Machines.
@@ -42,6 +39,7 @@ We use Cilium's eBPF based [Hubble](https://docs.cilium.io/en/stable/observabili
 
 Several Prometheus based tools such as [Robusta](https://home.robusta.dev/), [Honeycomb OTEL](https://www.honeycomb.io/), and [Groundcover](https://www.groundcover.com/).
 ### Cilium eBPF based CNI
+[Cilium](https://cilium.io/)
 Cilium provides the Kubernetes cluster's [Container Network Services](https://cilium.io/use-cases/cni/) using eBPF to run features directly in the Linux kernel.
 
 <img src="https://docs.cilium.io/en/stable/_images/cilium-arch.png" width="25%">
@@ -206,15 +204,3 @@ We use Terraform to provision Cilium Mesh of Talos based Kubernetes clusters.
 - `Groundcover` for Inversion of Cost for OTEL Cloud storage. They only ingest metadaata, all actual OTEL data remains in cluster.
 ## Applications
 - Ollama
-
-</div>
-
-<style>
-.markdown-body {
-  box-sizing: border-box;
-  min-width: 200px;
-  max-width: 980px; /* Example max-width used by GitHub */
-  margin: 0 auto;
-  padding: 45px;
-}
-</style>
