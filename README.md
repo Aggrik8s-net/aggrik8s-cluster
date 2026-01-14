@@ -2,6 +2,7 @@
 This project provisions an IoT platform of meshed Kubernetes clusters ready to deploy at the Edge.
 
 Our Kubernetes nodes run [Talos Linux](https://github.com/siderolabs/talos) with [Cilium CNI](https://github.com/cilium/cilium) for networking and storage provided using [Ceph CSI](https://github.com/ceph/ceph) orchestrated by [Rook](https://rook.io).
+All platform infrastructure is provisioned using Terraform while `Day 2 applications` such as Observability use Ansible.
 
 We use [Cilium Cluster Mesh](https://cilium.io/use-cases/cluster-mesh/) to federate multiple Kubernetes Clusters into a unified control plane.
 A cluster mesh allows Pods in one cluster to discover and access services in all clusters.
@@ -12,6 +13,7 @@ The diagram below shows a front-end in one cluster transparently failing over to
 Policy based control of Kubernetes resources across multiple federated clusters simplifies use cases such as high availability, follow the sun data centers, and centralized shared services.
 
 The intent of this project is to allow development of Edge based IoT applications distributed across multiple locations or cloud providers.  
+
 ## Platform Features
 ### All nodes run Talos
 The platform uses [Sideros' Talos Linux](https://www.siderolabs.com/talos-linux/) running on [Proxmox PVE](https://www.proxmox.com/en/) hosted Virtual Machines.
