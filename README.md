@@ -1,5 +1,6 @@
 # Introduction to the aggrik8s-cluster platform
 This project provisions an IoT platform of meshed Kubernetes clusters ready to deploy at the Edge.
+The intent of this project is to allow development of Edge based IoT applications distributed across multiple locations or cloud providers.
 
 Our Kubernetes nodes run [Talos Linux](https://github.com/siderolabs/talos) with [Cilium CNI](https://github.com/cilium/cilium) for networking and storage provided using [Ceph CSI](https://github.com/ceph/ceph) orchestrated by [Rook](https://rook.io).
 All platform infrastructure is provisioned using Terraform while `Day 2 applications` such as Observability use Ansible.
@@ -11,9 +12,6 @@ The diagram below shows a front-end in one cluster transparently failing over to
   <img src="https://cilium.io/static/04d2d06e7e32665b74c968a9f7fc0a40/b75cb/usecase_ha.png" width="45%">
 </p>
 Policy based control of Kubernetes resources across multiple federated clusters simplifies use cases such as high availability, follow the sun data centers, and centralized shared services.
-
-The intent of this project is to allow development of Edge based IoT applications distributed across multiple locations or cloud providers.  
-
 ## Platform Features
 ### All nodes run Talos
 The platform uses [Sideros' Talos Linux](https://www.siderolabs.com/talos-linux/) running on [Proxmox PVE](https://www.proxmox.com/en/) hosted Virtual Machines.
