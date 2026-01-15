@@ -20,20 +20,16 @@ Policy based control of Kubernetes resources across multiple federated clusters 
 ### All nodes run Talos
 The platform uses [Sideros' Talos Linux](https://www.siderolabs.com/talos-linux/) running on [Proxmox PVE](https://www.proxmox.com/en/) hosted virtual machines.
 
-Talos is a Linux distribution built to run Kubernetes and nothing else.
-Each Talos node is immutable and runs Kubernetes as a native service.
-All Talos nodes are declaratively administered using a YAML file to eliminate ad-hoc configuration drift.
-Talos nodes have no traditional Linux administrative interface - there is not even an SSH console.
-
-Talos features include[^1] :
-- Immutable Infrastructure: Uses a secure boot capable, read-only root filesystem.
+Talos is a Linux distribution built to run Kubernetes and nothing else. Its features include the following [^1].
 - Kubernetes-Native: Optimized to run Kubernetes and its control plane, including etcd, directly on nodes.
 - Declarative Configuration: Define your entire cluster state in two YAML files, one for Control Plane and one for Workers.
 - API-Managed: Entirely configured and managed through a declarative gRPC API, eliminating shell access (no SSH).
 - Minimalist & Secure: Contains only essential components required to run Kubernetes, reducing complexity and attack surface.
 - Platform Agnostic: Works on bare metal, VMs, and cloud environments, with tools for specific hardware.`
 
-All administration of Talos nodes is done using either the `talosctl` CLI command or the Talos API. 
+Talos nodes have no traditional Linux administrative interface - there is not even an SSH console.
+
+Talos soes not use SSH based administration, configuration of Talos nodes is done using either the `talosctl` CLI command or the Talos API. 
 
 Watch [Talos Linux: A Quick Installation and Configuration Guide](https://www.youtube.com/watch?v=YdQCeU7NOak) to see an example of a Proxmox based Talos cluster.
 
