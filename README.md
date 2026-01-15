@@ -1,9 +1,10 @@
 # Introduction to the aggrik8s-cluster platform
-This project provisions a platform of meshed Kubernetes clusters ready to deploy at the Edge.
+This project provisions meshed Kubernetes clusters ready to deploy to the Edge.
 
-The intent is to allow development of IoT applications distributed across multiple Edge locations and cloud providers.
+The purpose is to support the development of IoT applications hosted across multiple Edge sites and cloud providers.
 
-All Kubernetes nodes run [Talos Linux](https://github.com/siderolabs/talos) with [Cilium CNI](https://github.com/cilium/cilium) for networking and [Ceph CSI](https://github.com/ceph/ceph) orchestrated by [Rook](https://rook.io) for storage.
+All platform nodes run [Talos Linux](https://github.com/siderolabs/talos) which is a Linux distribution built to run Kubernetes.
+The Kubernetes nodes use [Cilium CNI](https://github.com/cilium/cilium) for networking and [Ceph CSI](https://github.com/ceph/ceph) orchestrated by [Rook](https://rook.io) for storage.
 
 Terraform provisions the platform infrastructure while both Ansible and Terraform are used for`Day 2 applications` such as Observability.
 
@@ -17,15 +18,24 @@ Policy based control of Kubernetes resources across multiple federated clusters 
 
 ## Platform Features
 ### All nodes run Talos
-The platform uses [Sideros' Talos Linux](https://www.siderolabs.com/talos-linux/) running on [Proxmox PVE](https://www.proxmox.com/en/) hosted Virtual Machines.
+The platform uses [Sideros' Talos Linux](https://www.siderolabs.com/talos-linux/) running on [Proxmox PVE](https://www.proxmox.com/en/) hosted virtual machines.
 
+Talos is a Linux distribution built to run Kubernetes and nothing else.
 Each Talos node is immutable and runs Kubernetes as a native service.
-All Talos nodes are declaratively administered using a single YAML file.
+All Talos nodes are declaratively administered using a YAML file to eliminate ad-hoc configuration drift.
 Talos nodes have no traditional Linux administrative interface - there is not even an SSH console.
+Talos features include (per Google):
+- Immutable Infrastructure: Uses a secure boot capable, read-only root filesystem.
+- Kubernetes-Native: Optimized to run Kubernetes and its control plane, including etcd, directly on nodes.
+- Declarative Configuration: Define your entire cluster state in two YAML files, one for Control Plane and one for Workers.
+- API-Managed: Entirely configured and managed through a declarative gRPC API, eliminating shell access (no SSH).
+- Minimalist & Secure: Contains only essential components required to run Kubernetes, reducing complexity and attack surface.
+- Platform Agnostic: Works on bare metal, VMs, and cloud environments, with tools for specific hardware.`
 
 All administration of Talos nodes is done using either the `talosctl` CLI command or the Talos API. 
 
-Watch [Talos Linux: A Quick Installation and Configuration Guide](https://www.youtube.com/watch?v=YdQCeU7NOak) for a demonstration of how to spin up a Proxmox based Kubernetes cluster using Talos.
+Watch [Talos Linux: A Quick Installation and Configuration Guide](https://www.youtube.com/watch?v=YdQCeU7NOak) to see an example of a Proxmox based Talos cluster.
+
 ### Secret Ops
 [Doppler](https://www.doppler.com) is used to decouple **_Code_**, **_Compute_**, and **_Secrets_** for our platform.
 
@@ -39,15 +49,16 @@ Our **_Compute_** is the infrastructure and applications resources provisioned u
 
 Watch [Doppler SecretOps Introduction](https://www.youtube.com/watch?v=sYKc4mcxWbM) for more info on how Doppler decouples **_Code_**, **_Compute_**, and **_Secrets_**.
 
-## Observability
-We use Cilium's eBPF based [Hubble](https://docs.cilium.io/en/stable/observability/hubble/#hubble-intro) for network traffic analysis and [Tetragon](https://github.com/cilium/tetragon) for Linux System calls.
-
-Several Prometheus based tools such as [Robusta](https://home.robusta.dev/), [Honeycomb OTEL](https://www.honeycomb.io/), and [Groundcover](https://www.groundcover.com/).
 ### Cilium eBPF based CNI
 [Cilium](https://cilium.io/)
 Cilium provides the Kubernetes cluster's [Container Network Services](https://cilium.io/use-cases/cni/) using eBPF to run features directly in the Linux kernel.
 
 <img src="https://docs.cilium.io/en/stable/_images/cilium-arch.png" width="25%">
+
+## Observability
+We use Cilium's eBPF based [Hubble](https://docs.cilium.io/en/stable/observability/hubble/#hubble-intro) for network traffic analysis and [Tetragon](https://github.com/cilium/tetragon) for Linux System calls.
+
+Several Prometheus based tools such as [Robusta](https://home.robusta.dev/), [Honeycomb OTEL](https://www.honeycomb.io/), and [Groundcover](https://www.groundcover.com/).
 
 ### Hubble and Tetragon
 The Cilium ecosystem includes two eBPF based plugins to provide network traffic and system call analysis.
@@ -65,6 +76,7 @@ A Cluster mes simplifies scenarios such as High Availability by allowing cross c
 
 Applications deployed to one cluster can securely access resources in the second.
 Watch [Cluster mesh Starwars demo](https://youtu.be/1fsXtqg4Pkw) to see how applications can run accross clusters.
+
 
 ### Robusta is our Cluster Observibility tool
 
