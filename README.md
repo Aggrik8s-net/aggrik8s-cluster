@@ -1,11 +1,13 @@
 # Introduction to the aggrik8s-cluster platform
-This project provisions an IoT platform of meshed Kubernetes clusters ready to deploy at the Edge.
-The intent of this project is to allow development of IoT applications distributed across multiple Edge locations and cloud providers.
+This project provisions a platform of meshed Kubernetes clusters ready to deploy at the Edge.
 
-All Kubernetes nodes run [Talos Linux](https://github.com/siderolabs/talos) with [Cilium CNI](https://github.com/cilium/cilium) for networking and storage provided using [Ceph CSI](https://github.com/ceph/ceph) orchestrated by [Rook](https://rook.io).
-The platforms infrastructure is provisioned using Terraform while Ansible is used for`Day 2 applications` such as Observability.
+The intent is to allow development of IoT applications distributed across multiple Edge locations and cloud providers.
 
-We federate multiple Kubernetes clusters using [Cilium Cluster Mesh](https://cilium.io/use-cases/cluster-mesh/).
+All Kubernetes nodes run [Talos Linux](https://github.com/siderolabs/talos) with [Cilium CNI](https://github.com/cilium/cilium) for networking and [Ceph CSI](https://github.com/ceph/ceph) orchestrated by [Rook](https://rook.io) for storage.
+
+Terraform provisions the platform infrastructure while both Ansible and Terraform are used for`Day 2 applications` such as Observability.
+
+Multiple Kubernetes clusters are federated using [Cilium Cluster Mesh](https://cilium.io/use-cases/cluster-mesh/).
 A cluster mesh allows Pods in one cluster to discover and access services in remote clusters.
 The diagram below shows a front-end in one cluster transparently failing over to back-end services in a remote cluster.
 <p align="left">
@@ -18,10 +20,12 @@ Policy based control of Kubernetes resources across multiple federated clusters 
 The platform uses [Sideros' Talos Linux](https://www.siderolabs.com/talos-linux/) running on [Proxmox PVE](https://www.proxmox.com/en/) hosted Virtual Machines.
 
 Each Talos node is immutable and runs Kubernetes as a native service.
-All Talos nodes are declaratively managed using a single YAML file.
+All Talos nodes are declaratively administered using a single YAML file.
+Talos nodes have no traditional Linux administrative interface - there is not even an SSH console.
 
-Nodes have no traditional Linux administrative interface - there is not even an SSH daemon running to provide access to a console.
-All administration of Talos nodes is done using either the Talos API or the `talosctl` CLI.
+All administration of Talos nodes is done using either the `talosctl` CLI command or the Talos API. 
+
+Watch [Talos Linux: A Quick Installation and Configuration Guide](https://www.youtube.com/watch?v=YdQCeU7NOak) for a demonstration of how to spin up a Proxmox based Kubernetes cluster using Talos.
 ### Secret Ops
 [Doppler](https://www.doppler.com) is used to decouple **_Code_**, **_Compute_**, and **_Secrets_** for our platform.
 
@@ -52,28 +56,15 @@ The Cilium ecosystem includes two eBPF based plugins to provide network traffic 
 
 Hubble allows traffic capture and analysis and Tetragon provides Security and Application deep dive analysis.
 
-## Cilium Cluster Mesh
+h## Cilium Cluster Mesh
 <img src="images/clustermesh-4-1a200e569e979d92696822a58c5beda4.png" width="45%">
 
 <img src="https://cilium.io/static/04d2d06e7e32665b74c968a9f7fc0a40/b75cb/usecase_ha.png" width="45%">
 
-A Cluster mesh simplifies scenarios such as High Availability by allowing cross cluster application fall over.
+A Cluster mes simplifies scenarios such as High Availability by allowing cross cluster application fall over.
 
 Applications deployed to one cluster can securely access resources in the second.
 Watch [Cluster mesh Starwars demo](https://youtu.be/1fsXtqg4Pkw) to see how applications can run accross clusters.
-## Platform Description
-### All nodes run Talos
-The platform uses [Proxmox PVE](https://www.proxmox.com/en/) to host multiple Kubernetes clusters running [Sidero Talos Linux](https://www.siderolabs.com/talos-linux/).
-
-Each Talos node is immutable and runs Kubernetes as a native service; it is declaratively managed using a single YAML.
-Nodes have no traditional Linux administrative interface - there is not even an SSH console.
-All administration of Talos nodes is done using either the `talosctl` CLI command or the Talos API.  
-
-### Cilium is our Kubernetes CNI
-The Cilium CNI provides network services to the Talos cluster.
-
-### Rook & CEPH are our Kubernetes CSI
-
 
 ### Robusta is our Cluster Observibility tool
 
