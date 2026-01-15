@@ -24,7 +24,8 @@ Talos is a Linux distribution built to run Kubernetes and nothing else.
 Each Talos node is immutable and runs Kubernetes as a native service.
 All Talos nodes are declaratively administered using a YAML file to eliminate ad-hoc configuration drift.
 Talos nodes have no traditional Linux administrative interface - there is not even an SSH console.
-Talos features include (per Google):
+
+Talos features include[^1] :
 - Immutable Infrastructure: Uses a secure boot capable, read-only root filesystem.
 - Kubernetes-Native: Optimized to run Kubernetes and its control plane, including etcd, directly on nodes.
 - Declarative Configuration: Define your entire cluster state in two YAML files, one for Control Plane and one for Workers.
@@ -208,3 +209,6 @@ We use Terraform to provision Cilium Mesh of Talos based Kubernetes clusters.
 - `Groundcover` for Inversion of Cost for OTEL Cloud storage. They only ingest metadaata, all actual OTEL data remains in cluster.
 ## Applications
 - Ollama
+  [ddd](https://www.google.com/search?q=Features+and+benefits+of+Talos+Linux+OS&sca_esv=37c453c1e71916bb&rlz=1C5CHFA_enUS1088US1089&sxsrf=ANbL-n6pC2spvtxl8vU4mOfADRZVT3RJ3A%3A1768514770275&ei=0mRpaY-_EJOi5NoPu4mqgA0&ved=0ahUKEwiP8KX1xo6SAxUTEVkFHbuECtAQ4dUDCBE&uact=5&oq=Features+and+benefits+of+Talos+Linux+OS&gs_lp=Egxnd3Mtd2l6LXNlcnAiJ0ZlYXR1cmVzIGFuZCBiZW5lZml0cyBvZiBUYWxvcyBMaW51eCBPUzIFECEYoAEyBRAhGKsCMgUQIRirAjIFECEYqwJIrZQBUMYTWLiSAXACeAGQAQCYAbMBoAG0F6oBBDMyLji4AQPIAQD4AQGYAiqgAvcXwgIKEAAYRxjWBBiwA8ICBBAjGCfCAgsQABiABBiKBRiRAsICERAuGIMBGMcBGLEDGNEDGIAEwgILEAAYgAQYsQMYgwHCAggQABiABBixA8ICChAjGIAEGIoFGCfCAgoQABiABBiKBRhDwgIKEC4YgAQYigUYQ8ICDRAAGIAEGIoFGEMYsQPCAg4QLhiABBiKBRixAxiDAcICCxAuGIAEGLEDGIMBwgIOEAAYgAQYigUYsQMYgwHCAg0QABiABBgUGIcCGLEDwgIEEAAYA8ICDhAuGIAEGLEDGMcBGNEDwgIMEAAYgAQYChgLGLEDwgIKEAAYgAQYFBiHAsICCRAAGIAEGAoYC8ICBRAAGIAEwgIHEAAYgAQYCsICBhAAGBYYHsICCxAAGIAEGIoFGIYDwgIIEAAYgAQYogTCAggQABiJBRiiBJgDAIgGAZAGCJIHBDM0LjigB_PaAbIHBDMyLji4B_QXwgcFMTQuMjjIByqACAE&sclient=gws-wiz-serp)
+
+[^1]: Features and benefits of Talos Linux OS
