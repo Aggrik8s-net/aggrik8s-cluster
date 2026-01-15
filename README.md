@@ -92,7 +92,7 @@ Platform features include:
 - to declaritively control `Day 2 Applications` on our a
 
 - Proxmox based Talos nodes wired up into two seperate Kubernetes clusters,
-- 
+ 
 - Cilium CNI,
 - ROOK/CEPH CSI.
 
