@@ -1,16 +1,14 @@
 # Introduction to the aggrik8s-cluster platform
 This project provisions meshed Kubernetes clusters ready to deploy to the Edge.
+Terraform provisions the platform infrastructure while both Ansible and Terraform are used for`Day 2 applications` such as Observability. 
+The purpose of the project is to enable development of IoT applications hosted across multiple Edge sites and cloud providers.
 
-The purpose is to support the development of IoT applications hosted across multiple Edge sites and cloud providers.
+The platform uses [Talos OS](https://github.com/siderolabs/talos) which is a Linux distribution built to run Kubernetes and nothing else.
+The Kubernetes nodes use [Cilium CNI](https://github.com/cilium/cilium) for POD networking and [Ceph CSI](https://github.com/ceph/ceph) orchestrated by [Rook](https://rook.io) for storage.
 
-All platform nodes run [Talos Linux](https://github.com/siderolabs/talos) which is a Linux distribution built to run Kubernetes.
-The Kubernetes nodes use [Cilium CNI](https://github.com/cilium/cilium) for networking and [Ceph CSI](https://github.com/ceph/ceph) orchestrated by [Rook](https://rook.io) for storage.
-
-Terraform provisions the platform infrastructure while both Ansible and Terraform are used for`Day 2 applications` such as Observability.
-
-Multiple Kubernetes clusters are federated using [Cilium Cluster Mesh](https://cilium.io/use-cases/cluster-mesh/).
-A cluster mesh allows Pods in one cluster to discover and access services in remote clusters.
-The diagram below shows a front-end in one cluster transparently failing over to back-end services in a remote cluster.
+Multiple Kubernetes clusters are federated using [Cilium Cluster Mesh](https://cilium.io/use-cases/cluster-mesh/)
+which allows Pods in one cluster to discover and access services in remote clusters.
+The diagram below shows an example where a front-end in one cluster transparently failing over to back-end services in a remote cluster.
 <p align="left">
   <img src="https://cilium.io/static/04d2d06e7e32665b74c968a9f7fc0a40/b75cb/usecase_ha.png" width="45%">
 </p>
@@ -21,15 +19,13 @@ Policy based control of Kubernetes resources across multiple federated clusters 
 The platform uses [Sideros' Talos Linux](https://www.siderolabs.com/talos-linux/) running on [Proxmox PVE](https://www.proxmox.com/en/) hosted virtual machines.
 
 Talos is a Linux distribution built to run Kubernetes and nothing else. Its features include the following [^1].
-- Kubernetes-Native: Optimized to run Kubernetes and its control plane, including etcd, directly on nodes.
-- Declarative Configuration: Define your entire cluster state in two YAML files, one for Control Plane and one for Workers.
-- API-Managed: Entirely configured and managed through a declarative gRPC API, eliminating shell access (no SSH).
-- Minimalist & Secure: Contains only essential components required to run Kubernetes, reducing complexity and attack surface.
-- Platform Agnostic: Works on bare metal, VMs, and cloud environments, with tools for specific hardware.`
+- Kubernetes-Native: Optimized to run Kubernetes including etcd, directly on nodes.
+- Declarative Configuration: Define all cluster state in two YAML files, one for the control plane and one for worker nodes.
+- API-Managed: Entirely configured and managed through a declarative gRPC API, there is no shell access (no SSH).
+- Minimalist & Secure: Contains only components required by Kubernetes, reducing complexity and attack surface.
+- Platform Agnostic: Works on bare metal, VMs, and cloud environments.
 
-Talos nodes have no traditional Linux administrative interface - there is not even an SSH console.
-
-Talos soes not use SSH based administration, configuration of Talos nodes is done using either the `talosctl` CLI command or the Talos API. 
+Talos does not use SSH based administration, configuration of Talos nodes is done using the `talosctl` CLI command or the Talos gRPC API. 
 
 Watch [Talos Linux: A Quick Installation and Configuration Guide](https://www.youtube.com/watch?v=YdQCeU7NOak) to see an example of a Proxmox based Talos cluster.
 
@@ -47,10 +43,14 @@ Our **_Compute_** is the infrastructure and applications resources provisioned u
 Watch [Doppler SecretOps Introduction](https://www.youtube.com/watch?v=sYKc4mcxWbM) for more info on how Doppler decouples **_Code_**, **_Compute_**, and **_Secrets_**.
 
 ### Cilium eBPF based CNI
-[Cilium](https://cilium.io/)
-Cilium provides the Kubernetes cluster's [Container Network Services](https://cilium.io/use-cases/cni/) using eBPF to run features directly in the Linux kernel.
+[Cilium](https://cilium.io/) uses [eBPF](https://ebpf.io) to implement Kubernetes' [Container Network Interface (CNI)](https://www.cni.dev).
+By default, Kubernetes uses [KubeProxy](https://kodekloud.com/blog/kube-proxy/) which does not scale in cost or performance for large clusters.
+[Liberating Kubernetes From Kube-proxy and Iptables](https://www.youtube.com/watch?v=bIRwSIwNHC0) describes how Cilium moves Kubernetes networking into the Kernel.
+Implementing POD networking in the Kernel provides performance, security, and observability benefits not available using KubeProxy.
 
-<img src="https://docs.cilium.io/en/stable/_images/cilium-arch.png" width="25%">
+
+[CNI use cases](https://cilium.io/use-cases/cni/)
+
 
 ## Observability
 We use Cilium's eBPF based [Hubble](https://docs.cilium.io/en/stable/observability/hubble/#hubble-intro) for network traffic analysis and [Tetragon](https://github.com/cilium/tetragon) for Linux System calls.
@@ -129,6 +129,8 @@ A Cluster Mesh extends Kubernetes to allow application deployment and administra
 <p align="center">
   <img src="https://cdn.sanity.io/images/xinsvxfu/production/52945d699a34350e33de7dc1d85182ae37b0715e-1600x938.png?auto=format&q=80&fit=clip&w=2560" width="675" title="Cilium Cluster Mesh">
 </p>
+
+<img src="https://docs.cilium.io/en/stable/_images/cilium-arch.png" width="25%">
 
 ## Installation
 Refer to [Cluster Mesh Cookbook](./CLUSTER_COOKBOOK.md) for detailed instructions for using [Aggrik8s-net/aggrik8s-cluster](https://github.com/Aggrik8s-net/aggrik8s-cluster/tree/main/terraform).
