@@ -1,22 +1,38 @@
-# Introduction to the aggrik8s-cluster platform
-This project provisions meshed Kubernetes clusters ready to deploy to the Edge.
-Terraform provisions the platform infrastructure while both Ansible and Terraform are used for`Day 2 applications` such as Observability. 
-The purpose of the project is to enable development of IoT applications hosted across multiple Edge sites and cloud providers.
+# Welcome to the aggrik8s-cluster project
+The Aggrik8s platform provides a mesh of raw metal Kubernetes clusters ready to host precision agriculture applications.
 
-The platform uses [Talos OS](https://github.com/siderolabs/talos) which is a Linux distribution built to run Kubernetes and nothing else.
-The Kubernetes nodes use [Cilium CNI](https://github.com/cilium/cilium) for POD networking and [Ceph CSI](https://github.com/ceph/ceph) orchestrated by [Rook](https://rook.io) for storage.
+Terraform automates Aggrik8s infrastructure provisioning while both Ansible and Terraform automate Kubernetes based application deployments.
+A mesh of Kubernetes clusters allows service discovery, orchestrated deployment, automatic scaling, self-healing, and high availability of containerized applications.
+We use DevOps best practices to manage our applications both at the edge and in the cloud as needed. 
 
-Multiple Kubernetes clusters are federated using [Cilium Cluster Mesh](https://cilium.io/use-cases/cluster-mesh/)
-which allows Pods in one cluster to discover and access services in remote clusters.
-The diagram below shows an example where a front-end in one cluster transparently failing over to back-end services in a remote cluster.
-<p align="left">
-  <img src="https://cilium.io/static/04d2d06e7e32665b74c968a9f7fc0a40/b75cb/usecase_ha.png" width="45%">
+Some precision agriculture applications belong in the Cloud while others are best hosted at the Edge. 
+One example is [NDVI](https://en.wikipedia.org/wiki/Normalized_difference_vegetation_index) which uses multispectral imaging to calculate vegatition the health.
+Multispectral cameras attached to drones and rovers image crops and a GPU processes raw images to detect plants needing attention.
+Aggrik8s allows farmers to choose where they run applications such as NDVI either at the Edge or in the Cloud based on their unique needs.
+
+<p style="align:center">
+  <img src="images/Cluster_mesh_shared_gpu.png" width="45%">
 </p>
+
+As shown above, a cluster mesh allows secure access to cloud resources from our edge clusters.
+
+# TL;DR
+The platform uses several tools [Talos OS](https://github.com/siderolabs/talos) which is a Linux distribution built to run Kubernetes and nothing else, not even SSHD.
+Talos uses a declarative model to reduces the cost and complexity of administering Linux based Kubernetes nodes.
+
+    
+<p align="center">
+   <img src="https://docs.cilium.io/en/stable/_images/cilium-arch.png" width="25%">
+</p>
+<p align="left">
+  <img src="https://cdn.sanity.io/images/xinsvxfu/production/d7e538715d25eddc181230273506aa9e58bd62bf-1600x973.webp?auto=format&q=80&fit=clip&w=1080">
+</p>
+
 Policy based control of Kubernetes resources across multiple federated clusters simplifies use cases such as high availability, follow the sun data centers, and centralized shared services.
 
 ## Platform Features
 ### All nodes run Talos
-The platform uses [Sideros' Talos Linux](https://www.siderolabs.com/talos-linux/) running on [Proxmox PVE](https://www.proxmox.com/en/) hosted virtual machines.
+The platform uses the [Sidero Talos](https://www.siderolabs.com/talos-linux/) running on [Proxmox PVE](https://www.proxmox.com/en/) hosted virtual machines.
 
 Talos is a Linux distribution built to run Kubernetes and nothing else. Its features include the following [^1].
 - Kubernetes-Native: Optimized to run Kubernetes including etcd, directly on nodes.
@@ -47,10 +63,13 @@ Watch [Doppler SecretOps Introduction](https://www.youtube.com/watch?v=sYKc4mcxW
 By default, Kubernetes uses [KubeProxy](https://kodekloud.com/blog/kube-proxy/) which does not scale in cost or performance for large clusters.
 [Liberating Kubernetes From Kube-proxy and Iptables](https://www.youtube.com/watch?v=bIRwSIwNHC0) describes how Cilium moves Kubernetes networking into the Kernel.
 Implementing POD networking in the Kernel provides performance, security, and observability benefits not available using KubeProxy.
-
+[Why Replace iptables with eBPF](https://isovalent.com/blog/post/why-replace-iptables-with-ebpf/)
 
 [CNI use cases](https://cilium.io/use-cases/cni/)
 
+<p align="left">
+  <img src="https://cdn.sanity.io/images/xinsvxfu/production/d7e538715d25eddc181230273506aa9e58bd62bf-1600x973.webp?auto=format&q=80&fit=clip&w=1080">
+</p>
 
 ## Observability
 We use Cilium's eBPF based [Hubble](https://docs.cilium.io/en/stable/observability/hubble/#hubble-intro) for network traffic analysis and [Tetragon](https://github.com/cilium/tetragon) for Linux System calls.
