@@ -1,20 +1,21 @@
 # Welcome to the aggrik8s-cluster project
-The Aggrik8s platform provides a mesh of raw metal Kubernetes clusters ready to host precision agriculture applications.
+The `Aggrik8s` platform provides a mesh of Kubernetes clusters ready to host [precision agriculture](https://en.wikipedia.org/wiki/Precision_agriculture) applications.
 
-Terraform automates Aggrik8s infrastructure provisioning while both Ansible and Terraform automate Kubernetes based application deployments.
-A mesh of Kubernetes clusters allows service discovery, orchestrated deployment, automatic scaling, self-healing, and high availability of containerized applications.
-We use DevOps best practices to manage our applications both at the edge and in the cloud as needed. 
+Terraform is used to provision infrastructure while Ansible and Terraform automate application deployments.
+
+A mesh of Kubernetes clusters allows service discovery, orchestrated deployments, automatic scaling, self-healing, and high availability of containerized applications.
+We use DevOps best practices to deploy and monitor our applications both at the edge and in the cloud. 
 
 Some precision agriculture applications belong in the Cloud while others are best hosted at the Edge. 
-One example is [NDVI](https://en.wikipedia.org/wiki/Normalized_difference_vegetation_index) which uses multispectral imaging to calculate vegatition the health.
-Multispectral cameras attached to drones and rovers image crops and a GPU processes raw images to detect plants needing attention.
-Aggrik8s allows farmers to choose where they run applications such as NDVI either at the Edge or in the Cloud based on their unique needs.
+One example is [NDVI](https://en.wikipedia.org/wiki/Normalized_difference_vegetation_index) which calculates crop health by processing multispectral image data.
+Cameras attached to satellites, drones or rovers image crops and allow farmers to geolocate specific plants which are under stress from pests or drought.
+[QGIS Remote Sensing - Calculate NDVI](https://www.youtube.com/watch?v=vpxVkYaWMno) describes how a farmer can use [QGIS](https://qgis.org) to process [NASA Landsat images](https://www.earthdata.nasa.gov/topics/land-surface/normalized-difference-vegetation-index-ndvi) images.
 
+Aggrik8s allows high value applications such as NDVI to use Cloud based GPUs to process image data collected at the Edge.
 <p style="align:center">
   <img src="images/Cluster_mesh_shared_gpu.png" width="45%">
 </p>
-
-As shown above, a cluster mesh allows secure access to cloud resources from our edge clusters.
+As shown above, a cluster mesh allows edge based applications to securely access cloud based resources as required.
 
 # TL;DR
 The platform uses several tools [Talos OS](https://github.com/siderolabs/talos) which is a Linux distribution built to run Kubernetes and nothing else, not even SSHD.
