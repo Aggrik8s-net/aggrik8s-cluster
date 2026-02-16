@@ -1,41 +1,51 @@
-# Welcome to the aggrik8s-cluster project
-The `Aggrik8s` platform provides a mesh of Kubernetes clusters ready to host [precision agriculture](https://en.wikipedia.org/wiki/Precision_agriculture) applications.
+# The aggrik8s-cluster platform
+## TL;DR
+`Aggrik8s` provides a mesh of Kubernetes clusters ready to host [precision agriculture](https://en.wikipedia.org/wiki/Precision_agriculture) applications.
+Terraform is used to provision platform infrastructure while Ansible and Terraform manage Kubernetes based applications. 
 
-Terraform is used to provision infrastructure while Ansible and Terraform automate application deployments.
+A cluster mesh allows service discovery, orchestrated deployments, automatic scaling and self-healing of containerized applications.
+The ability to have applications in one cluster securely discover and access services in a remote cluster simplifies scenarios such as high availability.  
+<p style="align:center">
+  <img src="https://cilium.io/static/04d2d06e7e32665b74c968a9f7fc0a40/b75cb/usecase_ha.png" width="45%">
+</p>
+We use DevOps best practices to deploy and monitor applications located both at the edge and in the cloud. 
 
-A mesh of Kubernetes clusters allows service discovery, orchestrated deployments, automatic scaling, self-healing, and high availability of containerized applications.
-We use DevOps best practices to deploy and monitor our applications both at the edge and in the cloud. 
+## Introduction
+Some precision agriculture applications belong in the Cloud while others are best hosted at the Edge.
+`aggrik8s-cluster` allows applications to safely access Kubernetes resources across cluster boundaries.
 
-Some precision agriculture applications belong in the Cloud while others are best hosted at the Edge. 
-One example is [NDVI](https://en.wikipedia.org/wiki/Normalized_difference_vegetation_index) which calculates crop health by processing multispectral image data.
-Cameras attached to satellites, drones or rovers image crops and allow farmers to geolocate specific plants which are under stress from pests or drought.
-[QGIS Remote Sensing - Calculate NDVI](https://www.youtube.com/watch?v=vpxVkYaWMno) describes how a farmer can use [QGIS](https://qgis.org) to process [NASA Landsat images](https://www.earthdata.nasa.gov/topics/land-surface/normalized-difference-vegetation-index-ndvi) images.
+One example is [NDVI](https://www.earthdata.nasa.gov/topics/land-surface/normalized-difference-vegetation-index-ndvi) which calculates vegetation health. 
+Clicking on the NDVI visualization below will show a video demonstrating the power of satellite based NDVI [^1].
+<p>
+  <a href="https://svs.gsfc.nasa.gov/vis/a000000/a004900/a004916/NDVI_anomaly_regions_1080p30.mp4">
+    <img src="https://svs.gsfc.nasa.gov/vis/a000000/a004900/a004916/NDVI_anomaly_withDate_US_2012_09_02_print.jpg" width="45%">
+  </a>
+</p>
 
-Aggrik8s allows high value applications such as NDVI to use Cloud based GPUs to process image data collected at the Edge.
+
+Multispectral cameras image crops in multiple frequency bands including Red and Near-infrared (NIR). 
+The following formula converts raw image to NDVI images.
+$$\text{NDVI} = \frac{\text{NIR} - \text{Red}}{\text{NIR} + \text{Red}}$$
+[Calculating NDVI from Satellite Imagery using QGIS](https://www.youtube.com/watch?v=4t4INqeoCk4) describes how farmers can use the free [QGIS](https://qgis.org) tool to process [NASA Landsat 9](https://www.earthdata.nasa.gov/topics/land-surface/normalized-difference-vegetation-index-ndvi) images.
+Becauzse Landsat image resolution is $30\text{ m}^2$ per pixel, an acre of crops are shown as 4.5 pixels.
+
+Farmers need higher resolution to identify portions of their fields under stress from drought or pests.
+A drone based multispectral camera can image fields at a higher resolution to quickly identify areas of a farm with unhealthy crops.
+Rovers can be dispatched to image, geolocate and remediate individual plants under stress. 
+
+Aggrik8s clusters provide flexibility to locate some agricultural applications on an edge based Kubernetes cluster and securely access resources in cloud based clusters. 
+As described below, a cluster mesh allows edge based drones and rovers to process high resolution image data using a cloud based GPU.
+This allows a fleet of edge based robots to securely share expensive cloud based GPU resources.  
 <p style="align:center">
   <img src="images/Cluster_mesh_shared_gpu.png" width="45%">
 </p>
-As shown above, a cluster mesh allows edge based applications to securely access cloud based resources as required.
-
-# TL;DR
-The platform uses several tools [Talos OS](https://github.com/siderolabs/talos) which is a Linux distribution built to run Kubernetes and nothing else, not even SSHD.
-Talos uses a declarative model to reduces the cost and complexity of administering Linux based Kubernetes nodes.
-
-    
-<p align="center">
-   <img src="https://docs.cilium.io/en/stable/_images/cilium-arch.png" width="25%">
-</p>
-<p align="left">
-  <img src="https://cdn.sanity.io/images/xinsvxfu/production/d7e538715d25eddc181230273506aa9e58bd62bf-1600x973.webp?auto=format&q=80&fit=clip&w=1080">
-</p>
-
-Policy based control of Kubernetes resources across multiple federated clusters simplifies use cases such as high availability, follow the sun data centers, and centralized shared services.
+Aggrik8s allows edge based applications to securely access cloud resources such as GPUs as required.
 
 ## Platform Features
 ### All nodes run Talos
 The platform uses the [Sidero Talos](https://www.siderolabs.com/talos-linux/) running on [Proxmox PVE](https://www.proxmox.com/en/) hosted virtual machines.
 
-Talos is a Linux distribution built to run Kubernetes and nothing else. Its features include the following [^1].
+Talos is a Linux distribution built to run Kubernetes and nothing else. Its features include the following [^2] .
 - Kubernetes-Native: Optimized to run Kubernetes including etcd, directly on nodes.
 - Declarative Configuration: Define all cluster state in two YAML files, one for the control plane and one for worker nodes.
 - API-Managed: Entirely configured and managed through a declarative gRPC API, there is no shell access (no SSH).
@@ -86,8 +96,6 @@ Hubble allows traffic capture and analysis and Tetragon provides Security and Ap
 
 h## Cilium Cluster Mesh
 <img src="images/clustermesh-4-1a200e569e979d92696822a58c5beda4.png" width="45%">
-
-<img src="https://cilium.io/static/04d2d06e7e32665b74c968a9f7fc0a40/b75cb/usecase_ha.png" width="45%">
 
 A Cluster mes simplifies scenarios such as High Availability by allowing cross cluster application fall over.
 
@@ -229,4 +237,24 @@ We use Terraform to provision Cilium Mesh of Talos based Kubernetes clusters.
 - Ollama
   [ddd](https://www.google.com/search?q=Features+and+benefits+of+Talos+Linux+OS&sca_esv=37c453c1e71916bb&rlz=1C5CHFA_enUS1088US1089&sxsrf=ANbL-n6pC2spvtxl8vU4mOfADRZVT3RJ3A%3A1768514770275&ei=0mRpaY-_EJOi5NoPu4mqgA0&ved=0ahUKEwiP8KX1xo6SAxUTEVkFHbuECtAQ4dUDCBE&uact=5&oq=Features+and+benefits+of+Talos+Linux+OS&gs_lp=Egxnd3Mtd2l6LXNlcnAiJ0ZlYXR1cmVzIGFuZCBiZW5lZml0cyBvZiBUYWxvcyBMaW51eCBPUzIFECEYoAEyBRAhGKsCMgUQIRirAjIFECEYqwJIrZQBUMYTWLiSAXACeAGQAQCYAbMBoAG0F6oBBDMyLji4AQPIAQD4AQGYAiqgAvcXwgIKEAAYRxjWBBiwA8ICBBAjGCfCAgsQABiABBiKBRiRAsICERAuGIMBGMcBGLEDGNEDGIAEwgILEAAYgAQYsQMYgwHCAggQABiABBixA8ICChAjGIAEGIoFGCfCAgoQABiABBiKBRhDwgIKEC4YgAQYigUYQ8ICDRAAGIAEGIoFGEMYsQPCAg4QLhiABBiKBRixAxiDAcICCxAuGIAEGLEDGIMBwgIOEAAYgAQYigUYsQMYgwHCAg0QABiABBgUGIcCGLEDwgIEEAAYA8ICDhAuGIAEGLEDGMcBGNEDwgIMEAAYgAQYChgLGLEDwgIKEAAYgAQYFBiHAsICCRAAGIAEGAoYC8ICBRAAGIAEwgIHEAAYgAQYCsICBhAAGBYYHsICCxAAGIAEGIoFGIYDwgIIEAAYgAQYogTCAggQABiJBRiiBJgDAIgGAZAGCJIHBDM0LjigB_PaAbIHBDMyLji4B_QXwgcFMTQuMjjIByqACAE&sclient=gws-wiz-serp)
 
-[^1]: Features and benefits of Talos Linux OS
+## Introduction
+The Aggrik8s platform uses several key technologies to built the cluster mes.
+- [Talos OS](https://github.com/siderolabs/talos) which is a Linux distribution built to run Kubernetes and nothing else, not even SSHD.
+  Talos uses a declarative model to reduces the cost and complexity of administering Linux based Kubernetes nodes.
+
+
+<p align="center">
+   <img src="https://docs.cilium.io/en/stable/_images/cilium-arch.png" width="25%">
+</p>
+<p align="left">
+  <img src="https://cdn.sanity.io/images/xinsvxfu/production/d7e538715d25eddc181230273506aa9e58bd62bf-1600x973.webp?auto=format&q=80&fit=clip&w=1080">
+</p>
+
+Policy based control of Kubernetes resources across multiple federated clusters simplifies use cases such as high availability, follow the sun data centers, and centralized shared services.
+
+
+[^1]: [Normalized Difference Vegetation Index (NDVI) Anomaly in crop-growing regions for selected years](https://svs.gsfc.nasa.gov/4916/)
+[^2]: Features and benefits of Talos Linux OS
+[^2]: [Calculate NDVI from Sentinel 2 and reclassify in QGIS](https://www.youtube.com/watch?v=EaC5sQpExjg)
+
+eeee
