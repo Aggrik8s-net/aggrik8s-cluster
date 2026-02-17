@@ -43,15 +43,17 @@ Clicking on the image below will play a NASA timelapse video of global NDVI[^1] 
   </a>
 </p>
 
-[Calculating NDVI from Satellite Imagery using QGIS](https://www.youtube.com/watch?v=4t4INqeoCk4) describes how to use the open source [QGIS](https://qgis.org) tool to process [NASA Landsat 9](https://www.earthdata.nasa.gov/topics/land-surface/normalized-difference-vegetation-index-ndvi) images.
+[Calculating NDVI from Satellite Imagery using QGIS](https://www.youtube.com/watch?v=4t4INqeoCk4) describes how to manually process [NASA Landsat 9](https://www.earthdata.nasa.gov/topics/land-surface/normalized-difference-vegetation-index-ndvi) data.
 Because each pixel in a Landsat image has a resolution of $30\text{ m}^2$, an acre of crops will be shown as $4.5\text{ pixels}$.
-The [DJI Mavic 3 Multispectral](https://ag.dji.com/mavic-3-m) drone can image the same acre at $1\text{ cm}^2\text{ resolution}$ resulting in an image having $40,468,564\text{ pixels}$.
+A [DJI Mavic 3 Multispectral](https://ag.dji.com/mavic-3-m) drone can image the same acre at $1\text{ cm}^2\text{ resolution}$ resulting in an image having $40,468,564\text{ pixels}$.
+We know how to collect multispectral images, now we need to decide how to process the raw data into actionable NDVI images.
+While we can use [QGIS](https://qgis.org) as shown in the Landsat tutorial, we will automate the image processing using Kubernetes based GPU and storage.
 
-Farmers need high resolution NDVI to identify specific plants under stress from drought or pests.
-A drone with multispectral camera can quickly image an entire farm and to identify portions of fields under stress.
-Agricultural rovers can be dispatched to geolocate and image specific plants to allow a detailed remediation plan to be developed addressing individual plants under stress. 
+Farmers need high resolution NDVI to accurately identify specific plants under stress from drought or pests.
+A drone with a multispectral camera can quickly image an entire farm and generate the image data for entire fields.
+Agricultural rovers can be dispatched to image and geolocate specific plants to allow a detailed remediation plan to be developed for each plant. 
+The `aggrik8s-cluster` platform provides flexibility to locate agricultural applications on an edge based Kubernetes cluster which securely access resources in cloud. 
 
-THe `aggrik8s-cluster` platform provides flexibility to locate agricultural applications on an edge based Kubernetes clusters which securely access resources in cloud. 
 As described below, a cluster mesh allows edge based drones and rovers to process high resolution image data using a cloud based GPU.
 This allows a fleet of edge based robots to securely share expensive cloud based GPU resources.  
 <p style="align:center">
