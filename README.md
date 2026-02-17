@@ -1,14 +1,31 @@
 # The aggrik8s-cluster platform
 ## TL;DR
-`Aggrik8s` provides a mesh of Kubernetes clusters ready to host [precision agriculture](https://en.wikipedia.org/wiki/Precision_agriculture) applications.
-Terraform is used to provision platform infrastructure while Ansible and Terraform manage Kubernetes based applications. 
+The `aggrik8s-cluster` project provides a mesh of Kubernetes clusters ready to host [precision agriculture](https://en.wikipedia.org/wiki/Precision_agriculture) applications.
 
-A cluster mesh allows service discovery, orchestrated deployments, automatic scaling and self-healing of containerized applications.
+Terraform provisions platform infrastructure while Ansible and Terraform manage the Kubernetes bits.
+DevOps best practices allow us to deploy and monitor applications on clusters located either at the edge or in the cloud.
+
+The platform architecture uses the following open source tools:
+- [Proxmox Virtual Envirnment (PVE)](https://www.proxmox.com/en/) provides virtual machines to lower the cost of edge based Kubernetes clusters,
+- [Sidero Labs's Talos](https://github.com/siderolabs/talos) is an immutable, secure, and minimal Linux distribution built to run Kubernetes and nothing else,
+- [Isovalent's Cilium](https://github.com/cilium) as the [eBPF](https://ebpf.io) based Container Network Interface (CNI) for pod networking,
+  - [Cluster Mesh](https://cilium.io/use-cases/cluster-mesh/) provides policy based cross cluster functionality,
+  - [Hubble](https://github.com/cilium/hubble) for eBPF based network observability,
+  - [Tetragon](https://github.com/cilium/tetragon) for eBPF based Kernel observability, 
+- [Rook](https://github.com/rook/rook) & [Ceph](https://github.com/ceph/ceph) provide the Container Storage Interface (CSI) for cluster storage,
+- [Robusta.dev](https://github.com/robusta-dev/robusta) cloud monitoring based on the [kube-prometheus-stack Helm Chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack),
+  - [Prometheus](https://github.com/prometheus/prometheus)
+  - [Alert Manager](https://github.com/prometheus/alertmanager) 
+  - [Grafana](https://grafana.com/)
+
+[CLUSTER_COOKBOOK.md](./CLUSTER_COOKBOOK.md) provides detailed instructions on creating and destroying meshed cluster for those wanting to *cut to the chase*.
+
+## Kubernetes Cluster Mesh
+A Kubernetes cluster mesh allows service discovery, orchestrated deployments, automatic scaling and self-healing of containerized applications.
 The ability to have applications in one cluster securely discover and access services in a remote cluster simplifies scenarios such as high availability.  
 <p style="align:center">
   <img src="https://cilium.io/static/04d2d06e7e32665b74c968a9f7fc0a40/b75cb/usecase_ha.png" width="45%">
 </p>
-We use DevOps best practices to deploy and monitor applications located both at the edge and in the cloud. 
 
 ## Introduction
 Some precision agriculture applications belong in the Cloud while others are best hosted at the Edge.
@@ -42,6 +59,8 @@ This allows a fleet of edge based robots to securely share expensive cloud based
 Aggrik8s allows edge based applications to securely access cloud resources such as GPUs as required.
 
 ## Platform Features
+### Proxmox based Virtual Machines
+We are using 
 ### All nodes run Talos
 The platform uses the [Sidero Talos](https://www.siderolabs.com/talos-linux/) running on [Proxmox PVE](https://www.proxmox.com/en/) hosted virtual machines.
 
