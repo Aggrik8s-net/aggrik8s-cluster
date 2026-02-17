@@ -18,16 +18,16 @@ The platform architecture uses the following open source tools:
   - [Alert Manager](https://github.com/prometheus/alertmanager) 
   - [Grafana](https://grafana.com/)
 
-[CLUSTER_COOKBOOK.md](./CLUSTER_COOKBOOK.md) provides detailed instructions on creating and destroying meshed cluster for those wanting to *cut to the chase*.
+[CLUSTER_COOKBOOK](./CLUSTER_COOKBOOK.md) provides detailed instructions on creating and destroying meshed cluster for those wanting to *cut to the chase*.
 
 ## Kubernetes Cluster Mesh
-A Kubernetes cluster mesh allows service discovery, orchestrated deployments, automatic scaling and self-healing of containerized applications.
-The ability to have applications in one cluster securely discover and access services in a remote cluster simplifies scenarios such as high availability.  
+A Kubernetes cluster mesh allows orchestrated deployments, automatic scaling and self-healing of containerized applications across multiple Kubernets clusters.
+The ability to have applications in one cluster securely discover and access services in a remote cluster simplifies scenarios such as failover. 
 <p style="align:center">
   <img src="https://cilium.io/static/04d2d06e7e32665b74c968a9f7fc0a40/b75cb/usecase_ha.png" width="45%">
 </p>
 
-## Introduction
+## Example Use Case
 Some precision agriculture applications belong in the Cloud while others are best hosted at the Edge.
 `aggrik8s-cluster` allows applications to safely access Kubernetes resources across cluster boundaries.
 
