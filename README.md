@@ -32,7 +32,8 @@ Some applications should be hosted on personal computers, some in the Cloud, and
 
 One example is [NDVI](https://www.earthdata.nasa.gov/topics/land-surface/normalized-difference-vegetation-index-ndvi) which determines *vegetative health* by calculating an index from $\text{-1 to 1}$.
 Multispectral cameras are used to image the earth in the Red and Near-infrared (NIR) spectra. 
-The following formula is used to calculate the NDVI index for each pixel. 
+The following formula is used to calculate the NDVI index for each pixel.
+
 $$\text{NDVI} = \frac{\text{NIR} - \text{Red}}{\text{NIR} + \text{Red}}$$
 
 Clicking on the image below will play a NASA timelapse video of global NDVI[^1] using Landsat data.
