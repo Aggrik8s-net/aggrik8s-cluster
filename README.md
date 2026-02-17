@@ -8,17 +8,17 @@ DevOps best practices allow us to deploy and monitor applications on clusters lo
 The platform architecture uses the following open source tools:
 - [Proxmox Virtual Envirnment (PVE)](https://www.proxmox.com/en/) provides virtual machines to lower the cost of edge based Kubernetes clusters,
 - [Sidero Labs's Talos](https://github.com/siderolabs/talos) is an immutable, secure, and minimal Linux distribution built to run Kubernetes and nothing else,
-- [Isovalent's Cilium](https://github.com/cilium) as the [eBPF](https://ebpf.io) based Container Network Interface (CNI) for pod networking,
-  - [Cluster Mesh](https://cilium.io/use-cases/cluster-mesh/) provides policy based cross cluster functionality,
+- [Isovalent's Cilium](https://github.com/cilium) is an [eBPF](https://ebpf.io) based implementation of the [CNI (Container Network Interface)](https://www.cni.dev) specification,
+  - [Cluster Mesh](https://cilium.io/use-cases/cluster-mesh/) is built into Cilium to allow a policy based cross cluster service mesh,
   - [Hubble](https://github.com/cilium/hubble) for eBPF based network observability,
   - [Tetragon](https://github.com/cilium/tetragon) for eBPF based Kernel observability, 
-- [Rook](https://github.com/rook/rook) & [Ceph](https://github.com/ceph/ceph) provide the Container Storage Interface (CSI) for cluster storage,
-- [Robusta.dev](https://github.com/robusta-dev/robusta) cloud monitoring based on the [kube-prometheus-stack Helm Chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack),
-  - [Prometheus](https://github.com/prometheus/prometheus)
-  - [Alert Manager](https://github.com/prometheus/alertmanager) 
-  - [Grafana](https://grafana.com/)
+- [Rook](https://github.com/rook/rook) & [Ceph](https://github.com/ceph/ceph) implement the [CSI (Container Storage Interface)](https://kubernetes-csi.github.io/docs/) specification to provide block and file storage,
+- [Robusta.dev](https://github.com/robusta-dev/robusta) cloud based monitoring using the [kube-prometheus-stack Helm Chart](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack),
+  - [Prometheus](https://github.com/prometheus/prometheus) provides open source metrics and monitoring of the Kubernetes clusters and applications,
+  - [Alert Manager](https://github.com/prometheus/alertmanager) provides deduplication, grouping, and routing of alerts created by the prometheus server, 
+  - [Grafana](https://grafana.com/) delivers dashboard visualizations and ad-hoc visualization of enriched events and metrics.
 
-[CLUSTER_COOKBOOK](./CLUSTER_COOKBOOK.md) provides detailed instructions on creating and destroying meshed cluster for those wanting to *cut to the chase*.
+Refer to  [CLUSTER_COOKBOOK](./CLUSTER_COOKBOOK.md) for details on creating and destroying meshed Talos clusters using aggrik8s-cluster.
 
 ## Kubernetes Cluster Mesh
 A Kubernetes cluster mesh allows orchestrated deployments, automatic scaling and self-healing of containerized applications across multiple Kubernets clusters.
@@ -27,36 +27,35 @@ The ability to have applications in one cluster securely discover and access ser
   <img src="https://cilium.io/static/04d2d06e7e32665b74c968a9f7fc0a40/b75cb/usecase_ha.png" width="45%">
 </p>
 
-## Example Use Case
-Some precision agriculture applications belong in the Cloud while others are best hosted at the Edge.
-`aggrik8s-cluster` allows applications to safely access Kubernetes resources across cluster boundaries.
+## NDVI using a Cluster Mesh
+Some applications should be hosted on personal computers, some in the Cloud, and some belong at the Edge.
 
-One example is [NDVI](https://www.earthdata.nasa.gov/topics/land-surface/normalized-difference-vegetation-index-ndvi) which calculates vegetation health. 
-Clicking on the NDVI visualization below will show a video demonstrating the power of satellite based NDVI [^1].
+One example is [NDVI](https://www.earthdata.nasa.gov/topics/land-surface/normalized-difference-vegetation-index-ndvi) which determines *vegetative health* by calculating an index from $\text{-1 to 1}$.
+Multispectral cameras are used to image the earth in the Red and Near-infrared (NIR) spectra. 
+The following formula is used to calculate the NDVI index for each pixel. $$\text{NDVI} = \frac{\text{NIR} - \text{Red}}{\text{NIR} + \text{Red}}$$
+
+Clicking on the image below will play a NASA timelapse video of global NDVI[^1] using Landsat data.
 <p>
   <a href="https://svs.gsfc.nasa.gov/vis/a000000/a004900/a004916/NDVI_anomaly_regions_1080p30.mp4">
     <img src="https://svs.gsfc.nasa.gov/vis/a000000/a004900/a004916/NDVI_anomaly_withDate_US_2012_09_02_print.jpg" width="45%">
   </a>
 </p>
 
+[Calculating NDVI from Satellite Imagery using QGIS](https://www.youtube.com/watch?v=4t4INqeoCk4) describes how to use the open source [QGIS](https://qgis.org) tool to process [NASA Landsat 9](https://www.earthdata.nasa.gov/topics/land-surface/normalized-difference-vegetation-index-ndvi) images.
+Because each pixel in a Landsat image has a resolution of $30\text{ m}^2$, an acre of crops will be shown as $4.5\text{ pixels}$.
+The [DJI Mavic 3 Multispectral](https://ag.dji.com/mavic-3-m) drone can image the same acre at $1\text{ cm}^2\text{ resolution}$ resulting in an image having $40,468,564\text{ pixels}$.
 
-Multispectral cameras image crops in multiple frequency bands including Red and Near-infrared (NIR). 
-The following formula converts raw image to NDVI images.
-$$\text{NDVI} = \frac{\text{NIR} - \text{Red}}{\text{NIR} + \text{Red}}$$
-[Calculating NDVI from Satellite Imagery using QGIS](https://www.youtube.com/watch?v=4t4INqeoCk4) describes how farmers can use the free [QGIS](https://qgis.org) tool to process [NASA Landsat 9](https://www.earthdata.nasa.gov/topics/land-surface/normalized-difference-vegetation-index-ndvi) images.
-Becauzse Landsat image resolution is $30\text{ m}^2$ per pixel, an acre of crops are shown as 4.5 pixels.
+Farmers need high resolution NDVI to identify specific plants under stress from drought or pests.
+A drone with multispectral camera can quickly image an entire farm and to identify portions of fields under stress.
+Agricultural rovers can be dispatched to geolocate and image specific plants to allow a detailed remediation plan to be developed addressing individual plants under stress. 
 
-Farmers need higher resolution to identify portions of their fields under stress from drought or pests.
-A drone based multispectral camera can image fields at a higher resolution to quickly identify areas of a farm with unhealthy crops.
-Rovers can be dispatched to image, geolocate and remediate individual plants under stress. 
-
-Aggrik8s clusters provide flexibility to locate some agricultural applications on an edge based Kubernetes cluster and securely access resources in cloud based clusters. 
+THe `aggrik8s-cluster` platform provides flexibility to locate agricultural applications on an edge based Kubernetes clusters which securely access resources in cloud. 
 As described below, a cluster mesh allows edge based drones and rovers to process high resolution image data using a cloud based GPU.
 This allows a fleet of edge based robots to securely share expensive cloud based GPU resources.  
 <p style="align:center">
   <img src="images/Cluster_mesh_shared_gpu.png" width="45%">
 </p>
-Aggrik8s allows edge based applications to securely access cloud resources such as GPUs as required.
+Aggrik8s allows application to run where needed and securely access resources in peer clusters as required.
 
 ## Platform Features
 ### Proxmox based Virtual Machines
